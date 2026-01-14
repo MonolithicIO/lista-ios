@@ -8,17 +8,27 @@
 import SwiftUI
 
 struct HomeContentView: View {
+    @Environment(NavigationCoordinator.self) private var coordinator: NavigationCoordinator
+    @State private var viewModel = ViewModel()
+
     var body: some View {
-        VStack {
-            Text("Home view")
-        }.background(AppColors.background)
-            .navigationTitle("Home")
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Image(systemName: "gearshape.fill")
-                        .foregroundStyle(AppColors.foreground)
-                }
+        VStack(spacing: 16) {
+            Text("Hello")
+        }
+        .background(AppColors.background)
+        .navigationTitle("Home")
+        .toolbar {
+            Button(action: {
+                coordinator.push(.setings)
+            }) {
+                Image(systemName: "gearshape")
+                    .resizable()
+                    .frame(width: 30, height: 30)
             }
+        }
+        .task {
+            
+        }
     }
 }
 
