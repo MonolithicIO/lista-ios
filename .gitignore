@@ -60,3 +60,48 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Adicional - User specific files
+*.xcuserstate
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.pbxuser
+!default.pbxuser
+!default.mode1v3
+!default.mode2v3
+!default.perspectivev3
+
+# Xcode workspace checksums
+*.moved-aside
+*.xccheckout
+*.xcscmblueprint
+
+# Swift compiler generated files
+*.swiftmodule
+*.swiftdoc
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# IDEs
+.vscode/
+.idea/
+
+# Backup files
+*~.nib
+*.swp
+*~
+
+# Build artifacts
+DerivedData/
+*.moved-aside
+
+# Code coverage
+*.gcda
+*.gcno
+*.profraw
+*.profdata
