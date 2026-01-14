@@ -9,6 +9,19 @@ import SwiftUI
 
 struct HomeContentView: View {
     var body: some View {
-        Text("Home view")
+        VStack {
+            Text("Home view")
+        }.background(AppColors.background)
+            .navigationTitle("Home")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Image(systemName: "gearshape.fill")
+                }
+            }
+        
     }
+}
+
+#Preview {
+    HomeContentView()
 }
