@@ -12,6 +12,6 @@ extension HomeContentView {
     
     @Observable
     class ViewModel {
-        var items: [String] = []
+        var items: [ListUiModel] = []
     }
 }
