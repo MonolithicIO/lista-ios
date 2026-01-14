@@ -16,12 +16,14 @@ struct HomeContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Image(systemName: "gearshape.fill")
+                        .foregroundStyle(AppColors.foreground)
                 }
             }
-        
     }
 }
 
 #Preview {
-    HomeContentView()
+    NavigationView {
+        HomeContentView()
+    }
 }
