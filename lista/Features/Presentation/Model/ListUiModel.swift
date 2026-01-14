@@ -8,6 +8,12 @@
 import Foundation
 
 struct ListUiModel {
-    let id: UUID
+    let id: String
     let title: String
+}
+
+extension List {
+    func toUiModel() -> ListUiModel {
+        return ListUiModel(id: self.id.uuidString, title: self.title)
+    }
 }
