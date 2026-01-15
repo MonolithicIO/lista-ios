@@ -8,7 +8,8 @@
 import SwiftUI
 import Combine
 
-class InstanceKeeper: ObservableObject {
+@Observable
+class InstanceKeeper {
     
     // MARK: - Initializers
     private init() {}
