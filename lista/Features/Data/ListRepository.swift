@@ -16,21 +16,23 @@ protocol ListRepositoryProtocol {
 }
 
 final class ListRepository: ListRepositoryProtocol {
-
-    private var lists: [List] = []
+    
+    private let datasource: ListDataSourceProtocol
+    
+    init(datasource: ListDataSourceProtocol) {
+        self.datasource = datasource
+    }
 
     func fetchLists() async -> [List] {
-        return lists
+        return await datasource.fetchLists()
     }
 
     func createList(title: String) async -> List {
-        let newItem = List(id: UUID.init(), title: title)
-        lists.append(newItem)
-        return newItem
+        return await datasource.createList(title: title)
     }
 
     func removeList(id: UUID) async {
-        lists = lists.filter { $0.id != id }
+        await datasource.removeList(id: id)
     }
 
 }
