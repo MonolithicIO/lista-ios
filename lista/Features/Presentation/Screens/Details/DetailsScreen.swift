@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct DetailsContentView: View {
+struct DetailsScreen: View {
     
     var body: some View {
         VStack {

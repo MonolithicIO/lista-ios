@@ -11,19 +11,15 @@ import SwiftUI
 @main
 struct listaApp: App {
     @State private var navigationCoordinator = NavigationCoordinator()
-    @State private var instanceKeeper = InstanceKeeper.shared
-
-    let persistenceController = PersistenceController.shared
 
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $navigationCoordinator.path) {
-                HomeContentView()
+                HomeScreen()
                     .navigationDestination(for: Routes.self) { route in
                         destinationView(for: route)
                     }
                     .environment(navigationCoordinator)
-                    .environment(instanceKeeper)
             }
         }
     }
@@ -32,13 +28,13 @@ struct listaApp: App {
     private func destinationView(for route: Routes) -> some View {
         switch route {
         case .home:
-            HomeContentView()
+            HomeScreen()
 
         case .details:
-            DetailsContentView()
+            DetailsScreen()
 
         case .setings:
-            SettingsContentView()
+            SettingsScreen()
         }
     }
 }

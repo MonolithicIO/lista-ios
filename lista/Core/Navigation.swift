@@ -14,22 +14,21 @@ enum Routes: Hashable {
     case setings
 }
 
-
 // MARK: - Navigation Coordinator
 @Observable
 class NavigationCoordinator {
     var path = NavigationPath()
-    
+
     func push(_ route: Routes) {
         path.append(route)
     }
-    
+
     func pop() {
         if !path.isEmpty {
             path.removeLast()
         }
     }
-    
+
     func popToRoot() {
         path = NavigationPath()
     }

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SettingsContentView: View {
+struct SettingsScreen: View {
     var body: some View {
         Text("Settings")
     }
