@@ -10,13 +10,13 @@ import SwiftUI
 struct HomeScreen: View {
     @Environment(NavigationCoordinator.self) private var coordinator:
         NavigationCoordinator
-    @State private var viewModel: HomeScreen.ViewModel
+    @StateObject private var viewModel: HomeScreen.ViewModel
 
     init(
         viewModel: HomeScreen.ViewModel = InstanceKeeper.shared
             .provideHomeViewModel()
     ) {
-        self.viewModel = viewModel
+        self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -36,7 +36,7 @@ private struct HomeScreenView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text(isEmpty ? "List Empty" : "List Not Empty")
+            ListsView(items: list)
         }
         .background(AppColors.background)
         .navigationTitle("Home")
@@ -52,8 +52,16 @@ private struct HomeScreenView: View {
     }
 }
 
+
+
 #Preview {
     NavigationStack {
-        HomeScreenView(list: [], onSettingsClick: {})
+        HomeScreenView(
+            list: [
+                ListUiModel(id: "123", title: "Presentes de natal"),
+                ListUiModel(id: "321", title: "Presentes de natal"),
+            ],
+            onSettingsClick: {}
+        )
     }
 }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ListUiModel {
+struct ListUiModel: Identifiable {
     let id: String
     let title: String
 }
