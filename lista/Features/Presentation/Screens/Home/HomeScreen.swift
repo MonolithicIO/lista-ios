@@ -23,30 +23,31 @@ struct HomeScreen: View {
         HomeScreenView(
             list: viewModel.items,
             onSettingsClick: {
-                coordinator.push(.setings)
+                coordinator.push(.settings)
             }
-        )
+        ).task {
+            await viewModel.onAppear()
+        }
     }
 }
 
 private struct HomeScreenView: View {
     let list: [ListUiModel]
     let onSettingsClick: () -> Void
-    var isEmpty: Bool { list.isEmpty }
 
     var body: some View {
         VStack(spacing: 16) {
             ListsView(items: list)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColors.background)
         .navigationTitle("Home")
         .toolbar {
-            Button(action: {
-                onSettingsClick()
-            }) {
-                Image(systemName: "gearshape")
-                    .resizable()
-                    .frame(width: 30, height: 30)
+            ToolbarItem {
+                Button(action: onSettingsClick) {
+                    Image(systemName: "gearshape")
+                        .font(.title3)
+                }
             }
         }
     }

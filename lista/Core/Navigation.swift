@@ -11,7 +11,7 @@ import SwiftUI
 enum Routes: Hashable {
     case home
     case details
-    case setings
+    case settings
 }
 
 // MARK: - Navigation Coordinator

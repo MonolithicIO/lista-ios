@@ -5,12 +5,12 @@
 //  Created by Lucca Beurmann on 14/01/26.
 //
 
-import Combine
 import Foundation
-import SwiftUI
+import Combine
 
 extension HomeScreen {
 
+    @MainActor
     class ViewModel: ObservableObject {
         private let fetchListsService: FetchListsServiceProtocol
         private let createListService: CreateListServiceProtocol
@@ -44,13 +44,13 @@ extension HomeScreen {
             )
         }
         
-        func removeList(list: ListUiModel) async {
-            guard let listUuid = UUID(uuidString: list.id) else {
+        func removeList(list _removedItem: ListUiModel) async {
+            guard let listUuid = UUID(uuidString: _removedItem.id) else {
                 return
             }
             await removeListService.remove(id: listUuid)
             items = items.filter { list in
-                list.id != list.id
+                list.id != _removedItem.id
             }
         }
     }

@@ -33,7 +33,7 @@ struct listaApp: App {
         case .details:
             DetailsScreen()
 
-        case .setings:
+        case .settings:
             SettingsScreen()
         }
     }
