@@ -10,7 +10,9 @@ import SwiftUI
 struct HomeScreen: View {
     @Environment(NavigationCoordinator.self) private var coordinator:
         NavigationCoordinator
+
     @StateObject private var viewModel: HomeScreen.ViewModel
+    @State private var isPresentingNewList: Bool = false
 
     init(
         viewModel: HomeScreen.ViewModel = InstanceKeeper.shared
@@ -24,7 +26,17 @@ struct HomeScreen: View {
             list: viewModel.items,
             onSettingsClick: {
                 coordinator.push(.settings)
-            }
+            },
+            onTapNewList: {
+                isPresentingNewList = true
+            },
+            onAddNewList: { newTitle in
+                Task {
+                    isPresentingNewList = false
+                    await viewModel.addList(title: newTitle)
+                }
+            },
+            isPresentingNewList: $isPresentingNewList
         ).task {
             await viewModel.onAppear()
         }
@@ -34,32 +46,53 @@ struct HomeScreen: View {
 private struct HomeScreenView: View {
     let list: [ListUiModel]
     let onSettingsClick: () -> Void
+    let onTapNewList: () -> Void
+    let onAddNewList: (String) -> Void
+    @Binding var isPresentingNewList: Bool
 
     var body: some View {
         VStack(spacing: 16) {
             ListsView(items: list)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(AppColors.background)
+        .background(AppColors.background.ignoresSafeArea())
         .navigationTitle("Home")
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: onSettingsClick) {
                     Image(systemName: "gearshape")
+                        .accessibilityLabel("Settings")
                         .font(.title3)
                 }
             }
         }
-        .overlay(alignment: .bottomTrailing) {
-            Button(action: {}) {
-                Image(systemName: "plus")
-                    .font(.title3.weight(.semibold))
-                    .foregroundStyle(AppColors.background)
-                    .frame(width: 56, height: 56)
-                    .background(AppColors.foreground)
-                    .clipShape(.circle)
+        .sheet(
+            isPresented: $isPresentingNewList,
+            content: {
+                NavigationStack {
+                    AddListView { newTitle in
+                        onAddNewList(newTitle)
+                    }
+                    .presentationDragIndicator(.visible)
+                }
             }
-            .padding(16)
+        )
+        .safeAreaInset(edge: .bottom) {
+            HStack {
+                Spacer()
+
+                Button(action: onTapNewList) {
+                    Image(systemName: "plus")
+                        .font(.title3.weight(.semibold))
+                        .foregroundStyle(AppColors.background)
+                        .frame(width: 56, height: 56)
+                        .background(AppColors.foreground)
+                        .clipShape(.circle)
+                }
+                .shadow(radius: 8)
+            }
+            .padding(.horizontal, 16)
+            .padding(.bottom, 8)
         }
     }
 }
@@ -71,7 +104,11 @@ private struct HomeScreenView: View {
                 ListUiModel(id: "123", title: "Presentes de natal"),
                 ListUiModel(id: "321", title: "Presentes de natal"),
             ],
-            onSettingsClick: {}
+            onSettingsClick: {},
+            onTapNewList: {},
+            onAddNewList: { value in
+            },
+            isPresentingNewList: .constant(false)
         )
     }
 }
