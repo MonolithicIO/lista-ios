@@ -43,7 +43,7 @@ private struct HomeScreenView: View {
         .background(AppColors.background)
         .navigationTitle("Home")
         .toolbar {
-            ToolbarItem {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button(action: onSettingsClick) {
                     Image(systemName: "gearshape")
                         .font(.title3)
@@ -59,8 +59,8 @@ private struct HomeScreenView: View {
                     .background(AppColors.foreground)
                     .clipShape(.circle)
             }
+            .padding(16)
         }
-        .padding(16)
     }
 }
 
