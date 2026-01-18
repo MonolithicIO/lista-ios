@@ -50,10 +50,19 @@ private struct HomeScreenView: View {
                 }
             }
         }
+        .overlay(alignment: .bottomTrailing) {
+            Button(action: {}) {
+                Image(systemName: "plus")
+                    .font(.title3.weight(.semibold))
+                    .foregroundStyle(AppColors.background)
+                    .frame(width: 56, height: 56)
+                    .background(AppColors.foreground)
+                    .clipShape(.circle)
+            }
+        }
+        .padding(16)
     }
 }
-
-
 
 #Preview {
     NavigationStack {
