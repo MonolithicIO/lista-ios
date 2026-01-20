@@ -13,10 +13,17 @@ struct AddListView: View {
     let onSubmit: (String) -> Void
 
     @State private var listTitle: String = ""
+    
+    var isAddButtonEnabled: Bool {
+        !listTitle.isEmpty
+    }
 
     var body: some View {
-
         VStack {
+            TextField("Title", text: $listTitle)
+                .textFieldStyle(.roundedBorder)
+                .padding()
+                .submitLabel(.done)
 
         }
         .navigationTitle("New list")
@@ -32,7 +39,7 @@ struct AddListView: View {
                 Button("Add") {
                     onSubmit(listTitle)
                     dismiss()
-                }
+                }.disabled(!isAddButtonEnabled)
             }
         }
     }

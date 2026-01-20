@@ -80,7 +80,6 @@ private struct HomeScreenView: View {
         .safeAreaInset(edge: .bottom) {
             HStack {
                 Spacer()
-
                 Button(action: onTapNewList) {
                     Image(systemName: "plus")
                         .font(.title3.weight(.semibold))
