@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct List {
+struct Lista {
     let id: UUID
     let title: String
 }

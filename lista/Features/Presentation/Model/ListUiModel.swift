@@ -12,7 +12,7 @@ struct ListUiModel: Identifiable {
     let title: String
 }
 
-extension List {
+extension Lista {
     func toUiModel() -> ListUiModel {
         return ListUiModel(id: self.id.uuidString, title: self.title)
     }

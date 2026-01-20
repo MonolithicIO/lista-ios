@@ -8,7 +8,7 @@
 import Foundation
 
 protocol RemoveListServiceProtocol {
-    func remove(id: UUID) async
+    func remove(id: UUID) async throws
 }
 
 final class RemoveListService: RemoveListServiceProtocol {
@@ -18,7 +18,7 @@ final class RemoveListService: RemoveListServiceProtocol {
         self.repository = repository
     }
 
-    func remove(id: UUID) async {
-        await repository.removeList(id: id)
+    func remove(id: UUID) async throws {
+        try await repository.removeList(id: id)
     }
 }

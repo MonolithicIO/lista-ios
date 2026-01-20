@@ -5,8 +5,8 @@
 //  Created by Lucca Beurmann on 14/01/26.
 //
 
-import Foundation
 import Combine
+import Foundation
 
 extension HomeScreen {
 
@@ -29,29 +29,42 @@ extension HomeScreen {
         @Published private(set) var items: [ListUiModel] = []
 
         func onAppear() async {
-            items = await fetchListsService.fetch().map { domainModel in
-                ListUiModel(
-                    id: domainModel.id.uuidString,
-                    title: domainModel.title
-                )
+            do {
+                items = try await fetchListsService.fetch().map { domainModel in
+                    ListUiModel(
+                        id: domainModel.id.uuidString,
+                        title: domainModel.title
+                    )
+                }
+            } catch {
+
             }
         }
 
         func addList(title: String) async {
-            let newList = await createListService.create(title: title)
-            items.append(
-                ListUiModel(id: newList.id.uuidString, title: newList.title)
-            )
+            do {
+                let newList = try await createListService.create(title: title)
+                items.append(
+                    ListUiModel(id: newList.id.uuidString, title: newList.title)
+                )
+            } catch {
+
+            }
         }
-        
+
         func removeList(list _removedItem: ListUiModel) async {
-            guard let listUuid = UUID(uuidString: _removedItem.id) else {
-                return
+            do {
+                guard let listUuid = UUID(uuidString: _removedItem.id) else {
+                    return
+                }
+                try await removeListService.remove(id: listUuid)
+                items = items.filter { list in
+                    list.id != _removedItem.id
+                }
+            } catch {
+
             }
-            await removeListService.remove(id: listUuid)
-            items = items.filter { list in
-                list.id != _removedItem.id
-            }
+
         }
     }
 }

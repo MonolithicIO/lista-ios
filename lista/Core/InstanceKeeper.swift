@@ -6,6 +6,7 @@
 //
 
 import Combine
+import CoreData
 import SwiftUI
 
 @Observable
@@ -20,10 +21,22 @@ class InstanceKeeper {
     private var listDatasource: ListDataSourceProtocol?
     private var listRepository: ListRepositoryProtocol?
 
+    // MARK: - Core
+    func provideDateProvider() -> DateProviderProtocol {
+        return DateProvider()
+    }
+
     // MARK: - Data Providers
+    func provideContext() -> NSManagedObjectContext {
+        return PersistenceController.shared.container.viewContext
+    }
+
     func provideListDatasource() -> ListDataSourceProtocol {
         guard let dataSource = listDatasource else {
-            listDatasource = ListDataSource()
+            listDatasource = ListDataSource(
+                context: provideContext(),
+                dateProvider: provideDateProvider()
+            )
             return listDatasource!
         }
         return dataSource

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol FetchListsServiceProtocol {
-    func fetch() async -> [List]
+    func fetch() async throws -> [Lista]
 }
 
 final class FetchListsService: FetchListsServiceProtocol {
@@ -18,7 +18,7 @@ final class FetchListsService: FetchListsServiceProtocol {
         self.repository = repository
     }
 
-    func fetch() async -> [List] {
-        return await repository.fetchLists()
+    func fetch() async throws -> [Lista] {
+        return try await repository.fetchLists()
     }
 }

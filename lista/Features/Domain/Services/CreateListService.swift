@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CreateListServiceProtocol {
-    func create(title: String) async -> List
+    func create(title: String) async throws -> Lista
 }
 
 final class CreateListService: CreateListServiceProtocol {
@@ -19,7 +19,7 @@ final class CreateListService: CreateListServiceProtocol {
         self.repository = repository
     }
 
-    func create(title: String) async -> List {
-        return await repository.createList(title: title)
+    func create(title: String) async throws -> Lista {
+        return try await repository.createList(title: title)
     }
 }
