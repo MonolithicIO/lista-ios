@@ -44,6 +44,7 @@ final class ListDataSource: ListDataSourceProtocol {
             entity.id = UUID()
             entity.title = title
             entity.createdAt = try self.dateProvider.currentDate()
+            entity.updatedAt = try self.dateProvider.currentDate()
 
             try context.save()
 

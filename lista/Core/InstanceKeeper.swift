@@ -20,6 +20,7 @@ class InstanceKeeper {
     // MARK: - Singletons
     private var listDatasource: ListDataSourceProtocol?
     private var listRepository: ListRepositoryProtocol?
+    private var listItemDatasource: ListItemDataSourceProtocol?
 
     // MARK: - Core
     func provideDateProvider() -> DateProviderProtocol {
@@ -50,6 +51,20 @@ class InstanceKeeper {
         return repository
     }
 
+    func provideListItemDatasource() -> ListItemDataSourceProtocol {
+        guard let dataSource = listItemDatasource else {
+            let newInstance = ListItemDataSource(
+                context: provideContext(),
+                dateProvider: provideDateProvider()
+            )
+            self.listItemDatasource = newInstance
+        
+            return newInstance
+        }
+        
+        return dataSource
+    }
+
     // MARK: - Domain Providers
     func provideCreateListService() -> CreateListServiceProtocol {
         return CreateListService(repository: provideListRepository())
@@ -70,5 +85,9 @@ class InstanceKeeper {
             createListService: provideCreateListService(),
             removeListService: provideRemoveListService()
         )
+    }
+
+    func provideDetailsViewModel() -> DetailsScreen.ViewModel {
+        return DetailsScreen.ViewModel()
     }
 }

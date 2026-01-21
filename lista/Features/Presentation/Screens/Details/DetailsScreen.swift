@@ -17,7 +17,7 @@ struct DetailsScreen: View {
         DetailsScreenView(
             title: listaTitle,
             onBack: {
-
+                coordinator.pop()
             }
         )
     }
@@ -34,16 +34,8 @@ private struct DetailsScreenView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColors.background.ignoresSafeArea())
         .navigationTitle(title)
-        .navigationBarBackButtonHidden(true)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: onBack) {
-                    Image(
-                        systemName: "chevron.left"
-                    )
-                }
-            }
-
+        
         }
     }
 }

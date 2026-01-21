@@ -19,8 +19,8 @@ struct listaApp: App {
                     .navigationDestination(for: Routes.self) { route in
                         destinationView(for: route)
                     }
-                    .environment(navigationCoordinator)
             }
+            .environment(navigationCoordinator)
         }
     }
 
