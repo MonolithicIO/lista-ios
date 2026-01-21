@@ -9,14 +9,16 @@ import Foundation
 import SwiftUI
 
 struct ListsView: View {
-    let items: [ListUiModel]
-    
+    let items: [ListaUiModel]
+    let onItemTap: (ListaUiModel) -> Void
+
     var body: some View {
-        
+
         if items.isEmpty {
             EmptyListsView()
         } else {
-            FilledListsView(items: items)
+            FilledListsView(items: items, onItemTap: onItemTap)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 }
@@ -28,12 +30,19 @@ private struct EmptyListsView: View {
 }
 
 private struct FilledListsView: View {
-    let items: [ListUiModel]
+    let items: [ListaUiModel]
+    let onItemTap: (ListaUiModel) -> Void
 
     var body: some View {
         LazyVStack(spacing: 16) {
             ForEach(items) { list in
-                Text(list.title)
+                ListCard(
+                    item: list,
+                    onTap: {
+                        onItemTap(list)
+                    }
+                )
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }

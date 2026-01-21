@@ -8,10 +8,11 @@
 import SwiftUI
 
 struct DetailsScreen: View {
+    let listaId: String
     
     var body: some View {
         VStack {
-            Text("Details")
+            Text("Details: \(listaId)")
         }
     }
 }

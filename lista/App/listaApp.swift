@@ -30,8 +30,10 @@ struct listaApp: App {
         case .home:
             HomeScreen()
 
-        case .details:
-            DetailsScreen()
+        case .details(let listaId):
+            DetailsScreen(
+                listaId: listaId
+            )
 
         case .settings:
             SettingsScreen()

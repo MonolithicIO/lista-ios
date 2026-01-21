@@ -26,12 +26,12 @@ extension HomeScreen {
             self.removeListService = removeListService
         }
 
-        @Published private(set) var items: [ListUiModel] = []
+        @Published private(set) var items: [ListaUiModel] = []
 
         func onAppear() async {
             do {
                 items = try await fetchListsService.fetch().map { domainModel in
-                    ListUiModel(
+                    ListaUiModel(
                         id: domainModel.id.uuidString,
                         title: domainModel.title
                     )
@@ -45,14 +45,14 @@ extension HomeScreen {
             do {
                 let newList = try await createListService.create(title: title)
                 items.append(
-                    ListUiModel(id: newList.id.uuidString, title: newList.title)
+                    ListaUiModel(id: newList.id.uuidString, title: newList.title)
                 )
             } catch {
 
             }
         }
 
-        func removeList(list _removedItem: ListUiModel) async {
+        func removeList(list _removedItem: ListaUiModel) async {
             do {
                 guard let listUuid = UUID(uuidString: _removedItem.id) else {
                     return

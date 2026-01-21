@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct ListUiModel: Identifiable {
+struct ListaUiModel: Identifiable {
     let id: String
     let title: String
 }
 
 extension Lista {
-    func toUiModel() -> ListUiModel {
-        return ListUiModel(id: self.id.uuidString, title: self.title)
+    func toUiModel() -> ListaUiModel {
+        return ListaUiModel(id: self.id.uuidString, title: self.title)
     }
 }

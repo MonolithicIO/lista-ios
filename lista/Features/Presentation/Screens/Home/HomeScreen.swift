@@ -36,6 +36,9 @@ struct HomeScreen: View {
                     await viewModel.addList(title: newTitle)
                 }
             },
+            onDetailsClick: { item in
+                coordinator.push(.details(listaId: item.id))
+            },
             isPresentingNewList: $isPresentingNewList
         ).task {
             await viewModel.onAppear()
@@ -44,15 +47,21 @@ struct HomeScreen: View {
 }
 
 private struct HomeScreenView: View {
-    let list: [ListUiModel]
+    let list: [ListaUiModel]
     let onSettingsClick: () -> Void
     let onTapNewList: () -> Void
     let onAddNewList: (String) -> Void
+    let onDetailsClick: (ListaUiModel) -> Void
     @Binding var isPresentingNewList: Bool
 
     var body: some View {
         VStack(spacing: 16) {
-            ListsView(items: list)
+            ListsView(
+                items: list,
+                onItemTap: onDetailsClick
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColors.background.ignoresSafeArea())
@@ -100,12 +109,14 @@ private struct HomeScreenView: View {
     NavigationStack {
         HomeScreenView(
             list: [
-                ListUiModel(id: "123", title: "Presentes de natal"),
-                ListUiModel(id: "321", title: "Presentes de natal"),
+                ListaUiModel(id: "123", title: "Presentes de natal"),
+                ListaUiModel(id: "321", title: "Presentes de natal"),
             ],
             onSettingsClick: {},
             onTapNewList: {},
             onAddNewList: { value in
+            },
+            onDetailsClick: { item in
             },
             isPresentingNewList: .constant(false)
         )
