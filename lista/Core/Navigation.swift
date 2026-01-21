@@ -10,7 +10,7 @@ import SwiftUI
 // MARK: - Routes & Destinations
 enum Routes: Hashable {
     case home
-    case details(listaId: String)
+    case details(listaId: String, listaTitle: String)
     case settings
 }
 

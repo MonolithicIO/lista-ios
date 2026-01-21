@@ -37,7 +37,9 @@ struct HomeScreen: View {
                 }
             },
             onDetailsClick: { item in
-                coordinator.push(.details(listaId: item.id))
+                coordinator.push(
+                    .details(listaId: item.id, listaTitle: item.title)
+                )
             },
             isPresentingNewList: $isPresentingNewList
         ).task {
@@ -70,6 +72,7 @@ private struct HomeScreenView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: onSettingsClick) {
                     Image(systemName: "gearshape")
+                        .foregroundStyle(AppColors.foreground)
                         .accessibilityLabel("Settings")
                         .font(.title3)
                 }
