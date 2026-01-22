@@ -1,0 +1,25 @@
+//
+//  ListItemRepository.swift
+//  lista
+//
+//  Created by Lucca Beurmann on 21/01/26.
+//
+
+import Foundation
+
+protocol ListItemRepositoryProtocol {
+    func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
+}
+
+final class ListItemRepository: ListItemRepositoryProtocol {
+    
+    private let datasource: ListItemDataSourceProtocol
+    
+    init(datasource: ListItemDataSourceProtocol) {
+        self.datasource = datasource
+    }
+    
+    func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem {
+        return try await datasource.createItem(item: _dto);
+    }
+}
