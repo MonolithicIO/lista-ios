@@ -23,8 +23,8 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
 
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem {
         try await context.perform {
-            let listRequest: NSFetchRequest<ListEntity> =
-                ListEntity.fetchRequest()
+            let listRequest: NSFetchRequest<ListaEntity> =
+            ListaEntity.fetchRequest()
             listRequest.fetchLimit = 1
             listRequest.predicate = NSPredicate(
                 format: "id == %@",
@@ -41,31 +41,26 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                     ]
                 )
             }
-            let listaItem = ListItemEntity(context: self.context)
+            let listaItem = ListaItemEntity(context: self.context)
             listaItem.title = _dto.title
             listaItem.note = _dto.description
             listaItem.link = _dto.url
             listaItem.updatedAt = try self.dateProvider.currentDate()
             listaItem.createdAt = try self.dateProvider.currentDate()
-            listaItem.parent = lista
+            listaItem.lista = lista
 
             if self.context.hasChanges {
                 try self.context.save()
             }
 
-            //            return ListaItem(
-            //                listId: lista.id,
-            //                id: listaItem.id,
-            //                title: listaItem.title,
-            //                description: listaItem.note,
-            //                url: listaItem.link
-            //            )
             return ListaItem(
-                listId: UUID(),
-                id: UUID(),
-                title: "",
+                listId: lista.id!,
+                id: listaItem.id!,
+                title: listaItem.title!,
                 description: listaItem.note,
-                url: listaItem.link
+                url: listaItem.link,
+                updatedAt: listaItem.updatedAt!,
+                createdAt: listaItem.createdAt!
             )
         }
     }

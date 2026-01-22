@@ -12,6 +12,7 @@ protocol ListDataSourceProtocol {
     func fetchLists() async throws -> [Lista]
     func createList(title: String) async throws -> Lista
     func removeList(id: UUID) async throws
+    func getListaDetails(id: UUID) async throws -> ListaDetails
 }
 
 final class ListDataSource: ListDataSourceProtocol {
@@ -26,21 +27,18 @@ final class ListDataSource: ListDataSourceProtocol {
 
     func fetchLists() async throws -> [Lista] {
         try await context.perform { [context] in
-            let request: NSFetchRequest<ListEntity> = ListEntity.fetchRequest()
-            let entities: [ListEntity] = try context.fetch(request)
+            let request: NSFetchRequest<ListaEntity> = ListaEntity.fetchRequest()
+            let entities: [ListaEntity] = try context.fetch(request)
 
             return entities.compactMap { entity -> Lista? in
-                guard let id = entity.id, let title = entity.title else {
-                    return nil
-                }
-                return Lista(id: id, title: title)
+                return Lista(id: entity.id!, title: entity.title!)
             }
         }
     }
 
     func createList(title: String) async throws -> Lista {
         try await context.perform { [context] in
-            let entity = ListEntity(context: context)
+            let entity = ListaEntity(context: context)
             entity.id = UUID()
             entity.title = title
             entity.createdAt = try self.dateProvider.currentDate()
@@ -58,7 +56,7 @@ final class ListDataSource: ListDataSourceProtocol {
 
     func removeList(id: UUID) async throws {
         try await context.perform { [context] in
-            let request: NSFetchRequest<ListEntity> = ListEntity.fetchRequest()
+            let request: NSFetchRequest<ListaEntity> = ListaEntity.fetchRequest()
             request.fetchLimit = 1
             request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
 
@@ -66,6 +64,24 @@ final class ListDataSource: ListDataSourceProtocol {
                 context.delete(object)
                 try context.save()
             }
+        }
+    }
+
+    func getListaDetails(id: UUID) async throws -> ListaDetails {
+        try await context.perform {
+            let request: NSFetchRequest<ListaEntity> = ListaEntity.fetchRequest()
+            request.fetchLimit = 1
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+
+            let object = try self.context.fetch(request).first!
+
+            return ListaDetails(
+                id: object.id!,
+                title: object.title!,
+                createdAt: object.createdAt!,
+                updatedAt: object.updatedAt!,
+                items: []
+            )
         }
     }
 }

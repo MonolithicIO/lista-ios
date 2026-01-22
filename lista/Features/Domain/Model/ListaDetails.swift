@@ -1,5 +1,5 @@
 //
-//  ListaItem.swift
+//  ListaDetails.swift
 //  lista
 //
 //  Created by Lucca Beurmann on 21/01/26.
@@ -7,12 +7,10 @@
 
 import Foundation
 
-struct ListaItem {
-    let listId: UUID
+struct ListaDetails {
     let id: UUID
     let title: String
-    let description: String?
-    let url: String?
-    let updatedAt: Date
     let createdAt: Date
+    let updatedAt: Date
+    let items: [ListaItem]
 }
