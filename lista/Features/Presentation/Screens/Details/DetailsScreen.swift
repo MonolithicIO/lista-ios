@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct DetailsScreen: View {
-    @StateObject var viewModel: DetailsScreen.ViewModel
-    @State private var showingNewItemSheet: Bool = false
-
     let listaId: String
     let listaTitle: String
+    @StateObject var viewModel: DetailsScreen.ViewModel
+    @State private var showingNewItemSheet: Bool = false
+    @State private var newItemTitle: String = ""
 
     init(
         viewModel: DetailsScreen.ViewModel = InstanceKeeper.shared
@@ -36,19 +36,16 @@ struct DetailsScreen: View {
         .task {
             await viewModel.onAppear(listaId: listaId)
         }
-        .sheet(isPresented: $showingNewItemSheet) {
+        .fullScreenCover(isPresented: $showingNewItemSheet) {
             NewItemFormView(
+                title: $newItemTitle,
                 onCancel: {
+                    newItemTitle = ""
                     showingNewItemSheet = false
                 },
-                onSubmit: { newTitle in
+                onSubmit: {
+                    newItemTitle = ""
                     showingNewItemSheet = false
-                    Task {
-                        await viewModel.onAddNewItem(
-                            title: newTitle,
-                            listaId: self.listaId
-                        )
-                    }
                 }
             )
         }
@@ -59,17 +56,43 @@ private struct DetailsScreenView: View {
     let title: String
     let items: [ListaItemUiModel]
     let onAddItem: () -> Void
-    @State private var newItemTitle: String = ""
 
     var body: some View {
-        VStack {
-            ListaItemsView(
-                items: items,
-                onItemTap: { _ in
-                    // Handle item tap if needed
+        VStack(spacing: 0) {
+            if items.isEmpty {
+                VStack(spacing: 12) {
+                    Image(systemName: "tray")
+                        .font(.system(size: 44))
+                        .foregroundStyle(AppColors.mutedForeground)
+                    Text("No items yet")
+                        .font(.headline)
+                        .foregroundStyle(AppColors.foreground)
+                    Text("Tap the + button to add your first item.")
+                        .font(.subheadline)
+                        .foregroundStyle(AppColors.mutedForeground)
                 }
-            )
-            .padding(.horizontal)
+                .frame(
+                    maxWidth: .infinity,
+                    maxHeight: .infinity,
+                    alignment: .center
+                )
+                .padding()
+            } else {
+                List {
+                    ForEach(items) { item in
+                        ListaItemRowView(
+                            item: item,
+                            onTap: { _ in }
+                        )
+                        .listRowBackground(AppColors.background)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    }
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .background(AppColors.background)
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppColors.background.ignoresSafeArea())
@@ -86,17 +109,17 @@ private struct DetailsScreenView: View {
 }
 
 private struct NewItemFormView: View {
+    @Binding var title: String
     let onCancel: () -> Void
-    let onSubmit: (String) -> Void
-    @State private var newItemTitle: String = ""
+    let onSubmit: () -> Void
 
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("New Item")) {
-                    TextField("Title", text: $newItemTitle)
+                    TextField("Title", text: $title)
                 }
-            }.padding(.vertical, 16)
+            }
             .navigationTitle("Add Item")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -106,14 +129,11 @@ private struct NewItemFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        onSubmit(self.newItemTitle)
-                        newItemTitle = ""
+                        onSubmit()
                     }
                     .disabled(
-                        newItemTitle.trimmingCharacters(
-                            in: .whitespacesAndNewlines
-                        )
-                        .isEmpty
+                        title.trimmingCharacters(in: .whitespacesAndNewlines)
+                            .isEmpty
                     )
                 }
             }
@@ -125,7 +145,15 @@ private struct NewItemFormView: View {
     NavigationStack {
         DetailsScreenView(
             title: "Lista Sample",
-            items: [],
+            items: [
+                ListaItemUiModel(
+                    listId: "123",
+                    id: UUID().uuidString,
+                    title: "Buy groceries",
+                    description: "Milk, eggs, bread",
+                    url: nil
+                )
+            ],
             onAddItem: {}
         )
     }
