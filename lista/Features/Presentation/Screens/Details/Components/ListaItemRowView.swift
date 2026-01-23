@@ -36,7 +36,8 @@ struct ListaItemRowView: View {
                         .foregroundStyle(AppColors.foreground)
                         .lineLimit(1)
 
-                    if let description = item.description, !description.isEmpty {
+                    if let description = item.description, !description.isEmpty
+                    {
                         Text(description)
                             .font(.subheadline)
                             .foregroundStyle(AppColors.mutedForeground)
@@ -63,49 +64,16 @@ struct ListaItemRowView: View {
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(AppColors.mutedForeground)
             }
-            .frame(maxWidth: .infinity, alignment: .center) // centraliza o conteúdo do HStack no card
+            .frame(maxWidth: .infinity, alignment: .center)  // centraliza o conteúdo do HStack no card
             .padding(.vertical, 10)
             .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(AppColors.card) // cor uniforme do card
+                    .fill(AppColors.card)  // cor uniforme do card
             )
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
-        .contextMenu {
-            if let onEdit {
-                Button {
-                    onEdit(item)
-                } label: {
-                    Label("Edit", systemImage: "pencil")
-                }
-            }
-            if let onDelete {
-                Button(role: .destructive) {
-                    onDelete(item)
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-            }
-        }
-        .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-            if let onDelete {
-                Button(role: .destructive) {
-                    onDelete(item)
-                } label: {
-                    Label("Delete", systemImage: "trash")
-                }
-            }
-            if let onEdit {
-                Button {
-                    onEdit(item)
-                } label: {
-                    Label("Edit", systemImage: "pencil")
-                }
-                .tint(AppColors.accent)
-            }
-        }
     }
 }
 

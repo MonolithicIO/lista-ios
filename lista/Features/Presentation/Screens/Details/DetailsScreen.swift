@@ -12,7 +12,6 @@ struct DetailsScreen: View {
     let listaTitle: String
     @StateObject var viewModel: DetailsScreen.ViewModel
     @State private var showingNewItemSheet: Bool = false
-    @State private var newItemTitle: String = ""
 
     init(
         viewModel: DetailsScreen.ViewModel = InstanceKeeper.shared
@@ -38,14 +37,17 @@ struct DetailsScreen: View {
         }
         .fullScreenCover(isPresented: $showingNewItemSheet) {
             NewItemFormView(
-                title: $newItemTitle,
                 onCancel: {
-                    newItemTitle = ""
                     showingNewItemSheet = false
                 },
-                onSubmit: {
-                    newItemTitle = ""
-                    showingNewItemSheet = false
+                onSubmit: { newItem in
+                    Task {
+                        showingNewItemSheet = false
+                        await viewModel.onAddNewItem(
+                            item: newItem,
+                            listaId: self.listaId
+                        )
+                    }
                 }
             )
         }
@@ -86,7 +88,9 @@ private struct DetailsScreenView: View {
                         )
                         .listRowBackground(AppColors.background)
                         .listRowSeparator(.hidden)
-                        .listRowInsets(.init(top: 8, leading: 16, bottom: 8, trailing: 16))
+                        .listRowInsets(
+                            .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+                        )
                     }
                 }
                 .listStyle(.plain)
@@ -109,9 +113,12 @@ private struct DetailsScreenView: View {
 }
 
 private struct NewItemFormView: View {
-    @Binding var title: String
     let onCancel: () -> Void
-    let onSubmit: () -> Void
+    let onSubmit: (AddListaItemUiModel) -> Void
+
+    @State private var title: String = ""
+    @State private var description: String = ""
+    @State private var url: String = ""
 
     var body: some View {
         NavigationStack {
@@ -129,7 +136,13 @@ private struct NewItemFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        onSubmit()
+                        onSubmit(
+                            AddListaItemUiModel(
+                                title: title,
+                                description: description,
+                                url: url
+                            )
+                        )
                     }
                     .disabled(
                         title.trimmingCharacters(in: .whitespacesAndNewlines)

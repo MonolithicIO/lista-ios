@@ -9,7 +9,7 @@ import Combine
 import Foundation
 
 extension DetailsScreen {
-    
+
     @MainActor
     class ViewModel: ObservableObject {
         private let fetchDetailsService: FetchListaDetailsServiceProtocol
@@ -37,22 +37,32 @@ extension DetailsScreen {
             }
         }
 
-        func onAddNewItem(title: String, listaId: String) async {
+        func onAddNewItem(item: AddListaItemUiModel, listaId: String) async {
             guard let listaUuid = UUID(uuidString: listaId) else { return }
 
             do {
                 let newItem = try await createItemService.create(
                     item: CreateListItemDTO(
                         listId: listaUuid,
-                        title: title,
-                        description: nil,
-                        url: nil
+                        title: item.title.trimmingCharacters(in: .whitespacesAndNewlines),
+                        description: self.sanitizeString(input: item.description),
+                        url: self.sanitizeString(input: item.url)
                     )
                 )
                 items.append(newItem.toUiModel())
             } catch {
                 print("Error saving data \(error)")
             }
+        }
+        
+        private func sanitizeString(input: String?) -> String? {
+            guard let filledInput = input else { return nil }
+
+            if filledInput.isEmpty {
+                return nil
+            }
+
+            return filledInput.trimmingCharacters(in: .whitespacesAndNewlines)
         }
     }
 }
