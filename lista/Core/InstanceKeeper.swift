@@ -21,6 +21,7 @@ class InstanceKeeper {
     private var listDatasource: ListDataSourceProtocol?
     private var listRepository: ListRepositoryProtocol?
     private var listItemDatasource: ListItemDataSourceProtocol?
+    private var listItemRepository: ListItemRepositoryProtocol?
 
     // MARK: - Core
     func provideDateProvider() -> DateProviderProtocol {
@@ -58,11 +59,24 @@ class InstanceKeeper {
                 dateProvider: provideDateProvider()
             )
             self.listItemDatasource = newInstance
-        
+
             return newInstance
         }
-        
+
         return dataSource
+    }
+
+    func provideListItemRepository() -> ListItemRepositoryProtocol {
+        guard let listRepository = self.listItemRepository else {
+            let newInstance = ListItemRepository(
+                datasource: provideListItemDatasource()
+            )
+            self.listItemRepository = newInstance
+
+            return newInstance
+        }
+
+        return listRepository
     }
 
     // MARK: - Domain Providers
@@ -78,6 +92,16 @@ class InstanceKeeper {
         return RemoveListService(repository: provideListRepository())
     }
 
+    func provideFetchListDetailsService() -> FetchListaDetailsServiceProtocol {
+        return FetchListaDetailsService(repository: provideListRepository())
+    }
+
+    func provideCreateListItemService() -> CreateListItemServiceProtocol {
+        return CreateListItemService(
+            listItemRepository: provideListItemRepository()
+        )
+    }
+
     // MARK: - Presentation Providers
     func provideHomeViewModel() -> HomeScreen.ViewModel {
         return HomeScreen.ViewModel(
@@ -88,6 +112,9 @@ class InstanceKeeper {
     }
 
     func provideDetailsViewModel() -> DetailsScreen.ViewModel {
-        return DetailsScreen.ViewModel()
+        return DetailsScreen.ViewModel(
+            fetchDetailsService: provideFetchListDetailsService(),
+            createItemService: provideCreateListItemService()
+        )
     }
 }

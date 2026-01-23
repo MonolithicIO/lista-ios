@@ -9,8 +9,20 @@ import Foundation
 
 struct ListaItemUiModel: Identifiable {
     let listId: String
-    let id: UUID
+    let id: String
     let title: String
     let description: String?
     let url: String?
+}
+
+extension ListaItem {
+    func toUiModel() -> ListaItemUiModel {
+        return ListaItemUiModel(
+            listId: self.listId.uuidString,
+            id: self.id.uuidString,
+            title: self.title,
+            description: self.description,
+            url: self.url
+        )
+    }
 }
