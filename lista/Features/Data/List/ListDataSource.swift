@@ -27,7 +27,8 @@ final class ListDataSource: ListDataSourceProtocol {
 
     func fetchLists() async throws -> [Lista] {
         try await context.perform { [context] in
-            let request: NSFetchRequest<ListaEntity> = ListaEntity.fetchRequest()
+            let request: NSFetchRequest<ListaEntity> =
+                ListaEntity.fetchRequest()
             let entities: [ListaEntity] = try context.fetch(request)
 
             return entities.compactMap { entity -> Lista? in
@@ -56,7 +57,8 @@ final class ListDataSource: ListDataSourceProtocol {
 
     func removeList(id: UUID) async throws {
         try await context.perform { [context] in
-            let request: NSFetchRequest<ListaEntity> = ListaEntity.fetchRequest()
+            let request: NSFetchRequest<ListaEntity> =
+                ListaEntity.fetchRequest()
             request.fetchLimit = 1
             request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
 
@@ -68,20 +70,65 @@ final class ListDataSource: ListDataSourceProtocol {
     }
 
     func getListaDetails(id: UUID) async throws -> ListaDetails {
-        try await context.perform {
-            let request: NSFetchRequest<ListaEntity> = ListaEntity.fetchRequest()
+        try await context.perform { [context] in
+            let request: NSFetchRequest<ListaEntity> =
+                ListaEntity.fetchRequest()
             request.fetchLimit = 1
             request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
 
-            let object = try self.context.fetch(request).first!
+            guard let object = try context.fetch(request).first else {
+                throw NSError(
+                    domain: "CoreData",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey: "Lista não encontrada"
+                    ]
+                )
+            }
+
+            let tasksSet = object.children as? Set<ListaItemEntity> ?? []
+
+            let itemsSorted = tasksSet.sorted {
+                ($0.createdAt ?? .distantPast) < ($1.createdAt ?? .distantPast)
+            }
+
+            let items: [ListaItem] = itemsSorted.compactMap { item in
+                guard
+                    let listId = object.id,
+                    let itemId = item.id,
+                    let title = item.title,
+                    let createdAt = item.createdAt,
+                    let updatedAt = item.updatedAt
+                else { return nil }
+
+                return ListaItem(
+                    listId: listId,
+                    id: itemId,
+                    title: title,
+                    description: item.note,
+                    url: item.link,
+                    updatedAt: updatedAt,
+                    createdAt: createdAt
+                )
+            }
+
+            guard
+                let listId = object.id,
+                let title = object.title,
+                let createdAt = object.createdAt,
+                let updatedAt = object.updatedAt
+            else {
+                throw NSError(domain: "CoreData", code: 0)
+            }
 
             return ListaDetails(
-                id: object.id!,
-                title: object.title!,
-                createdAt: object.createdAt!,
-                updatedAt: object.updatedAt!,
-                items: []
+                id: listId,
+                title: title,
+                createdAt: createdAt,
+                updatedAt: updatedAt,
+                items: items
             )
         }
     }
+
 }
