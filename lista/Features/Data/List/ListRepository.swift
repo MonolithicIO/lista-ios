@@ -12,6 +12,7 @@ protocol ListRepositoryProtocol {
     func fetchLists() async throws -> [Lista]
     func createList(title: String) async throws -> Lista
     func removeList(id: UUID) async throws
+    func fetchListDetails (listaId _id: UUID) async throws -> ListaDetails
 
 }
 
@@ -33,6 +34,10 @@ final class ListRepository: ListRepositoryProtocol {
 
     func removeList(id: UUID) async throws {
         try await datasource.removeList(id: id)
+    }
+    
+    func fetchListDetails(listaId _id: UUID) async throws -> ListaDetails {
+        return try await datasource.getListaDetails(id: _id)
     }
 
 }
