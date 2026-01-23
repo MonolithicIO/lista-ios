@@ -9,6 +9,7 @@ import Combine
 import Foundation
 
 extension DetailsScreen {
+    
     @MainActor
     class ViewModel: ObservableObject {
         private let fetchDetailsService: FetchListaDetailsServiceProtocol
@@ -36,18 +37,22 @@ extension DetailsScreen {
             }
         }
 
-        func onAddNewItem(title: String, listaId: String) async throws {
+        func onAddNewItem(title: String, listaId: String) async {
             guard let listaUuid = UUID(uuidString: listaId) else { return }
 
-            let newItem = try await createItemService.create(
-                item: CreateListItemDTO(
-                    listId: listaUuid,
-                    title: title,
-                    description: nil,
-                    url: nil
+            do {
+                let newItem = try await createItemService.create(
+                    item: CreateListItemDTO(
+                        listId: listaUuid,
+                        title: title,
+                        description: nil,
+                        url: nil
+                    )
                 )
-            )
-            items.append(newItem.toUiModel())
+                items.append(newItem.toUiModel())
+            } catch {
+                print("Error saving data \(error)")
+            }
         }
     }
 }

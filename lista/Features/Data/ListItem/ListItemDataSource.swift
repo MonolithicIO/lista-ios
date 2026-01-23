@@ -42,6 +42,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 )
             }
             let listaItem = ListaItemEntity(context: self.context)
+            listaItem.id = UUID()
             listaItem.title = _dto.title
             listaItem.note = _dto.description
             listaItem.link = _dto.url

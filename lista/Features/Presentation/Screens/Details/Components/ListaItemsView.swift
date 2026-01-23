@@ -34,15 +34,17 @@ private struct FilledListsView: View {
     let onItemTap: (ListaItemUiModel) -> Void
 
     var body: some View {
-        LazyVStack(spacing: 16) {
-            ForEach(items) { list in
-                ListaItemCardView(
-                    item: list,
-                    onTap: {
-                        onItemTap(list)
-                    }
-                )
-                .frame(maxWidth: .infinity, alignment: .leading)
+        ScrollView {
+            LazyVStack(spacing: 16) {
+                ForEach(items) { list in
+                    ListaItemCardView(
+                        item: list,
+                        onTap: {
+                            onItemTap(list)
+                        }
+                    )
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                }
             }
         }
     }

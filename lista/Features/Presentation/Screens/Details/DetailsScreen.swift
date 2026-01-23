@@ -8,14 +8,11 @@
 import SwiftUI
 
 struct DetailsScreen: View {
-    @Environment(NavigationCoordinator.self) private var coordinator: NavigationCoordinator
+    @StateObject var viewModel: DetailsScreen.ViewModel
+    @State private var showingNewItemSheet: Bool = false
 
     let listaId: String
     let listaTitle: String
-    @StateObject var viewModel: DetailsScreen.ViewModel
-
-    @State private var showingNewItemSheet: Bool = false
-    @State private var newItemTitle: String = ""
 
     init(
         viewModel: DetailsScreen.ViewModel = InstanceKeeper.shared
@@ -41,16 +38,16 @@ struct DetailsScreen: View {
         }
         .sheet(isPresented: $showingNewItemSheet) {
             NewItemFormView(
-                title: $newItemTitle,
                 onCancel: {
-                    newItemTitle = ""
                     showingNewItemSheet = false
                 },
-                onSubmit: {
+                onSubmit: { newTitle in
+                    showingNewItemSheet = false
                     Task {
-                        newItemTitle = ""
-                        showingNewItemSheet = false
-                        
+                        await viewModel.onAddNewItem(
+                            title: newTitle,
+                            listaId: self.listaId
+                        )
                     }
                 }
             )
@@ -62,6 +59,7 @@ private struct DetailsScreenView: View {
     let title: String
     let items: [ListaItemUiModel]
     let onAddItem: () -> Void
+    @State private var newItemTitle: String = ""
 
     var body: some View {
         VStack {
@@ -88,17 +86,17 @@ private struct DetailsScreenView: View {
 }
 
 private struct NewItemFormView: View {
-    @Binding var title: String
     let onCancel: () -> Void
-    let onSubmit: () -> Void
+    let onSubmit: (String) -> Void
+    @State private var newItemTitle: String = ""
 
     var body: some View {
         NavigationStack {
             Form {
                 Section(header: Text("New Item")) {
-                    TextField("Title", text: $title)
+                    TextField("Title", text: $newItemTitle)
                 }
-            }
+            }.padding(.vertical, 16)
             .navigationTitle("Add Item")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -108,9 +106,15 @@ private struct NewItemFormView: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
-                        onSubmit()
+                        onSubmit(self.newItemTitle)
+                        newItemTitle = ""
                     }
-                    .disabled(title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                    .disabled(
+                        newItemTitle.trimmingCharacters(
+                            in: .whitespacesAndNewlines
+                        )
+                        .isEmpty
+                    )
                 }
             }
         }
