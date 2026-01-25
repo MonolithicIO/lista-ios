@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ListaItemRowView: View {
     let item: ListaItemUiModel
+    let onToggle: (ListaItemUiModel) -> Void
     let onTap: (ListaItemUiModel) -> Void
     var onDelete: ((ListaItemUiModel) -> Void)? = nil
     var onEdit: ((ListaItemUiModel) -> Void)? = nil
@@ -18,18 +19,10 @@ struct ListaItemRowView: View {
             onTap(item)
         } label: {
             HStack(spacing: 12) {
-                // Ícone à esquerda
-                ZStack {
-                    Circle()
-                        .fill(AppColors.card)
-                        .frame(width: 36, height: 36)
-
-                    Image(systemName: "checklist")
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundStyle(AppColors.accent)
-                }
-
-                // Conteúdo centralizado verticalmente
+                RadioButton(
+                    isCompleted: item.isCompleted,
+                    onToggle: { onToggle(item) }
+                )
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title)
                         .font(.headline)
@@ -42,19 +35,6 @@ struct ListaItemRowView: View {
                             .font(.subheadline)
                             .foregroundStyle(AppColors.mutedForeground)
                             .lineLimit(2)
-                    }
-
-                    if let link = item.url, !link.isEmpty {
-                        HStack(spacing: 4) {
-                            Image(systemName: "link")
-                                .font(.caption)
-                                .foregroundStyle(AppColors.mutedForeground)
-                            Text(link)
-                                .font(.caption)
-                                .foregroundStyle(AppColors.mutedForeground)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -85,8 +65,10 @@ struct ListaItemRowView: View {
                 id: "1234",
                 title: "Buy groceries for the week",
                 description: "Milk, eggs, bread, fruits, and veggies.",
-                url: "https://example.com"
+                url: "https://example.com",
+                isCompleted: true,
             ),
+            onToggle: { _ in },
             onTap: { _ in }
         )
 
@@ -96,8 +78,10 @@ struct ListaItemRowView: View {
                 id: "123444",
                 title: "Read a book",
                 description: nil,
-                url: nil
+                url: nil,
+                isCompleted: true,
             ),
+            onToggle: { _ in },
             onTap: { _ in }
         )
     }

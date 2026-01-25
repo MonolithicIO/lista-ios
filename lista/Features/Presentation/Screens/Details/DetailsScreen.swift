@@ -84,7 +84,11 @@ private struct DetailsScreenView: View {
                     ForEach(items) { item in
                         ListaItemRowView(
                             item: item,
-                            onTap: { _ in }
+                            onToggle: { _ in
+
+                            },
+                            onTap: { _ in
+                            }
                         )
                         .listRowBackground(AppColors.background)
                         .listRowSeparator(.hidden)
@@ -164,7 +168,8 @@ private struct NewItemFormView: View {
                     id: UUID().uuidString,
                     title: "Buy groceries",
                     description: "Milk, eggs, bread",
-                    url: nil
+                    url: nil,
+                    isCompleted: false
                 )
             ],
             onAddItem: {}

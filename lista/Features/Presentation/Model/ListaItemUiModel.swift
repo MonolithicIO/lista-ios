@@ -13,6 +13,7 @@ struct ListaItemUiModel: Identifiable {
     let title: String
     let description: String?
     let url: String?
+    let isCompleted: Bool
 }
 
 extension ListaItem {
@@ -22,7 +23,8 @@ extension ListaItem {
             id: self.id.uuidString,
             title: self.title,
             description: self.description,
-            url: self.url
+            url: self.url,
+            isCompleted: self.isCompleted
         )
     }
 }
