@@ -71,7 +71,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
 
     func updateStatus(itemId: UUID, isActive: Bool) async throws {
         try await context.perform {
-            let listItemRequset = NSFetchRequest<ListaItemEntity>()
+            let listItemRequset = ListaItemEntity.fetchRequest()
             listItemRequset.fetchLimit = 1
             listItemRequset.predicate = NSPredicate(
                 format: "id ==%@",

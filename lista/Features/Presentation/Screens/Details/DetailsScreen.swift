@@ -30,6 +30,11 @@ struct DetailsScreen: View {
             items: viewModel.items,
             onAddItem: {
                 showingNewItemSheet = true
+            },
+            onToggleItemState: { item in
+                Task {
+                    await viewModel.onToggleState(item: item)
+                }
             }
         )
         .task {
@@ -58,6 +63,7 @@ private struct DetailsScreenView: View {
     let title: String
     let items: [ListaItemUiModel]
     let onAddItem: () -> Void
+    let onToggleItemState: (ListaItemUiModel) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -84,8 +90,8 @@ private struct DetailsScreenView: View {
                     ForEach(items) { item in
                         ListaItemRowView(
                             item: item,
-                            onToggle: { _ in
-
+                            onToggle: { item in
+                                onToggleItemState(item)
                             },
                             onTap: { _ in
                             }
@@ -172,7 +178,8 @@ private struct NewItemFormView: View {
                     isCompleted: false
                 )
             ],
-            onAddItem: {}
+            onAddItem: {},
+            onToggleItemState: {_ in}
         )
     }
 }

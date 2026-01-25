@@ -14,13 +14,22 @@ struct RadioButton: View {
 
     var body: some View {
         Button {
-            onToggle()
+            withAnimation(
+                .spring(
+                    response: 0.22,
+                    dampingFraction: 0.85,
+                    blendDuration: 0
+                )
+            ) {
+                onToggle()
+            }
         } label: {
             ZStack {
                 Circle()
                     .strokeBorder(
                         isCompleted
-                            ? AppColors.foreground : AppColors.mutedForeground,
+                            ? AppColors.foreground
+                            : AppColors.mutedForeground,
                         lineWidth: 2
                     )
                     .frame(width: 22, height: 22)
@@ -29,11 +38,21 @@ struct RadioButton: View {
                     Circle()
                         .fill(AppColors.foreground)
                         .frame(width: 12, height: 12)
+                        .transition(
+                            .scale(scale: 0.6)
+                                .combined(with: .opacity)
+                        )
                 }
             }
+            .animation(
+                .spring(
+                    response: 0.22,
+                    dampingFraction: 0.85
+                ),
+                value: isCompleted
+            )
         }
         .buttonStyle(.plain)
-        .contentShape(Circle())
     }
 }
 
@@ -42,7 +61,7 @@ struct RadioButton: View {
         isCompleted: true,
         onToggle: {}
     )
-    
+
     RadioButton(
         isCompleted: false,
         onToggle: {}

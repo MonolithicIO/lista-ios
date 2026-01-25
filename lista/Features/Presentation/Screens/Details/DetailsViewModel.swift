@@ -62,6 +62,40 @@ extension DetailsScreen {
             }
         }
 
+        func onToggleState(item: ListaItemUiModel) async {
+            guard
+                let itemIndex = items.firstIndex(
+                    where: { stateItem in
+                        item.id == stateItem.id
+                    }
+                )
+            else {
+                return
+            }
+
+            do {
+                let newState = !item.isCompleted
+
+                try await updateItemStatusService.updateItemStatus(
+                    itemId: item.id,
+                    isCompleted: newState
+                )
+
+                let item = items[itemIndex]
+
+                items[itemIndex] = ListaItemUiModel(
+                    listId: item.listId,
+                    id: item.id,
+                    title: item.title,
+                    description: item.description,
+                    url: item.url,
+                    isCompleted: newState
+                )
+            } catch {
+                
+            }
+        }
+
         private func sanitizeString(input: String?) -> String? {
             guard let filledInput = input else { return nil }
 
