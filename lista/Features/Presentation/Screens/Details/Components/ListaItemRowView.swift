@@ -23,6 +23,7 @@ struct ListaItemRowView: View {
                     isCompleted: item.isCompleted,
                     onToggle: { onToggle(item) }
                 )
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title)
                         .font(.headline)
@@ -39,17 +40,20 @@ struct ListaItemRowView: View {
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
-                // Disclosure
                 Image(systemName: "chevron.right")
                     .font(.footnote.weight(.semibold))
                     .foregroundStyle(AppColors.mutedForeground)
             }
-            .frame(maxWidth: .infinity, alignment: .center)  // centraliza o conteúdo do HStack no card
-            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
             .padding(.horizontal, 12)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(AppColors.card)  // cor uniforme do card
+                    .fill(AppColors.card)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .stroke(AppColors.border, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
@@ -57,34 +61,23 @@ struct ListaItemRowView: View {
     }
 }
 
-#Preview("Centered") {
-    VStack(spacing: 12) {
-        ListaItemRowView(
-            item: .init(
-                listId: "123",
-                id: "1234",
-                title: "Buy groceries for the week",
-                description: "Milk, eggs, bread, fruits, and veggies.",
-                url: "https://example.com",
-                isCompleted: true,
-            ),
-            onToggle: { _ in },
-            onTap: { _ in }
+#Preview {
+    ListaItemRowView(
+        item: ListaItemUiModel(
+            listId: "123",
+            id: UUID().uuidString,
+            title: "Buy groceries",
+            description: "Milk, eggs, bread",
+            url: nil,
+            isCompleted: false
         )
+    ) { item in
 
-        ListaItemRowView(
-            item: .init(
-                listId: "12345",
-                id: "123444",
-                title: "Read a book",
-                description: nil,
-                url: nil,
-                isCompleted: true,
-            ),
-            onToggle: { _ in },
-            onTap: { _ in }
-        )
+    } onTap: { item in
+
+    } onDelete: { item in
+
+    } onEdit: { item in
+
     }
-    .padding()
-    .background(AppColors.background)
 }
