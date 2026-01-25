@@ -102,6 +102,12 @@ class InstanceKeeper {
         )
     }
 
+    func provideUpdateItemStatusService() -> UpdateItemStatusServiceProtocol {
+        return UpdateItemStatusService(
+            repository: provideListItemRepository()
+        )
+    }
+
     // MARK: - Presentation Providers
     func provideHomeViewModel() -> HomeScreen.ViewModel {
         return HomeScreen.ViewModel(

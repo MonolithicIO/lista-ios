@@ -10,6 +10,7 @@ import Foundation
 
 protocol ListItemDataSourceProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
+    func updateStatus(itemId: UUID, isActive: Bool) async throws
 }
 
 final class ListItemDataSource: ListItemDataSourceProtocol {
@@ -24,7 +25,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem {
         try await context.perform {
             let listRequest: NSFetchRequest<ListaEntity> =
-            ListaEntity.fetchRequest()
+                ListaEntity.fetchRequest()
             listRequest.fetchLimit = 1
             listRequest.predicate = NSPredicate(
                 format: "id == %@",
@@ -63,6 +64,34 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 updatedAt: listaItem.updatedAt!,
                 createdAt: listaItem.createdAt!
             )
+        }
+    }
+
+    func updateStatus(itemId: UUID, isActive: Bool) async throws {
+        try await context.perform {
+            let listItemRequset = NSFetchRequest<ListaItemEntity>()
+            listItemRequset.fetchLimit = 1
+            listItemRequset.predicate = NSPredicate(
+                format: "id ==%@",
+                itemId as CVarArg
+            )
+            
+            guard let listItem = try self.context.fetch(listItemRequset).first else {
+                throw NSError(
+                    domain: "ListItemDataSource",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey:
+                            "ListItem with id \(itemId.uuidString) not found"
+                    ]
+                )
+            }
+            
+            listItem.isCompleted = isActive
+            
+            if self.context.hasChanges {
+                try self.context.save()
+            }
         }
     }
 }

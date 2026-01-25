@@ -9,17 +9,25 @@ import Foundation
 
 protocol ListItemRepositoryProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
+    func updateStatus(itemId: UUID, isActive: Bool) async throws
 }
 
 final class ListItemRepository: ListItemRepositoryProtocol {
-    
+
     private let datasource: ListItemDataSourceProtocol
-    
+
     init(datasource: ListItemDataSourceProtocol) {
         self.datasource = datasource
     }
-    
+
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem {
-        return try await datasource.createItem(item: _dto);
+        return try await datasource.createItem(item: _dto)
+    }
+
+    func updateStatus(itemId: UUID, isActive: Bool) async throws {
+        return try await datasource.updateStatus(
+            itemId: itemId,
+            isActive: isActive
+        )
     }
 }
