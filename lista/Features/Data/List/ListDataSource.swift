@@ -108,7 +108,8 @@ final class ListDataSource: ListDataSourceProtocol {
                     description: item.note,
                     url: item.link,
                     updatedAt: updatedAt,
-                    createdAt: createdAt
+                    createdAt: createdAt,
+                    isCompleted: item.isCompleted
                 )
             }
 

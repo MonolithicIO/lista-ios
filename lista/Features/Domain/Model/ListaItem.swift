@@ -15,4 +15,5 @@ struct ListaItem {
     let url: String?
     let updatedAt: Date
     let createdAt: Date
+    let isCompleted: Bool
 }

@@ -14,15 +14,18 @@ extension DetailsScreen {
     class ViewModel: ObservableObject {
         private let fetchDetailsService: FetchListaDetailsServiceProtocol
         private let createItemService: CreateListItemServiceProtocol
+        private let updateItemStatusService: UpdateItemStatusServiceProtocol
 
         @Published private(set) var items: [ListaItemUiModel] = []
 
         init(
             fetchDetailsService: FetchListaDetailsServiceProtocol,
-            createItemService: CreateListItemServiceProtocol
+            createItemService: CreateListItemServiceProtocol,
+            updateItemStatusService: UpdateItemStatusServiceProtocol
         ) {
             self.fetchDetailsService = fetchDetailsService
             self.createItemService = createItemService
+            self.updateItemStatusService = updateItemStatusService
         }
 
         func onAppear(listaId: String) async {
@@ -44,8 +47,12 @@ extension DetailsScreen {
                 let newItem = try await createItemService.create(
                     item: CreateListItemDTO(
                         listId: listaUuid,
-                        title: item.title.trimmingCharacters(in: .whitespacesAndNewlines),
-                        description: self.sanitizeString(input: item.description),
+                        title: item.title.trimmingCharacters(
+                            in: .whitespacesAndNewlines
+                        ),
+                        description: self.sanitizeString(
+                            input: item.description
+                        ),
                         url: self.sanitizeString(input: item.url)
                     )
                 )
@@ -54,7 +61,7 @@ extension DetailsScreen {
                 print("Error saving data \(error)")
             }
         }
-        
+
         private func sanitizeString(input: String?) -> String? {
             guard let filledInput = input else { return nil }
 

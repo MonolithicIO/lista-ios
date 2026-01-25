@@ -50,6 +50,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
             listaItem.updatedAt = try self.dateProvider.currentDate()
             listaItem.createdAt = try self.dateProvider.currentDate()
             listaItem.lista = lista
+            listaItem.isCompleted = false
 
             if self.context.hasChanges {
                 try self.context.save()
@@ -62,7 +63,8 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 description: listaItem.note,
                 url: listaItem.link,
                 updatedAt: listaItem.updatedAt!,
-                createdAt: listaItem.createdAt!
+                createdAt: listaItem.createdAt!,
+                isCompleted: listaItem.isCompleted
             )
         }
     }
