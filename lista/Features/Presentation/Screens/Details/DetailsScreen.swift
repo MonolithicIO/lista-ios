@@ -111,7 +111,15 @@ private struct DetailsScreenView: View {
         .background(AppColors.background.ignoresSafeArea())
         .navigationTitle(title)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItemGroup(placement: .topBarTrailing) {
+                DetailsContextMenuView(
+                    onArchive: {},
+                    onDelete: {},
+                    onComplete: {},
+                    onRestore: {},
+                    isCompleted: false
+                )
+
                 Button(action: onAddItem) {
                     Image(systemName: "plus")
                 }
@@ -120,8 +128,6 @@ private struct DetailsScreenView: View {
         }
     }
 }
-
-
 
 #Preview {
     NavigationStack {
@@ -138,7 +144,7 @@ private struct DetailsScreenView: View {
                 )
             ],
             onAddItem: {},
-            onToggleItemState: {_ in}
+            onToggleItemState: { _ in }
         )
     }
 }
