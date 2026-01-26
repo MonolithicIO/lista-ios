@@ -45,7 +45,10 @@ extension HomeScreen {
             do {
                 let newList = try await createListService.create(title: title)
                 items.append(
-                    ListaUiModel(id: newList.id.uuidString, title: newList.title)
+                    ListaUiModel(
+                        id: newList.id.uuidString,
+                        title: newList.title
+                    )
                 )
             } catch {
 
@@ -54,10 +57,7 @@ extension HomeScreen {
 
         func removeList(list _removedItem: ListaUiModel) async {
             do {
-                guard let listUuid = UUID(uuidString: _removedItem.id) else {
-                    return
-                }
-                try await removeListService.remove(id: listUuid)
+                try await removeListService.remove(listId: _removedItem.id)
                 items = items.filter { list in
                     list.id != _removedItem.id
                 }

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol RemoveListServiceProtocol {
-    func remove(id: UUID) async throws
+    func remove(listId: String) async throws
 }
 
 final class RemoveListService: RemoveListServiceProtocol {
@@ -18,7 +18,15 @@ final class RemoveListService: RemoveListServiceProtocol {
         self.repository = repository
     }
 
-    func remove(id: UUID) async throws {
-        try await repository.removeList(id: id)
+    func remove(listId: String) async throws {
+        guard let listUuid = UUID(uuidString: listId) else {
+            throw NSError(
+                domain: "RemoveListService",
+                code: 400,
+                userInfo: [NSLocalizedDescriptionKey: "Invalid UUID"]
+            )
+        }
+
+        try await repository.removeList(id: listUuid)
     }
 }

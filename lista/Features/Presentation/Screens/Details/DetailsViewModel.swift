@@ -15,17 +15,20 @@ extension DetailsScreen {
         private let fetchDetailsService: FetchListaDetailsServiceProtocol
         private let createItemService: CreateListItemServiceProtocol
         private let updateItemStatusService: UpdateItemStatusServiceProtocol
+        private let deleteListService: RemoveListServiceProtocol
 
         @Published private(set) var items: [ListaItemUiModel] = []
 
         init(
             fetchDetailsService: FetchListaDetailsServiceProtocol,
             createItemService: CreateListItemServiceProtocol,
-            updateItemStatusService: UpdateItemStatusServiceProtocol
+            updateItemStatusService: UpdateItemStatusServiceProtocol,
+            deleteListService: RemoveListServiceProtocol
         ) {
             self.fetchDetailsService = fetchDetailsService
             self.createItemService = createItemService
             self.updateItemStatusService = updateItemStatusService
+            self.deleteListService = deleteListService
         }
 
         func onAppear(listaId: String) async {
@@ -58,11 +61,11 @@ extension DetailsScreen {
                 )
                 items.append(newItem.toUiModel())
             } catch {
-                print("Error saving data \(error)")
+                print("Error saving new item \(error)")
             }
         }
 
-        func onToggleState(item: ListaItemUiModel) async {
+        func onToogleItemState(item: ListaItemUiModel) async {
             guard
                 let itemIndex = items.firstIndex(
                     where: { stateItem in
@@ -92,7 +95,15 @@ extension DetailsScreen {
                     isCompleted: newState
                 )
             } catch {
-                
+                print("Error updating item \(item.id). Error: \(error) ")
+            }
+        }
+        
+        func onDeleteList(listaId: String) async -> Void {
+            do {
+                try await deleteListService.remove(listId: listaId)
+            } catch {
+                print("Error deleting list: \(listaId). Error: \(error)")
             }
         }
 

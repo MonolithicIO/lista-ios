@@ -121,7 +121,8 @@ class InstanceKeeper {
         return DetailsScreen.ViewModel(
             fetchDetailsService: provideFetchListDetailsService(),
             createItemService: provideCreateListItemService(),
-            updateItemStatusService: provideUpdateItemStatusService()
+            updateItemStatusService: provideUpdateItemStatusService(),
+            deleteListService: provideRemoveListService()
         )
     }
 }

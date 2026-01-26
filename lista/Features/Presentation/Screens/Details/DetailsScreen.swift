@@ -10,6 +10,8 @@ import SwiftUI
 struct DetailsScreen: View {
     let listaId: String
     let listaTitle: String
+
+    @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel: DetailsScreen.ViewModel
     @State private var showingNewItemSheet: Bool = false
 
@@ -33,14 +35,20 @@ struct DetailsScreen: View {
             },
             onToggleItemState: { item in
                 Task {
-                    await viewModel.onToggleState(item: item)
+                    await viewModel.onToogleItemState(item: item)
+                }
+            },
+            onDelete: {
+                Task {
+                    await viewModel.onDeleteList(listaId: listaId)
+                    dismiss()
                 }
             }
         )
         .task {
             await viewModel.onAppear(listaId: listaId)
         }
-        .fullScreenCover(isPresented: $showingNewItemSheet) {
+        .sheet(isPresented: $showingNewItemSheet) {
             InsertItemView(
                 onSubmit: { newItem in
                     Task {
@@ -63,6 +71,9 @@ private struct DetailsScreenView: View {
     let items: [ListaItemUiModel]
     let onAddItem: () -> Void
     let onToggleItemState: (ListaItemUiModel) -> Void
+    let onDelete: () -> Void
+    
+    @State private var isDeleteDialogVisible: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -114,7 +125,9 @@ private struct DetailsScreenView: View {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 DetailsContextMenuView(
                     onArchive: {},
-                    onDelete: {},
+                    onDelete: {
+                        isDeleteDialogVisible = true
+                    },
                     onComplete: {},
                     onRestore: {},
                     isCompleted: false
@@ -125,6 +138,19 @@ private struct DetailsScreenView: View {
                 }
                 .accessibilityLabel("Add Item")
             }
+        }
+        .alert(
+            "Are you sure you want to delete this list?",
+            isPresented: $isDeleteDialogVisible,
+        ) {
+            Button("Delete", role: .destructive) {
+                onDelete()
+            }
+            Button("Cancel", role: .cancel) {
+                isDeleteDialogVisible = false
+            }
+        } message: {
+            Text("This action cannot be undone.")
         }
     }
 }
@@ -144,7 +170,8 @@ private struct DetailsScreenView: View {
                 )
             ],
             onAddItem: {},
-            onToggleItemState: { _ in }
+            onToggleItemState: { _ in },
+            onDelete: {}
         )
     }
 }
