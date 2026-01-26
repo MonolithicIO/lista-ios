@@ -60,7 +60,7 @@ struct InsertItemView: View {
             }
         }
     }
-    
+
     private func clearState() {
         title = ""
         description = ""
@@ -70,9 +70,9 @@ struct InsertItemView: View {
 
 #Preview {
     InsertItemView { item in
-        
+
     } onDismiss: {
-        
+
     }
 
 }

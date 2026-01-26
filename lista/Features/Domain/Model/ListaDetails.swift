@@ -13,4 +13,6 @@ struct ListaDetails {
     let createdAt: Date
     let updatedAt: Date
     let items: [ListaItem]
+    let isArchived: Bool
+    let isCompleted: Bool
 }

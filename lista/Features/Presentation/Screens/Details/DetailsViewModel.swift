@@ -18,6 +18,7 @@ extension DetailsScreen {
         private let deleteListService: RemoveListServiceProtocol
 
         @Published private(set) var items: [ListaItemUiModel] = []
+        @Published private(set) var isArchived: Bool = false
 
         init(
             fetchDetailsService: FetchListaDetailsServiceProtocol,
@@ -38,6 +39,7 @@ extension DetailsScreen {
                 items = details.items.map { item in
                     item.toUiModel()
                 }
+                isArchived = details.isArchived
             } catch {
                 items = []
             }
@@ -98,8 +100,8 @@ extension DetailsScreen {
                 print("Error updating item \(item.id). Error: \(error) ")
             }
         }
-        
-        func onDeleteList(listaId: String) async -> Void {
+
+        func onDeleteList(listaId: String) async {
             do {
                 try await deleteListService.remove(listId: listaId)
             } catch {

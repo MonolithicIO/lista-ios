@@ -13,7 +13,6 @@ struct DetailsScreen: View {
 
     @Environment(\.dismiss) private var dismiss
     @StateObject var viewModel: DetailsScreen.ViewModel
-    @State private var showingNewItemSheet: Bool = false
 
     init(
         viewModel: DetailsScreen.ViewModel = InstanceKeeper.shared
@@ -29,9 +28,15 @@ struct DetailsScreen: View {
     var body: some View {
         DetailsScreenView(
             title: listaTitle,
+            isArchived: viewModel.isArchived,
             items: viewModel.items,
-            onAddItem: {
-                showingNewItemSheet = true
+            onAddItem: { newItem in
+                Task {
+                    await viewModel.onAddNewItem(
+                        item: newItem,
+                        listaId: self.listaId
+                    )
+                }
             },
             onToggleItemState: { item in
                 Task {
@@ -43,37 +48,24 @@ struct DetailsScreen: View {
                     await viewModel.onDeleteList(listaId: listaId)
                     dismiss()
                 }
-            }
+            },
         )
         .task {
             await viewModel.onAppear(listaId: listaId)
-        }
-        .sheet(isPresented: $showingNewItemSheet) {
-            InsertItemView(
-                onSubmit: { newItem in
-                    Task {
-                        await viewModel.onAddNewItem(
-                            item: newItem,
-                            listaId: self.listaId
-                        )
-                    }
-                },
-                onDismiss: {
-                    showingNewItemSheet = false
-                },
-            )
         }
     }
 }
 
 private struct DetailsScreenView: View {
     let title: String
+    let isArchived: Bool
     let items: [ListaItemUiModel]
-    let onAddItem: () -> Void
+    let onAddItem: (AddListaItemUiModel) -> Void
     let onToggleItemState: (ListaItemUiModel) -> Void
     let onDelete: () -> Void
-    
+
     @State private var isDeleteDialogVisible: Bool = false
+    @State private var showingNewItemSheet: Bool = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -133,10 +125,13 @@ private struct DetailsScreenView: View {
                     isCompleted: false
                 )
 
-                Button(action: onAddItem) {
+                Button(action: {
+                    showingNewItemSheet = true
+                }) {
                     Image(systemName: "plus")
                 }
                 .accessibilityLabel("Add Item")
+                .disabled(isArchived)
             }
         }
         .alert(
@@ -152,6 +147,17 @@ private struct DetailsScreenView: View {
         } message: {
             Text("This action cannot be undone.")
         }
+        .fullScreenCover(isPresented: $showingNewItemSheet) {
+            InsertItemView(
+                onSubmit: { newItem in
+                    onAddItem(newItem)
+                },
+                onDismiss: {
+                    showingNewItemSheet = false
+                },
+            )
+            .background(AppColors.blue)
+        }
     }
 }
 
@@ -159,6 +165,7 @@ private struct DetailsScreenView: View {
     NavigationStack {
         DetailsScreenView(
             title: "Lista Sample",
+            isArchived: false,
             items: [
                 ListaItemUiModel(
                     listId: "123",
@@ -169,9 +176,9 @@ private struct DetailsScreenView: View {
                     isCompleted: false
                 )
             ],
-            onAddItem: {},
+            onAddItem: { _ in },
             onToggleItemState: { _ in },
-            onDelete: {}
+            onDelete: {},
         )
     }
 }

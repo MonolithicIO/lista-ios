@@ -44,6 +44,8 @@ final class ListDataSource: ListDataSourceProtocol {
             entity.title = title
             entity.createdAt = try self.dateProvider.currentDate()
             entity.updatedAt = try self.dateProvider.currentDate()
+            entity.isArchived = false
+            entity.isCompleted = false
 
             try context.save()
 
@@ -109,7 +111,7 @@ final class ListDataSource: ListDataSourceProtocol {
                     url: item.link,
                     updatedAt: updatedAt,
                     createdAt: createdAt,
-                    isCompleted: item.isCompleted
+                    isCompleted: item.isCompleted,
                 )
             }
 
@@ -127,7 +129,9 @@ final class ListDataSource: ListDataSourceProtocol {
                 title: title,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
-                items: items
+                items: items,
+                isArchived: object.isArchived,
+                isCompleted: object.isCompleted
             )
         }
     }
