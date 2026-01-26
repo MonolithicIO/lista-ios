@@ -41,19 +41,18 @@ struct DetailsScreen: View {
             await viewModel.onAppear(listaId: listaId)
         }
         .fullScreenCover(isPresented: $showingNewItemSheet) {
-            NewItemFormView(
-                onCancel: {
-                    showingNewItemSheet = false
-                },
+            InsertItemView(
                 onSubmit: { newItem in
                     Task {
-                        showingNewItemSheet = false
                         await viewModel.onAddNewItem(
                             item: newItem,
                             listaId: self.listaId
                         )
                     }
-                }
+                },
+                onDismiss: {
+                    showingNewItemSheet = false
+                },
             )
         }
     }
@@ -122,47 +121,7 @@ private struct DetailsScreenView: View {
     }
 }
 
-private struct NewItemFormView: View {
-    let onCancel: () -> Void
-    let onSubmit: (AddListaItemUiModel) -> Void
 
-    @State private var title: String = ""
-    @State private var description: String = ""
-    @State private var url: String = ""
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section(header: Text("New Item")) {
-                    TextField("Title", text: $title)
-                }
-            }
-            .navigationTitle("Add Item")
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
-                        onCancel()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Add") {
-                        onSubmit(
-                            AddListaItemUiModel(
-                                title: title,
-                                description: description,
-                                url: url
-                            )
-                        )
-                    }
-                    .disabled(
-                        title.trimmingCharacters(in: .whitespacesAndNewlines)
-                            .isEmpty
-                    )
-                }
-            }
-        }
-    }
-}
 
 #Preview {
     NavigationStack {
