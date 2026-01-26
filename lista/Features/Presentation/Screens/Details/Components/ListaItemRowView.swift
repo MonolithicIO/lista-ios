@@ -27,8 +27,9 @@ struct ListaItemRowView: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(item.title)
                         .font(.headline)
-                        .foregroundStyle(AppColors.foreground)
+                        .foregroundStyle(AppColors.cardForeground)
                         .lineLimit(1)
+                        .strikethrough(item.isCompleted, pattern: .solid, color: AppColors.cardForeground)
 
                     if let description = item.description, !description.isEmpty
                     {
@@ -36,6 +37,7 @@ struct ListaItemRowView: View {
                             .font(.subheadline)
                             .foregroundStyle(AppColors.mutedForeground)
                             .lineLimit(2)
+                            .strikethrough(item.isCompleted, pattern: .dash, color: AppColors.cardForeground)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,6 +72,25 @@ struct ListaItemRowView: View {
             description: "Milk, eggs, bread",
             url: nil,
             isCompleted: false
+        )
+    ) { item in
+
+    } onTap: { item in
+
+    } onDelete: { item in
+
+    } onEdit: { item in
+
+    }
+    
+    ListaItemRowView(
+        item: ListaItemUiModel(
+            listId: "123",
+            id: UUID().uuidString,
+            title: "Buy groceries",
+            description: "Milk, eggs, bread",
+            url: nil,
+            isCompleted: true
         )
     ) { item in
 
