@@ -8,15 +8,19 @@
 import Foundation
 import SwiftUI
 
+enum DetailsMenuAction {
+    case archive
+    case undoArchive
+    case delete
+    case complete
+    case undoComplete
+}
+
 struct DetailsContextMenuView: View {
     
-    let onArchive: () -> Void
-    let onUndoArchive: () -> Void
-    let onDelete: () -> Void
-    let onComplete: () -> Void
-    let onUndoCompletion: () -> Void
     let isCompleted: Bool
     let isArquived: Bool
+    let onAction: (DetailsMenuAction) -> Void
 
     var body: some View {
         Menu {
@@ -25,7 +29,7 @@ struct DetailsContextMenuView: View {
                     "Undo completion",
                     systemImage: "arrow.uturn.backward.circle"
                 ) {
-                    onUndoCompletion()
+                    onAction(.undoComplete)
                 }
                 .disabled(isArquived)
             } else {
@@ -33,7 +37,7 @@ struct DetailsContextMenuView: View {
                     "Mark as completed",
                     systemImage: "checkmark.circle"
                 ) {
-                    onComplete()
+                    onAction(.complete)
                 }
                 .disabled(isArquived)
             }
@@ -43,7 +47,7 @@ struct DetailsContextMenuView: View {
                     "Undo archive",
                     systemImage: "arrow.uturn.backward.circle"
                 ) {
-                    onUndoArchive()
+                    onAction(.undoArchive)
                 }
                 
             } else {
@@ -51,7 +55,7 @@ struct DetailsContextMenuView: View {
                     "Archive",
                     systemImage: "archivebox"
                 ) {
-                    onArchive()
+                    onAction(.archive)
                 }
             }
 
@@ -62,7 +66,7 @@ struct DetailsContextMenuView: View {
                 systemImage: "trash",
                 role: .destructive
             ) {
-                onDelete()
+                onAction(.delete)
             }
         } label: {
             Image(systemName: "ellipsis.circle")

@@ -43,10 +43,16 @@ struct DetailsScreen: View {
                 viewModel.setArchiveState(state: false)
             }
         )
-        .onAppear {
+        .task {
             viewModel.onAppear(listaId: listaId)
         }
     }
+}
+
+private enum DetailsScreenPresentation {
+    case addItem
+    case confirmDelete
+    case confirmArchive
 }
 
 private struct DetailsScreenView: View {
@@ -59,9 +65,7 @@ private struct DetailsScreenView: View {
     let onArchive: () -> Void
     let onUndoArchive: () -> Void
 
-    @State private var isDeleteDialogVisible: Bool = false
-    @State private var isArchiveDialogVisible: Bool = false
-    @State private var showingNewItemSheet: Bool = false
+    @State private var presentation: DetailsScreenPresentation? = nil
 
     var body: some View {
         VStack(spacing: 0) {
@@ -112,21 +116,26 @@ private struct DetailsScreenView: View {
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 DetailsContextMenuView(
-                    onArchive: {
-                        isArchiveDialogVisible = true
-                    },
-                    onUndoArchive: onUndoArchive,
-                    onDelete: {
-                        isDeleteDialogVisible = true
-                    },
-                    onComplete: {},
-                    onUndoCompletion: {},
                     isCompleted: false,
-                    isArquived: isArchived
+                    isArquived: isArchived,
+                    onAction: { action in
+                        switch action {
+                        case .archive:
+                            presentation = .confirmArchive
+                        case .undoArchive:
+                            onUndoArchive()
+                        case .delete:
+                            presentation = .confirmDelete
+                        case .complete:
+                            return
+                        case .undoComplete:
+                            return
+                        }
+                    }
                 )
 
                 Button(action: {
-                    showingNewItemSheet = true
+                    presentation = .addItem
                 }) {
                     Image(systemName: "plus")
                 }
@@ -136,13 +145,13 @@ private struct DetailsScreenView: View {
         }
         .alert(
             "Are you sure you want to delete this list?",
-            isPresented: $isDeleteDialogVisible,
+            isPresented: .constant(presentation == .confirmDelete),
         ) {
             Button("Delete", role: .destructive) {
                 onDelete()
             }
             Button("Cancel", role: .cancel) {
-                isDeleteDialogVisible = false
+                presentation = nil
             }
         } message: {
             Text(
@@ -151,13 +160,13 @@ private struct DetailsScreenView: View {
         }
         .alert(
             "Archive this list?",
-            isPresented: $isArchiveDialogVisible,
+            isPresented: .constant(presentation == .confirmArchive),
             actions: {
                 Button("Archive", role: .destructive) {
                     onArchive()
                 }
                 Button("Cancel", role: .cancel) {
-                    isArchiveDialogVisible = false
+                    presentation = nil
                 }
             },
             message: {
@@ -166,13 +175,13 @@ private struct DetailsScreenView: View {
                 )
             }
         )
-        .sheet(isPresented: $showingNewItemSheet) {
+        .sheet(isPresented: .constant(presentation == .addItem)) {
             InsertItemView(
                 onSubmit: { newItem in
                     onAddItem(newItem)
                 },
                 onDismiss: {
-                    showingNewItemSheet = false
+                    presentation = nil
                 },
             )
         }
