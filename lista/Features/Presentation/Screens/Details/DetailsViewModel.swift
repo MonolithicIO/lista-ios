@@ -13,23 +13,27 @@ extension DetailsScreen {
     @MainActor
     class ViewModel: ObservableObject {
         private let fetchDetailsService: FetchListaDetailsServiceProtocol
+        private let deleteListService: RemoveListServiceProtocol
+        private let archiveListService: ArchiveListServiceProtocol
         private let createItemService: CreateListItemServiceProtocol
         private let updateItemStatusService: UpdateItemStatusServiceProtocol
-        private let deleteListService: RemoveListServiceProtocol
 
         @Published private(set) var items: [ListaItemUiModel] = []
         @Published private(set) var isArchived: Bool = false
+        private var listId: String!
 
         init(
             fetchDetailsService: FetchListaDetailsServiceProtocol,
             createItemService: CreateListItemServiceProtocol,
             updateItemStatusService: UpdateItemStatusServiceProtocol,
-            deleteListService: RemoveListServiceProtocol
+            deleteListService: RemoveListServiceProtocol,
+            archiveListService: ArchiveListServiceProtocol
         ) {
             self.fetchDetailsService = fetchDetailsService
             self.createItemService = createItemService
             self.updateItemStatusService = updateItemStatusService
             self.deleteListService = deleteListService
+            self.archiveListService = archiveListService
         }
 
         func onAppear(listaId: String) async {
@@ -40,13 +44,14 @@ extension DetailsScreen {
                     item.toUiModel()
                 }
                 isArchived = details.isArchived
+                listId = details.id.uuidString
             } catch {
                 items = []
             }
         }
 
-        func onAddNewItem(item: AddListaItemUiModel, listaId: String) async {
-            guard let listaUuid = UUID(uuidString: listaId) else { return }
+        func onAddNewItem(item: AddListaItemUiModel) async {
+            guard let listaUuid = UUID(uuidString: listId) else { return }
 
             do {
                 let newItem = try await createItemService.create(
@@ -101,11 +106,21 @@ extension DetailsScreen {
             }
         }
 
-        func onDeleteList(listaId: String) async {
+        func onDeleteList() async {
             do {
-                try await deleteListService.remove(listId: listaId)
+                try await deleteListService.remove(listId: listId)
             } catch {
-                print("Error deleting list: \(listaId). Error: \(error)")
+                print("Error deleting list: \(listId ?? ""). Error: \(error)")
+            }
+        }
+        
+        func setArchiveState(state: Bool) async {
+            do {
+                let newState = !self.isArchived
+                try await archiveListService.archive(listaId: listId, isArchived: newState)
+                self.isArchived = newState
+            } catch {
+                print("Error updating archived list state: \(listId ?? ""). Error: \(error)")
             }
         }
 

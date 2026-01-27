@@ -26,6 +26,34 @@ final class ListDataSource: ListDataSourceProtocol {
         self.dateProvider = dateProvider
     }
 
+    func setArchivedState(id: UUID, state: Bool) async throws {
+        try await context.perform { [context] in
+
+            let request: NSFetchRequest<ListaEntity> =
+                ListaEntity.fetchRequest()
+
+            request.fetchLimit = 1
+
+            request.predicate = NSPredicate(
+                format: "id == %@",
+                id as CVarArg
+            )
+
+            guard let listaObject = try context.fetch(request).first else {
+                throw NSError(
+                    domain: "CoreData",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey: "Lista não encontrada"
+                    ]
+                )
+            }
+
+            listaObject.isArchived = state
+            listaObject.updatedAt = try self.dateProvider.currentDate()
+        }
+    }
+
     func fetchLists() async throws -> [Lista] {
         try await context.perform { [context] in
             let request: NSFetchRequest<ListaEntity> =
@@ -134,34 +162,6 @@ final class ListDataSource: ListDataSourceProtocol {
                 isArchived: object.isArchived,
                 isCompleted: object.isCompleted
             )
-        }
-
-        func setArchivedState(id: UUID, state: Bool) async throws {
-            try await context.perform { [context] in
-                
-                let request: NSFetchRequest<ListaEntity> =
-                    ListaEntity.fetchRequest()
-                
-                request.fetchLimit = 1
-                
-                request.predicate = NSPredicate(
-                    format: "id == %@",
-                    id as CVarArg
-                )
-
-                guard let listaObject = try context.fetch(request).first else {
-                    throw NSError(
-                        domain: "CoreData",
-                        code: 404,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Lista não encontrada"
-                        ]
-                    )
-                }
-                
-                listaObject.isArchived = state
-                listaObject.updatedAt = try self.dateProvider.currentDate()
-            }
         }
     }
 }

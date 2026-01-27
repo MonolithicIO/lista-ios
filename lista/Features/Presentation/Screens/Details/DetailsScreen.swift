@@ -34,7 +34,6 @@ struct DetailsScreen: View {
                 Task {
                     await viewModel.onAddNewItem(
                         item: newItem,
-                        listaId: self.listaId
                     )
                 }
             },
@@ -45,10 +44,20 @@ struct DetailsScreen: View {
             },
             onDelete: {
                 Task {
-                    await viewModel.onDeleteList(listaId: listaId)
+                    await viewModel.onDeleteList()
                     dismiss()
                 }
             },
+            onArchive: {
+                Task {
+                    await viewModel.setArchiveState(state: true)
+                }
+            },
+            onUndoArchive: {
+                Task {
+                    await viewModel.setArchiveState(state: false)
+                }
+            }
         )
         .task {
             await viewModel.onAppear(listaId: listaId)
@@ -63,8 +72,11 @@ private struct DetailsScreenView: View {
     let onAddItem: (AddListaItemUiModel) -> Void
     let onToggleItemState: (ListaItemUiModel) -> Void
     let onDelete: () -> Void
+    let onArchive: () -> Void
+    let onUndoArchive: () -> Void
 
     @State private var isDeleteDialogVisible: Bool = false
+    @State private var isArchiveDialogVisible: Bool = false
     @State private var showingNewItemSheet: Bool = false
 
     var body: some View {
@@ -116,13 +128,17 @@ private struct DetailsScreenView: View {
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 DetailsContextMenuView(
-                    onArchive: {},
+                    onArchive: {
+                        isArchiveDialogVisible = true
+                    },
+                    onUndoArchive: onUndoArchive,
                     onDelete: {
                         isDeleteDialogVisible = true
                     },
                     onComplete: {},
-                    onRestore: {},
-                    isCompleted: false
+                    onUndoCompletion: {},
+                    isCompleted: false,
+                    isArquived: isArchived
                 )
 
                 Button(action: {
@@ -145,8 +161,27 @@ private struct DetailsScreenView: View {
                 isDeleteDialogVisible = false
             }
         } message: {
-            Text("This action cannot be undone.")
+            Text(
+                "This action cannot be undone."
+            )
         }
+        .alert(
+            "Archive this list?",
+            isPresented: $isArchiveDialogVisible,
+            actions: {
+                Button("Archive", role: .destructive) {
+                    onArchive()
+                }
+                Button("Cancel", role: .cancel) {
+                    isArchiveDialogVisible = false
+                }
+            },
+            message: {
+                Text(
+                    "Archived lists cannot be edited. Restore this list before making changes"
+                )
+            }
+        )
         .fullScreenCover(isPresented: $showingNewItemSheet) {
             InsertItemView(
                 onSubmit: { newItem in
@@ -179,6 +214,12 @@ private struct DetailsScreenView: View {
             onAddItem: { _ in },
             onToggleItemState: { _ in },
             onDelete: {},
+            onArchive: {
+
+            },
+            onUndoArchive: {
+
+            }
         )
     }
 }
