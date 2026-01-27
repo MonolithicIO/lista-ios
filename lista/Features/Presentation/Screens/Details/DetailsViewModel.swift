@@ -17,9 +17,11 @@ extension DetailsScreen {
         private let archiveListService: ArchiveListServiceProtocol
         private let createItemService: CreateListItemServiceProtocol
         private let updateItemStatusService: UpdateItemStatusServiceProtocol
+        private let dateProvider: DateProviderProtocol
 
         @Published private(set) var items: [ListaItemUiModel] = []
         @Published private(set) var isArchived: Bool = false
+        @Published private(set) var updatedAt: Date? = nil
         private var listId: String!
 
         init(
@@ -27,13 +29,15 @@ extension DetailsScreen {
             createItemService: CreateListItemServiceProtocol,
             updateItemStatusService: UpdateItemStatusServiceProtocol,
             deleteListService: RemoveListServiceProtocol,
-            archiveListService: ArchiveListServiceProtocol
+            archiveListService: ArchiveListServiceProtocol,
+            dateProvider: DateProviderProtocol
         ) {
             self.fetchDetailsService = fetchDetailsService
             self.createItemService = createItemService
             self.updateItemStatusService = updateItemStatusService
             self.deleteListService = deleteListService
             self.archiveListService = archiveListService
+            self.dateProvider = dateProvider
         }
 
         func onAppear(listaId: String) {
@@ -48,6 +52,7 @@ extension DetailsScreen {
                     }
                     isArchived = details.isArchived
                     listId = details.id.uuidString
+                    updatedAt = details.updatedAt
                 } catch {
                     items = []
                 }
@@ -72,6 +77,7 @@ extension DetailsScreen {
                         )
                     )
                     items.append(newItem.toUiModel())
+                    updatedAt = try dateProvider.currentDate()
                 } catch {
                     print("Error saving new item \(error)")
                 }
@@ -108,6 +114,7 @@ extension DetailsScreen {
                         url: item.url,
                         isCompleted: newState
                     )
+                    updatedAt = try dateProvider.currentDate()
                 } catch {
                     print("Error updating item \(item.id). Error: \(error) ")
                 }
@@ -137,6 +144,7 @@ extension DetailsScreen {
                         isArchived: newState
                     )
                     self.isArchived = newState
+                    self.updatedAt = try dateProvider.currentDate()
                 } catch {
                     print(
                         "Error updating archived list state: \(listId ?? ""). Error: \(error)"

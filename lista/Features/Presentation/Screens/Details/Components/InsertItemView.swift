@@ -19,18 +19,15 @@ struct InsertItemView: View {
 
     var body: some View {
         NavigationStack {
-            Form {
+            List {
                 Section(
                     header: Text("Title").foregroundStyle(
                         AppColors.foreground
                     )
                 ) {
                     TextField("Something cool", text: $title)
-                        .padding(12)
-                        .background(
-                            RoundedRectangle(cornerRadius: 10)
-                                .fill(AppColors.border)
-                        )
+                        .listRowBackground(AppColors.border)
+                        
                 }
                 Toggle(
                     isOn: $addMore
@@ -38,11 +35,7 @@ struct InsertItemView: View {
                     Text("Add more")
                         .foregroundStyle(AppColors.cardForeground)
                 }
-                .padding(12)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(AppColors.border)
-                )
+                .listRowBackground(AppColors.border)
             }
             .scrollContentBackground(.hidden)
             .background(AppColors.accentColor)

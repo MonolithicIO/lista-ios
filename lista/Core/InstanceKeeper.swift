@@ -127,7 +127,8 @@ class InstanceKeeper {
             createItemService: provideCreateListItemService(),
             updateItemStatusService: provideUpdateItemStatusService(),
             deleteListService: provideRemoveListService(),
-            archiveListService: provideArchiveListService()
+            archiveListService: provideArchiveListService(),
+            dateProvider: provideDateProvider()
         )
     }
 }

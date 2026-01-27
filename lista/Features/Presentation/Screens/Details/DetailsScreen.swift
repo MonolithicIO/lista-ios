@@ -29,6 +29,7 @@ struct DetailsScreen: View {
         DetailsScreenView(
             title: listaTitle,
             isArchived: viewModel.isArchived,
+            updatedAt: viewModel.updatedAt,
             items: viewModel.items,
             onAddItem: viewModel.onAddNewItem,
             onToggleItemState: viewModel.onToogleItemState,
@@ -58,6 +59,7 @@ private enum DetailsScreenPresentation {
 private struct DetailsScreenView: View {
     let title: String
     let isArchived: Bool
+    let updatedAt: Date?
     let items: [ListaItemUiModel]
     let onAddItem: (AddListaItemUiModel) -> Void
     let onToggleItemState: (ListaItemUiModel) -> Void
@@ -69,6 +71,14 @@ private struct DetailsScreenView: View {
 
     var body: some View {
         VStack(spacing: 0) {
+            
+            if let updatedAt {
+                LastUpdatedView(date: updatedAt)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 8)
+            }
+            
+            
             if items.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "tray")
@@ -101,7 +111,7 @@ private struct DetailsScreenView: View {
                         .listRowBackground(AppColors.background)
                         .listRowSeparator(.hidden)
                         .listRowInsets(
-                            .init(top: 8, leading: 16, bottom: 8, trailing: 16)
+                            .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                         )
                     }
                 }
@@ -111,6 +121,7 @@ private struct DetailsScreenView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 16)
         .background(AppColors.background.ignoresSafeArea())
         .navigationTitle(title)
         .toolbar {
@@ -193,6 +204,7 @@ private struct DetailsScreenView: View {
         DetailsScreenView(
             title: "Lista Sample",
             isArchived: false,
+            updatedAt: Date(),
             items: [
                 ListaItemUiModel(
                     listId: "123",
