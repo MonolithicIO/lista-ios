@@ -21,11 +21,11 @@ struct InsertItemView: View {
         NavigationStack {
             Form {
                 Section(
-                    header: Text("New Item").foregroundStyle(
+                    header: Text("Title").foregroundStyle(
                         AppColors.foreground
                     )
                 ) {
-                    TextField("Title", text: $title)
+                    TextField("Something cool", text: $title)
                         .padding(12)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
