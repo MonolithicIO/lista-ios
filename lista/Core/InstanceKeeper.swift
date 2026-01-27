@@ -107,6 +107,10 @@ class InstanceKeeper {
             repository: provideListItemRepository()
         )
     }
+    
+    func provideArchiveListService() -> ArchiveListServiceProtocol {
+        return ArchiveListService(repository: provideListRepository())
+    }
 
     // MARK: - Presentation Providers
     func provideHomeViewModel() -> HomeScreen.ViewModel {

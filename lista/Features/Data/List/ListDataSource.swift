@@ -13,6 +13,7 @@ protocol ListDataSourceProtocol {
     func createList(title: String) async throws -> Lista
     func removeList(id: UUID) async throws
     func getListaDetails(id: UUID) async throws -> ListaDetails
+    func setArchivedState(id: UUID, state: Bool) async throws
 }
 
 final class ListDataSource: ListDataSourceProtocol {
@@ -134,6 +135,33 @@ final class ListDataSource: ListDataSourceProtocol {
                 isCompleted: object.isCompleted
             )
         }
-    }
 
+        func setArchivedState(id: UUID, state: Bool) async throws {
+            try await context.perform { [context] in
+                
+                let request: NSFetchRequest<ListaEntity> =
+                    ListaEntity.fetchRequest()
+                
+                request.fetchLimit = 1
+                
+                request.predicate = NSPredicate(
+                    format: "id == %@",
+                    id as CVarArg
+                )
+
+                guard let listaObject = try context.fetch(request).first else {
+                    throw NSError(
+                        domain: "CoreData",
+                        code: 404,
+                        userInfo: [
+                            NSLocalizedDescriptionKey: "Lista não encontrada"
+                        ]
+                    )
+                }
+                
+                listaObject.isArchived = state
+                listaObject.updatedAt = try self.dateProvider.currentDate()
+            }
+        }
+    }
 }
