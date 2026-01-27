@@ -36,91 +36,112 @@ extension DetailsScreen {
             self.archiveListService = archiveListService
         }
 
-        func onAppear(listaId: String) async {
-            guard let uuid = UUID(uuidString: listaId) else { return }
-            do {
-                let details = try await fetchDetailsService.fetch(listaId: uuid)
-                items = details.items.map { item in
-                    item.toUiModel()
-                }
-                isArchived = details.isArchived
-                listId = details.id.uuidString
-            } catch {
-                items = []
-            }
-        }
-
-        func onAddNewItem(item: AddListaItemUiModel) async {
-            guard let listaUuid = UUID(uuidString: listId) else { return }
-
-            do {
-                let newItem = try await createItemService.create(
-                    item: CreateListItemDTO(
-                        listId: listaUuid,
-                        title: item.title.trimmingCharacters(
-                            in: .whitespacesAndNewlines
-                        ),
-                        description: self.sanitizeString(
-                            input: item.description
-                        ),
-                        url: self.sanitizeString(input: item.url)
+        func onAppear(listaId: String) {
+            Task {
+                guard let uuid = UUID(uuidString: listaId) else { return }
+                do {
+                    let details = try await fetchDetailsService.fetch(
+                        listaId: uuid
                     )
-                )
-                items.append(newItem.toUiModel())
-            } catch {
-                print("Error saving new item \(error)")
-            }
-        }
-
-        func onToogleItemState(item: ListaItemUiModel) async {
-            guard
-                let itemIndex = items.firstIndex(
-                    where: { stateItem in
-                        item.id == stateItem.id
+                    items = details.items.map { item in
+                        item.toUiModel()
                     }
-                )
-            else {
-                return
-            }
-
-            do {
-                let newState = !item.isCompleted
-
-                try await updateItemStatusService.updateItemStatus(
-                    itemId: item.id,
-                    isCompleted: newState
-                )
-
-                let item = items[itemIndex]
-
-                items[itemIndex] = ListaItemUiModel(
-                    listId: item.listId,
-                    id: item.id,
-                    title: item.title,
-                    description: item.description,
-                    url: item.url,
-                    isCompleted: newState
-                )
-            } catch {
-                print("Error updating item \(item.id). Error: \(error) ")
+                    isArchived = details.isArchived
+                    listId = details.id.uuidString
+                } catch {
+                    items = []
+                }
             }
         }
 
-        func onDeleteList() async {
-            do {
-                try await deleteListService.remove(listId: listId)
-            } catch {
-                print("Error deleting list: \(listId ?? ""). Error: \(error)")
+        func onAddNewItem(item: AddListaItemUiModel) {
+            Task {
+                guard let listaUuid = UUID(uuidString: listId) else { return }
+
+                do {
+                    let newItem = try await createItemService.create(
+                        item: CreateListItemDTO(
+                            listId: listaUuid,
+                            title: item.title.trimmingCharacters(
+                                in: .whitespacesAndNewlines
+                            ),
+                            description: self.sanitizeString(
+                                input: item.description
+                            ),
+                            url: self.sanitizeString(input: item.url)
+                        )
+                    )
+                    items.append(newItem.toUiModel())
+                } catch {
+                    print("Error saving new item \(error)")
+                }
             }
         }
-        
-        func setArchiveState(state: Bool) async {
-            do {
-                let newState = !self.isArchived
-                try await archiveListService.archive(listaId: listId, isArchived: newState)
-                self.isArchived = newState
-            } catch {
-                print("Error updating archived list state: \(listId ?? ""). Error: \(error)")
+
+        func onToogleItemState(item: ListaItemUiModel) {
+            Task {
+                guard
+                    let itemIndex = items.firstIndex(
+                        where: { stateItem in
+                            item.id == stateItem.id
+                        }
+                    )
+                else {
+                    return
+                }
+
+                do {
+                    let newState = !item.isCompleted
+
+                    try await updateItemStatusService.updateItemStatus(
+                        itemId: item.id,
+                        isCompleted: newState
+                    )
+
+                    let item = items[itemIndex]
+
+                    items[itemIndex] = ListaItemUiModel(
+                        listId: item.listId,
+                        id: item.id,
+                        title: item.title,
+                        description: item.description,
+                        url: item.url,
+                        isCompleted: newState
+                    )
+                } catch {
+                    print("Error updating item \(item.id). Error: \(error) ")
+                }
+            }
+
+        }
+
+        func onDeleteList() {
+            Task {
+                do {
+                    try await deleteListService.remove(listId: listId)
+                } catch {
+                    print(
+                        "Error deleting list: \(listId ?? ""). Error: \(error)"
+                    )
+                }
+            }
+
+        }
+
+        func setArchiveState(state: Bool) {
+            Task {
+                do {
+                    let newState = !self.isArchived
+                    try await archiveListService.archive(
+                        listaId: listId,
+                        isArchived: newState
+                    )
+                    self.isArchived = newState
+                } catch {
+                    print(
+                        "Error updating archived list state: \(listId ?? ""). Error: \(error)"
+                    )
+                }
             }
         }
 

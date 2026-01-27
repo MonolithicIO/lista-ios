@@ -30,37 +30,21 @@ struct DetailsScreen: View {
             title: listaTitle,
             isArchived: viewModel.isArchived,
             items: viewModel.items,
-            onAddItem: { newItem in
-                Task {
-                    await viewModel.onAddNewItem(
-                        item: newItem,
-                    )
-                }
-            },
-            onToggleItemState: { item in
-                Task {
-                    await viewModel.onToogleItemState(item: item)
-                }
-            },
+            onAddItem: viewModel.onAddNewItem,
+            onToggleItemState: viewModel.onToogleItemState,
             onDelete: {
-                Task {
-                    await viewModel.onDeleteList()
-                    dismiss()
-                }
+                viewModel.onDeleteList()
+                dismiss()
             },
             onArchive: {
-                Task {
-                    await viewModel.setArchiveState(state: true)
-                }
+                viewModel.setArchiveState(state: true)
             },
             onUndoArchive: {
-                Task {
-                    await viewModel.setArchiveState(state: false)
-                }
+                viewModel.setArchiveState(state: false)
             }
         )
-        .task {
-            await viewModel.onAppear(listaId: listaId)
+        .onAppear {
+            viewModel.onAppear(listaId: listaId)
         }
     }
 }
@@ -182,7 +166,7 @@ private struct DetailsScreenView: View {
                 )
             }
         )
-        .fullScreenCover(isPresented: $showingNewItemSheet) {
+        .sheet(isPresented: $showingNewItemSheet) {
             InsertItemView(
                 onSubmit: { newItem in
                     onAddItem(newItem)
@@ -191,7 +175,6 @@ private struct DetailsScreenView: View {
                     showingNewItemSheet = false
                 },
             )
-            .background(AppColors.blue)
         }
     }
 }
