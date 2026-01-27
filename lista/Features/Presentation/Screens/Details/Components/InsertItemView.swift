@@ -20,8 +20,17 @@ struct InsertItemView: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section(header: Text("New Item")) {
+                Section(
+                    header: Text("New Item").foregroundStyle(
+                        AppColors.foreground
+                    )
+                ) {
                     TextField("Title", text: $title)
+                        .padding(12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 10)
+                                .fill(AppColors.border)
+                        )
                 }
                 Toggle(
                     isOn: $addMore
@@ -29,7 +38,14 @@ struct InsertItemView: View {
                     Text("Add more")
                         .foregroundStyle(AppColors.cardForeground)
                 }
+                .padding(12)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(AppColors.border)
+                )
             }
+            .scrollContentBackground(.hidden)
+            .background(AppColors.accentColor)
             .navigationTitle("Add Item")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
