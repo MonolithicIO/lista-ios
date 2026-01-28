@@ -32,36 +32,29 @@ struct DetailsScreen: View {
             isCompleted: viewModel.isCompleted,
             updatedAt: viewModel.updatedAt,
             items: viewModel.items,
-            onAddItem: viewModel.onAddNewItem,
-            onToggleItemState: viewModel.onToogleItemState,
-            onDelete: {
-                viewModel.onDeleteList()
-                dismiss()
+            onAction: { action in
+                switch(action) {
+                case .onAddItem(let newItem):
+                    viewModel.onAddNewItem(item: newItem)
+                case .onToggleItemState(let changedItem):
+                    viewModel.onToogleItemState(item: changedItem)
+                case .onDelete:
+                    viewModel.onDeleteList()
+                case .onArchive:
+                    viewModel.setArchiveState(state: true)
+                case .onUndoArchive:
+                    viewModel.setArchiveState(state: false)
+                case .onComplete:
+                    viewModel.setCompletedState(state: true)
+                case .onUndoComplete:
+                    viewModel.setCompletedState(state: false)
+                }
             },
-            onArchive: {
-                viewModel.setArchiveState(state: true)
-            },
-            onUndoArchive: {
-                viewModel.setArchiveState(state: false)
-            },
-            onComplete: {
-                viewModel.setCompletedState(state: true)
-            },
-            onUndoComplete: {
-                viewModel.setCompletedState(state: false)
-            }
         )
         .task {
             viewModel.onAppear(listaId: listaId)
         }
     }
-}
-
-private enum DetailsScreenPresentation {
-    case addItem
-    case confirmDelete
-    case confirmArchive
-    case confirmComplete
 }
 
 private struct DetailsScreenView: View {
@@ -70,13 +63,7 @@ private struct DetailsScreenView: View {
     let isCompleted: Bool
     let updatedAt: Date?
     let items: [ListaItemUiModel]
-    let onAddItem: (AddListaItemUiModel) -> Void
-    let onToggleItemState: (ListaItemUiModel) -> Void
-    let onDelete: () -> Void
-    let onArchive: () -> Void
-    let onUndoArchive: () -> Void
-    let onComplete: () -> Void
-    let onUndoComplete: () -> Void
+    let onAction: (DetailsScreenView.Actions) -> Void
 
     @State private var presentation: DetailsScreenPresentation? = nil
 
@@ -113,7 +100,7 @@ private struct DetailsScreenView: View {
                         ListaItemRowView(
                             item: item,
                             onToggle: { item in
-                                onToggleItemState(item)
+                                onAction(.onToggleItemState(item))
                             },
                             onTap: { _ in
                             }
@@ -144,13 +131,13 @@ private struct DetailsScreenView: View {
                         case .archive:
                             presentation = .confirmArchive
                         case .undoArchive:
-                            onUndoArchive()
+                            onAction(.onUndoArchive)
                         case .delete:
                             presentation = .confirmDelete
                         case .complete:
                             presentation = .confirmComplete
                         case .undoComplete:
-                            onUndoComplete()
+                            onAction(.onUndoComplete)
                         }
                     }
                 )
@@ -169,7 +156,7 @@ private struct DetailsScreenView: View {
             isPresented: .constant(presentation == .confirmDelete),
         ) {
             Button("Delete", role: .destructive) {
-                onDelete()
+                onAction(.onDelete)
                 presentation = nil
             }
             Button("Cancel", role: .cancel) {
@@ -185,7 +172,7 @@ private struct DetailsScreenView: View {
             isPresented: .constant(presentation == .confirmArchive),
             actions: {
                 Button("Archive", role: .destructive) {
-                    onArchive()
+                    onAction(.onArchive)
                     presentation = nil
                 }
                 Button("Cancel", role: .cancel) {
@@ -203,7 +190,7 @@ private struct DetailsScreenView: View {
             isPresented: .constant(presentation == .confirmComplete),
             actions: {
                 Button("Complete", role: .destructive) {
-                    onComplete()
+                    onAction(.onComplete)
                     presentation = nil
                 }
                 Button("Cancel", role: .cancel) {
@@ -219,13 +206,32 @@ private struct DetailsScreenView: View {
         .sheet(isPresented: .constant(presentation == .addItem)) {
             InsertItemView(
                 onSubmit: { newItem in
-                    onAddItem(newItem)
+                    onAction(.onAddItem(newItem))
                 },
                 onDismiss: {
                     presentation = nil
                 },
             )
         }
+    }
+}
+
+extension DetailsScreenView {
+    enum DetailsScreenPresentation {
+        case addItem
+        case confirmDelete
+        case confirmArchive
+        case confirmComplete
+    }
+    
+    enum Actions {
+        case onAddItem(AddListaItemUiModel)
+        case onToggleItemState(ListaItemUiModel)
+        case onDelete
+        case onArchive
+        case onUndoArchive
+        case onComplete
+        case onUndoComplete
     }
 }
 
@@ -246,13 +252,8 @@ private struct DetailsScreenView: View {
                     isCompleted: false
                 )
             ],
-            onAddItem: { _ in },
-            onToggleItemState: { _ in },
-            onDelete: {},
-            onArchive: {},
-            onUndoArchive: {},
-            onComplete: {},
-            onUndoComplete: {}
+            onAction: { _ in}
         )
     }
 }
+
