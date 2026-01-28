@@ -51,6 +51,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
             listaItem.createdAt = try self.dateProvider.currentDate()
             listaItem.lista = lista
             listaItem.isCompleted = false
+            lista.updatedAt = try self.dateProvider.currentDate()
 
             if self.context.hasChanges {
                 try self.context.save()
@@ -90,6 +91,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
             }
             
             listItem.isCompleted = isActive
+            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
             
             if self.context.hasChanges {
                 try self.context.save()
