@@ -25,20 +25,25 @@ struct InsertItemView: View {
                         AppColors.foreground
                     )
                 ) {
-                    TextField("Something cool", text: $title)
-                        .listRowBackground(AppColors.border)
-                        
+                    TextField(
+                        "Something cool",
+                        text: $title,
+                    )
+                    .listRowBackground(AppColors.accent)
                 }
+                
                 Toggle(
                     isOn: $addMore
                 ) {
                     Text("Add more")
-                        .foregroundStyle(AppColors.cardForeground)
+                        .foregroundStyle(AppColors.accentForeground)
                 }
-                .listRowBackground(AppColors.border)
+                .listRowBackground(AppColors.accent)
             }
+            .interactiveDismissDisabled(true)
+            .scrollDismissesKeyboard(.interactively)
             .scrollContentBackground(.hidden)
-            .background(AppColors.accentColor)
+            .background(AppColors.background)
             .navigationTitle("Add Item")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {

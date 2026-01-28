@@ -13,7 +13,6 @@ import SwiftUI
 struct AppColors {
   static let accentForeground = Color("AppAccentForeground")
   static let accent = Color("AppAccent")
-  static let accentColor = Color("AppAccentColor")
   static let amber = Color("AppAmber")
   static let appIcon = Color("AppAppIcon")
   static let background = Color("AppBackground")
