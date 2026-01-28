@@ -14,6 +14,7 @@ protocol ListDataSourceProtocol {
     func removeList(id: UUID) async throws
     func getListaDetails(id: UUID) async throws -> ListaDetails
     func setArchivedState(id: UUID, state: Bool) async throws
+    func setCompletedState(id: UUID, state: Bool) async throws
 }
 
 final class ListDataSource: ListDataSourceProtocol {
@@ -164,4 +165,41 @@ final class ListDataSource: ListDataSourceProtocol {
             )
         }
     }
+
+    func setCompletedState(id: UUID, state: Bool) async throws {
+        let now = try dateProvider.currentDate()
+        
+        try await context.perform { [context] in
+
+            let request: NSFetchRequest<ListaEntity> =
+                ListaEntity.fetchRequest()
+            request.fetchLimit = 1
+            request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+            request.returnsObjectsAsFaults = false
+
+            guard let list = try context.fetch(request).first else {
+                throw NSError(
+                    domain: "ListDataSource",
+                    code: 404
+                )
+            }
+
+            list.isCompleted = state
+            list.updatedAt = now
+
+            if state {
+                if let children = list.children as? Set<ListaItemEntity> {
+                    children.forEach { item in
+                        item.updatedAt = now
+                        item.isCompleted = state
+                    }
+                }
+            }
+
+            guard context.hasChanges else { return }
+
+            try context.save()
+        }
+    }
+
 }

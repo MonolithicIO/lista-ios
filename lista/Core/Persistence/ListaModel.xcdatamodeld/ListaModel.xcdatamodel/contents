@@ -7,7 +7,7 @@
         <attribute name="isCompleted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="children" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ListaItemEntity" inverseName="lista" inverseEntity="ListaItemEntity"/>
+        <relationship name="children" toMany="YES" deletionRule="Cascade" destinationEntity="ListaItemEntity" inverseName="lista" inverseEntity="ListaItemEntity"/>
     </entity>
     <entity name="ListaItemEntity" representedClassName="ListaItemEntity" syncable="YES" codeGenerationType="class">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
@@ -17,6 +17,6 @@
         <attribute name="note" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
-        <relationship name="lista" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ListaEntity" inverseName="children" inverseEntity="ListaEntity"/>
+        <relationship name="lista" maxCount="1" deletionRule="Nullify" destinationEntity="ListaEntity" inverseName="children" inverseEntity="ListaEntity"/>
     </entity>
 </model>

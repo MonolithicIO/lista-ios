@@ -14,7 +14,7 @@ protocol ListRepositoryProtocol {
     func removeList(id: UUID) async throws
     func fetchListDetails (listaId _id: UUID) async throws -> ListaDetails
     func setArchivedState(listaId _id: UUID, isArchived: Bool) async throws -> Void
-
+    func setCompletedState(listaid _id: UUID, isCompleted: Bool) async throws -> Void
 }
 
 final class ListRepository: ListRepositoryProtocol {
@@ -43,6 +43,10 @@ final class ListRepository: ListRepositoryProtocol {
     
     func setArchivedState(listaId _id: UUID, isArchived: Bool) async throws {
         return try await datasource.setArchivedState(id: _id, state: isArchived)
+    }
+    
+    func setCompletedState(listaid _id: UUID, isCompleted: Bool) async throws -> Void {
+        return try await datasource.setCompletedState(id: _id, state: isCompleted)
     }
 
 }

@@ -112,6 +112,14 @@ class InstanceKeeper {
         return ArchiveListService(repository: provideListRepository())
     }
 
+    func provideCompleteListService() -> CompleteListServiceProtocol {
+        return CompleteListService(repository: provideListRepository())
+    }
+
+    func provideRevertCompleteService() -> RevertCompleteServiceProtocol {
+        return RevertCompleteService(repository: provideListRepository())
+    }
+
     // MARK: - Presentation Providers
     func provideHomeViewModel() -> HomeScreen.ViewModel {
         return HomeScreen.ViewModel(
@@ -132,3 +140,4 @@ class InstanceKeeper {
         )
     }
 }
+
