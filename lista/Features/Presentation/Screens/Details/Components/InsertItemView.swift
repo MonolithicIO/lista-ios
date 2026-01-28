@@ -32,6 +32,25 @@ struct InsertItemView: View {
                     .listRowBackground(AppColors.accent)
                 }
                 
+                Section(
+                    header: HStack {
+                        Text("Description").foregroundStyle(
+                            AppColors.foreground
+                        )
+                        Spacer()
+                        Text("Optional").foregroundStyle(
+                            AppColors.mutedForeground
+                        )
+                        .font(.caption)
+                    }
+                ) {
+                    TextField(
+                        "Extra notes",
+                        text: $description,
+                    )
+                    .listRowBackground(AppColors.accent)
+                }
+                
                 Toggle(
                     isOn: $addMore
                 ) {
