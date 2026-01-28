@@ -33,7 +33,7 @@ struct DetailsScreen: View {
             updatedAt: viewModel.updatedAt,
             items: viewModel.items,
             onAction: { action in
-                switch(action) {
+                switch action {
                 case .onAddItem(let newItem):
                     viewModel.onAddNewItem(item: newItem)
                 case .onToggleItemState(let changedItem):
@@ -75,6 +75,13 @@ private struct DetailsScreenView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 8)
             }
+
+            ListStatusBadge(
+                status: isArchived
+                    ? .archived : isCompleted ? .completed : .active
+            )
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, 8)
 
             if items.isEmpty {
                 VStack(spacing: 12) {
@@ -223,7 +230,7 @@ extension DetailsScreenView {
         case confirmArchive
         case confirmComplete
     }
-    
+
     enum Actions {
         case onAddItem(AddListaItemUiModel)
         case onToggleItemState(ListaItemUiModel)
@@ -252,8 +259,7 @@ extension DetailsScreenView {
                     isCompleted: false
                 )
             ],
-            onAction: { _ in}
+            onAction: { _ in }
         )
     }
 }
-
