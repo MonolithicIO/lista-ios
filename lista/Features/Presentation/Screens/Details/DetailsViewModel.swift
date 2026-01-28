@@ -145,16 +145,18 @@ extension DetailsScreen {
                 }
             }
         }
-        
+
         func setCompletedState(state: Bool) {
             Task {
                 do {
                     if state {
                         try await completeListService.complete(listaId: listId)
                     } else {
-                        try await revertCompleteListService.revert(listaId: listId)
+                        try await revertCompleteListService.revert(
+                            listaId: listId
+                        )
                     }
-                    
+
                     loadList()
                 } catch {
                     print(
@@ -163,7 +165,7 @@ extension DetailsScreen {
                 }
             }
         }
-        
+
         private func loadList() {
             Task {
                 guard let uuid = UUID(uuidString: self.listId) else { return }
@@ -182,7 +184,7 @@ extension DetailsScreen {
                     items = []
                 }
             }
-            
+
         }
 
         private func sanitizeString(input: String?) -> String? {
