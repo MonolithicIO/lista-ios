@@ -106,11 +106,12 @@ private struct DetailsScreenView: View {
                     ForEach(items) { item in
                         ListaItemRowView(
                             item: item,
+                            enableToggle: !isArchived && !isCompleted,
                             onToggle: { item in
                                 onAction(.onToggleItemState(item))
                             },
                             onTap: { _ in
-                            }
+                            },
                         )
                         .listRowBackground(AppColors.background)
                         .listRowSeparator(.hidden)

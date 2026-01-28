@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ListaItemRowView: View {
     let item: ListaItemUiModel
+    let enableToggle: Bool
     let onToggle: (ListaItemUiModel) -> Void
     let onTap: (ListaItemUiModel) -> Void
     var onDelete: ((ListaItemUiModel) -> Void)? = nil
@@ -20,8 +21,9 @@ struct ListaItemRowView: View {
         } label: {
             HStack(spacing: 12) {
                 RadioButton(
-                    isCompleted: item.isCompleted,
-                    onToggle: { onToggle(item) }
+                    isChecked: item.isCompleted,
+                    onToggle: { onToggle(item) },
+                    isEnabled: enableToggle
                 )
 
                 VStack(alignment: .leading, spacing: 4) {
@@ -71,8 +73,8 @@ struct ListaItemRowView: View {
             title: "Buy groceries",
             description: "Milk, eggs, bread",
             url: nil,
-            isCompleted: false
-        )
+            isCompleted: false,
+        ), enableToggle: false
     ) { item in
 
     } onTap: { item in
@@ -91,7 +93,7 @@ struct ListaItemRowView: View {
             description: "Milk, eggs, bread",
             url: nil,
             isCompleted: true
-        )
+        ), enableToggle: false
     ) { item in
 
     } onTap: { item in

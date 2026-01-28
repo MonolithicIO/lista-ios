@@ -9,11 +9,14 @@ import Foundation
 import SwiftUI
 
 struct RadioButton: View {
-    let isCompleted: Bool
+    let isChecked: Bool
     let onToggle: () -> Void
+    let isEnabled: Bool
 
     var body: some View {
         Button {
+            guard isEnabled else { return }
+
             withAnimation(
                 .spring(
                     response: 0.22,
@@ -27,16 +30,14 @@ struct RadioButton: View {
             ZStack {
                 Circle()
                     .strokeBorder(
-                        isCompleted
-                            ? AppColors.foreground
-                            : AppColors.mutedForeground,
+                        strokeColor,
                         lineWidth: 2
                     )
                     .frame(width: 22, height: 22)
 
-                if isCompleted {
+                if isChecked {
                     Circle()
-                        .fill(AppColors.foreground)
+                        .fill(fillColor)
                         .frame(width: 12, height: 12)
                         .transition(
                             .scale(scale: 0.6)
@@ -44,26 +45,56 @@ struct RadioButton: View {
                         )
                 }
             }
+            .opacity(isEnabled ? 1.0 : 0.4)
             .animation(
                 .spring(
                     response: 0.22,
                     dampingFraction: 0.85
                 ),
-                value: isCompleted
+                value: isChecked
             )
         }
         .buttonStyle(.plain)
+        .disabled(!isEnabled)
+        .accessibilityElement()
+    }
+
+    // MARK: - Computed styles
+
+    private var strokeColor: Color {
+        if !isEnabled {
+            return AppColors.mutedForeground
+        }
+        return isChecked
+            ? AppColors.foreground
+            : AppColors.mutedForeground
+    }
+
+    private var fillColor: Color {
+        if !isEnabled {
+            return AppColors.mutedForeground
+        }
+        return AppColors.foreground
     }
 }
 
+
 #Preview {
     RadioButton(
-        isCompleted: true,
-        onToggle: {}
+        isChecked: true,
+        onToggle: {},
+        isEnabled: true
     )
 
     RadioButton(
-        isCompleted: false,
-        onToggle: {}
+        isChecked: false,
+        onToggle: {},
+        isEnabled: true
+    )
+    
+    RadioButton(
+        isChecked: false,
+        onToggle: {},
+        isEnabled: false
     )
 }
