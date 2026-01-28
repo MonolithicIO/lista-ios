@@ -49,6 +49,7 @@ struct DetailsContextMenuView: View {
                 ) {
                     onAction(.undoArchive)
                 }
+                .disabled(isCompleted)
                 
             } else {
                 Button(
@@ -57,6 +58,7 @@ struct DetailsContextMenuView: View {
                 ) {
                     onAction(.archive)
                 }
+                .disabled(isCompleted)
             }
 
             Divider()

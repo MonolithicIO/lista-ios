@@ -29,6 +29,7 @@ struct DetailsScreen: View {
         DetailsScreenView(
             title: listaTitle,
             isArchived: viewModel.isArchived,
+            isCompleted: viewModel.isCompleted,
             updatedAt: viewModel.updatedAt,
             items: viewModel.items,
             onAddItem: viewModel.onAddNewItem,
@@ -42,6 +43,12 @@ struct DetailsScreen: View {
             },
             onUndoArchive: {
                 viewModel.setArchiveState(state: false)
+            },
+            onComplete: {
+                viewModel.setCompletedState(state: true)
+            },
+            onUndoComplete: {
+                viewModel.setCompletedState(state: false)
             }
         )
         .task {
@@ -54,11 +61,13 @@ private enum DetailsScreenPresentation {
     case addItem
     case confirmDelete
     case confirmArchive
+    case confirmComplete
 }
 
 private struct DetailsScreenView: View {
     let title: String
     let isArchived: Bool
+    let isCompleted: Bool
     let updatedAt: Date?
     let items: [ListaItemUiModel]
     let onAddItem: (AddListaItemUiModel) -> Void
@@ -66,19 +75,20 @@ private struct DetailsScreenView: View {
     let onDelete: () -> Void
     let onArchive: () -> Void
     let onUndoArchive: () -> Void
+    let onComplete: () -> Void
+    let onUndoComplete: () -> Void
 
     @State private var presentation: DetailsScreenPresentation? = nil
 
     var body: some View {
         VStack(spacing: 0) {
-            
+
             if let updatedAt {
                 LastUpdatedView(date: updatedAt)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.vertical, 8)
             }
-            
-            
+
             if items.isEmpty {
                 VStack(spacing: 12) {
                     Image(systemName: "tray")
@@ -127,7 +137,7 @@ private struct DetailsScreenView: View {
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 DetailsContextMenuView(
-                    isCompleted: false,
+                    isCompleted: isCompleted,
                     isArquived: isArchived,
                     onAction: { action in
                         switch action {
@@ -138,9 +148,9 @@ private struct DetailsScreenView: View {
                         case .delete:
                             presentation = .confirmDelete
                         case .complete:
-                            return
+                            presentation = .confirmComplete
                         case .undoComplete:
-                            return
+                            onUndoComplete()
                         }
                     }
                 )
@@ -151,7 +161,7 @@ private struct DetailsScreenView: View {
                     Image(systemName: "plus")
                 }
                 .accessibilityLabel("Add Item")
-                .disabled(isArchived)
+                .disabled(isArchived || isCompleted)
             }
         }
         .alert(
@@ -160,6 +170,7 @@ private struct DetailsScreenView: View {
         ) {
             Button("Delete", role: .destructive) {
                 onDelete()
+                presentation = nil
             }
             Button("Cancel", role: .cancel) {
                 presentation = nil
@@ -175,6 +186,7 @@ private struct DetailsScreenView: View {
             actions: {
                 Button("Archive", role: .destructive) {
                     onArchive()
+                    presentation = nil
                 }
                 Button("Cancel", role: .cancel) {
                     presentation = nil
@@ -183,6 +195,24 @@ private struct DetailsScreenView: View {
             message: {
                 Text(
                     "Archived lists cannot be edited. Restore this list before making changes"
+                )
+            }
+        )
+        .alert(
+            "Complete this list?",
+            isPresented: .constant(presentation == .confirmComplete),
+            actions: {
+                Button("Complete", role: .destructive) {
+                    onComplete()
+                    presentation = nil
+                }
+                Button("Cancel", role: .cancel) {
+                    presentation = nil
+                }
+            },
+            message: {
+                Text(
+                    "Completing a list will mark all items as done. Once completed a list cannot be edited, undo this action before making changes "
                 )
             }
         )
@@ -204,6 +234,7 @@ private struct DetailsScreenView: View {
         DetailsScreenView(
             title: "Lista Sample",
             isArchived: false,
+            isCompleted: false,
             updatedAt: Date(),
             items: [
                 ListaItemUiModel(
@@ -218,12 +249,10 @@ private struct DetailsScreenView: View {
             onAddItem: { _ in },
             onToggleItemState: { _ in },
             onDelete: {},
-            onArchive: {
-
-            },
-            onUndoArchive: {
-
-            }
+            onArchive: {},
+            onUndoArchive: {},
+            onComplete: {},
+            onUndoComplete: {}
         )
     }
 }

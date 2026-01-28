@@ -17,10 +17,13 @@ extension DetailsScreen {
         private let archiveListService: ArchiveListServiceProtocol
         private let createItemService: CreateListItemServiceProtocol
         private let updateItemStatusService: UpdateItemStatusServiceProtocol
+        private let completeListService: CompleteListServiceProtocol
+        private let revertCompleteListService: RevertCompleteServiceProtocol
         private let dateProvider: DateProviderProtocol
 
         @Published private(set) var items: [ListaItemUiModel] = []
         @Published private(set) var isArchived: Bool = false
+        @Published private(set) var isCompleted: Bool = false
         @Published private(set) var updatedAt: Date? = nil
         private var listId: String!
 
@@ -30,7 +33,9 @@ extension DetailsScreen {
             updateItemStatusService: UpdateItemStatusServiceProtocol,
             deleteListService: RemoveListServiceProtocol,
             archiveListService: ArchiveListServiceProtocol,
-            dateProvider: DateProviderProtocol
+            dateProvider: DateProviderProtocol,
+            completeListService: CompleteListServiceProtocol,
+            revertCompleteListService: RevertCompleteServiceProtocol
         ) {
             self.fetchDetailsService = fetchDetailsService
             self.createItemService = createItemService
@@ -38,25 +43,13 @@ extension DetailsScreen {
             self.deleteListService = deleteListService
             self.archiveListService = archiveListService
             self.dateProvider = dateProvider
+            self.completeListService = completeListService
+            self.revertCompleteListService = revertCompleteListService
         }
 
         func onAppear(listaId: String) {
-            Task {
-                guard let uuid = UUID(uuidString: listaId) else { return }
-                do {
-                    let details = try await fetchDetailsService.fetch(
-                        listaId: uuid
-                    )
-                    items = details.items.map { item in
-                        item.toUiModel()
-                    }
-                    isArchived = details.isArchived
-                    listId = details.id.uuidString
-                    updatedAt = details.updatedAt
-                } catch {
-                    items = []
-                }
-            }
+            self.listId = listaId
+            loadList()
         }
 
         func onAddNewItem(item: AddListaItemUiModel) {
@@ -151,6 +144,45 @@ extension DetailsScreen {
                     )
                 }
             }
+        }
+        
+        func setCompletedState(state: Bool) {
+            Task {
+                do {
+                    if state {
+                        try await completeListService.complete(listaId: listId)
+                    } else {
+                        try await revertCompleteListService.revert(listaId: listId)
+                    }
+                    
+                    loadList()
+                } catch {
+                    print(
+                        "Error updating archived list state: \(listId ?? ""). Error: \(error)"
+                    )
+                }
+            }
+        }
+        
+        private func loadList() {
+            Task {
+                guard let uuid = UUID(uuidString: self.listId) else { return }
+                do {
+                    let details = try await fetchDetailsService.fetch(
+                        listaId: uuid
+                    )
+                    items = details.items.map { item in
+                        item.toUiModel()
+                    }
+                    isArchived = details.isArchived
+                    isCompleted = details.isCompleted
+                    listId = details.id.uuidString
+                    updatedAt = details.updatedAt
+                } catch {
+                    items = []
+                }
+            }
+            
         }
 
         private func sanitizeString(input: String?) -> String? {
