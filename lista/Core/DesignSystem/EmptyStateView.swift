@@ -40,7 +40,7 @@ struct EmptyStateView: View {
                         .padding(.horizontal, 20)
                         .padding(.vertical, 10)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.borderless)
             }
         }
         .padding(.horizontal, 32)
