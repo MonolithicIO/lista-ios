@@ -54,7 +54,9 @@ extension HomeScreen {
         @Published var searchQuery: String = ""
 
         func onAppear() {
-            fetchLists()
+            Task {
+                await fetchLists()
+            }
         }
 
         func addList(title: String) {
@@ -86,23 +88,27 @@ extension HomeScreen {
             }
         }
 
-        private func fetchLists() {
+        func onChangeSearchQuery() {
             Task {
-                do {
-                    items = try await fetchListsService.fetch(
-                        filter: FetchListFilter(
-                            query: self.searchQuery,
-                            state: self.filter.toDomainModel()
-                        )
-                    ).map { domainModel in
-                        ListaUiModel(
-                            id: domainModel.id.uuidString,
-                            title: domainModel.title
-                        )
-                    }
-                } catch {
+                await fetchLists()
+            }
+        }
 
+        private func fetchLists() async {
+            do {
+                items = try await fetchListsService.fetch(
+                    filter: FetchListFilter(
+                        query: self.searchQuery,
+                        state: self.filter.toDomainModel()
+                    )
+                ).map { domainModel in
+                    ListaUiModel(
+                        id: domainModel.id.uuidString,
+                        title: domainModel.title
+                    )
                 }
+            } catch {
+
             }
         }
     }
