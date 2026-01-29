@@ -9,15 +9,26 @@ import Combine
 import Foundation
 
 extension HomeScreen {
-    
+
     enum Filter: String, CaseIterable, Identifiable {
         case active = "Active"
         case completed = "Completed"
         case archived = "Archived"
 
         var id: String { rawValue }
+
+        func toDomainModel() -> ListState {
+            switch self {
+            case .active:
+                return .active
+            case .completed:
+                return .completed
+            case .archived:
+                return .archived
+            }
+        }
     }
-    
+
     enum Presentation {
         case addList
     }
@@ -39,24 +50,19 @@ extension HomeScreen {
         }
 
         @Published private(set) var items: [ListaUiModel] = []
+        @Published private(set) var filter: Filter = .active
+        @Published private(set) var searchQuery: String = ""
 
-        func onAppear() async {
-            do {
-                items = try await fetchListsService.fetch().map { domainModel in
-                    ListaUiModel(
-                        id: domainModel.id.uuidString,
-                        title: domainModel.title
-                    )
-                }
-            } catch {
-
-            }
+        func onAppear()  {
+            fetchLists()
         }
 
         func addList(title: String) {
             Task {
                 do {
-                    let newList = try await createListService.create(title: title)
+                    let newList = try await createListService.create(
+                        title: title
+                    )
                     items.append(
                         ListaUiModel(
                             id: newList.id.uuidString,
@@ -78,7 +84,26 @@ extension HomeScreen {
             } catch {
 
             }
+        }
 
+        private func fetchLists() {
+            Task {
+                do {
+                    items = try await fetchListsService.fetch(
+                        filter: FetchListFilter(
+                            query: self.searchQuery,
+                            state: self.filter.toDomainModel()
+                        )
+                    ).map { domainModel in
+                        ListaUiModel(
+                            id: domainModel.id.uuidString,
+                            title: domainModel.title
+                        )
+                    }
+                } catch {
+
+                }
+            }
         }
     }
 }

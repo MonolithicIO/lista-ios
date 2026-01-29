@@ -9,7 +9,7 @@ import CoreData
 import Foundation
 
 protocol ListDataSourceProtocol {
-    func fetchLists() async throws -> [Lista]
+    func fetchLists(filter: FetchListFilter) async throws -> [Lista]
     func createList(title: String) async throws -> Lista
     func removeList(id: UUID) async throws
     func getListaDetails(id: UUID) async throws -> ListaDetails
@@ -55,14 +55,58 @@ final class ListDataSource: ListDataSourceProtocol {
         }
     }
 
-    func fetchLists() async throws -> [Lista] {
+    func fetchLists(filter: FetchListFilter) async throws -> [Lista] {
         try await context.perform { [context] in
             let request: NSFetchRequest<ListaEntity> =
                 ListaEntity.fetchRequest()
-            let entities: [ListaEntity] = try context.fetch(request)
 
-            return entities.compactMap { entity -> Lista? in
-                return Lista(id: entity.id!, title: entity.title!)
+            var predicates: [NSPredicate] = []
+
+            switch filter.state {
+            case .active:
+                predicates.append(
+                    NSPredicate(
+                        format: "isCompleted == NO AND isArchived == NO"
+                    )
+                )
+
+            case .completed:
+                predicates.append(
+                    NSPredicate(format: "isCompleted == YES")
+                )
+
+            case .archived:
+                predicates.append(
+                    NSPredicate(format: "isArchived == YES")
+                )
+            }
+
+            if !filter.query.isEmpty {
+                predicates.append(
+                    NSPredicate(
+                        format: "title CONTAINS[cd] %@",
+                        filter.query
+                    )
+                )
+            }
+
+            request.predicate = NSCompoundPredicate(
+                andPredicateWithSubpredicates: predicates
+            )
+
+            request.sortDescriptors = [
+                NSSortDescriptor(key: "title", ascending: true)
+            ]
+
+            let entities = try context.fetch(request)
+
+            return entities.compactMap { entity in
+                guard let id = entity.id,
+                      let title = entity.title else {
+                    return nil
+                }
+
+                return Lista(id: id, title: title)
             }
         }
     }

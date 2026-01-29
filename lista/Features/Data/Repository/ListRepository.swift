@@ -9,7 +9,7 @@ import Foundation
 
 protocol ListRepositoryProtocol {
 
-    func fetchLists() async throws -> [Lista]
+    func fetchLists(filter: FetchListFilter) async throws -> [Lista]
     func createList(title: String) async throws -> Lista
     func removeList(id: UUID) async throws
     func fetchListDetails (listaId _id: UUID) async throws -> ListaDetails
@@ -25,8 +25,8 @@ final class ListRepository: ListRepositoryProtocol {
         self.datasource = datasource
     }
 
-    func fetchLists() async throws -> [Lista] {
-        return try await datasource.fetchLists()
+    func fetchLists(filter: FetchListFilter) async throws -> [Lista] {
+        return try await datasource.fetchLists(filter: filter)
     }
 
     func createList(title: String) async throws  -> Lista {

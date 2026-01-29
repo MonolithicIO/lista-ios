@@ -43,7 +43,7 @@ struct HomeScreen: View {
                 }
             }
         ).task {
-            await viewModel.onAppear()
+            viewModel.onAppear()
         }
 
     }
