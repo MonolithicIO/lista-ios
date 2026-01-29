@@ -9,6 +9,14 @@ import Combine
 import Foundation
 
 extension HomeScreen {
+    
+    enum Filter: String, CaseIterable, Identifiable {
+        case active = "Active"
+        case completed = "Completed"
+        case archived = "Archived"
+
+        var id: String { rawValue }
+    }
 
     @MainActor
     class ViewModel: ObservableObject {
