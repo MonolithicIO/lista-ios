@@ -49,17 +49,19 @@ extension HomeScreen {
             }
         }
 
-        func addList(title: String) async {
-            do {
-                let newList = try await createListService.create(title: title)
-                items.append(
-                    ListaUiModel(
-                        id: newList.id.uuidString,
-                        title: newList.title
+        func addList(title: String) {
+            Task {
+                do {
+                    let newList = try await createListService.create(title: title)
+                    items.append(
+                        ListaUiModel(
+                            id: newList.id.uuidString,
+                            title: newList.title
+                        )
                     )
-                )
-            } catch {
+                } catch {
 
+                }
             }
         }
 

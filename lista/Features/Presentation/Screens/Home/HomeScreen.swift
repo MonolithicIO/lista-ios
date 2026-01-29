@@ -27,9 +27,9 @@ struct HomeScreen: View {
             searchText: .constant(""),
             selectedFilter: .constant(.active),
             onAction: { action in
-                switch(action) {
+                switch action {
                 case .onAddTap:
-                    return
+                    isPresentingNewList = true
                 case .onItemTap(let item):
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
@@ -40,6 +40,14 @@ struct HomeScreen: View {
             }
         ).task {
             await viewModel.onAppear()
+        }
+        .sheet(isPresented: $isPresentingNewList) {
+            NavigationStack {
+                AddListView { title in
+                    viewModel.addList(title: title)
+                    isPresentingNewList = true
+                }
+            }
         }
     }
 }
@@ -56,13 +64,17 @@ private struct HomeScreenView: View {
     let items: [ListaUiModel]
     @Binding var searchText: String
     @Binding var selectedFilter: HomeScreen.Filter
-
     let onAction: (Actions) -> Void
 
     var body: some View {
         Group {
             if items.isEmpty {
-//                EmptyStateView(onAddTap: onAddTap)
+                EmptyStateView(
+                    title: "No lists created",
+                    description:
+                        "Tap the plus button to create your first list.",
+                    iconName: "list.bullet"
+                )
             } else {
                 List(items) { item in
                     Button {
@@ -75,11 +87,11 @@ private struct HomeScreenView: View {
                 .listStyle(.insetGrouped)
             }
         }
-        .navigationTitle("Listas")
+        .navigationTitle("Lists")
         .searchable(
             text: $searchText,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Buscar listas"
+            prompt: "Search lists"
         )
         .toolbar {
             // Settings
@@ -98,13 +110,13 @@ private struct HomeScreenView: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel("Nova lista")
+                .accessibilityLabel("New lsit")
             }
 
             // Filtro
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
-                    Picker("Filtro", selection: $selectedFilter) {
+                    Picker("Filter", selection: $selectedFilter) {
                         ForEach(HomeScreen.Filter.allCases) { filter in
                             Text(filter.rawValue).tag(filter)
                         }
@@ -117,7 +129,6 @@ private struct HomeScreenView: View {
     }
 }
 
-
 #Preview {
     NavigationStack {
         HomeScreenView(
@@ -127,7 +138,7 @@ private struct HomeScreenView: View {
             ],
             searchText: .constant(""),
             selectedFilter: .constant(.active),
-            onAction: {_ in}
+            onAction: { _ in }
         )
     }
 }

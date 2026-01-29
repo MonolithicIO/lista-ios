@@ -60,10 +60,10 @@ struct DetailsScreen: View {
             }
         }
     }
-    
+
     private func handleEvent(event: Events) {
-        switch(event) {
-            
+        switch event {
+
         case .deleteSuccess:
             dismiss()
         }
@@ -97,17 +97,11 @@ private struct DetailsScreenView: View {
             .padding(.vertical, 8)
 
             if items.isEmpty {
-                VStack(spacing: 12) {
-                    Image(systemName: "tray")
-                        .font(.system(size: 44))
-                        .foregroundStyle(AppColors.mutedForeground)
-                    Text("No items yet")
-                        .font(.headline)
-                        .foregroundStyle(AppColors.foreground)
-                    Text("Tap the + button to add your first item.")
-                        .font(.subheadline)
-                        .foregroundStyle(AppColors.mutedForeground)
-                }
+                EmptyStateView(
+                    title: "No items yet",
+                    description: "Tap the + button to add your first item.",
+                    iconName: "list.bullet"
+                )
                 .frame(
                     maxWidth: .infinity,
                     maxHeight: .infinity,
