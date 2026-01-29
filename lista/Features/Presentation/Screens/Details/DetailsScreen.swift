@@ -54,6 +54,19 @@ struct DetailsScreen: View {
         .task {
             viewModel.onAppear(listaId: listaId)
         }
+        .onChange(of: self.viewModel.events) { _, newValue in
+            if let event = newValue {
+                self.handleEvent(event: event)
+            }
+        }
+    }
+    
+    private func handleEvent(event: Events) {
+        switch(event) {
+            
+        case .deleteSuccess:
+            dismiss()
+        }
     }
 }
 
@@ -248,7 +261,7 @@ extension DetailsScreenView {
         DetailsScreenView(
             title: "Lista Sample",
             isArchived: false,
-            isCompleted: false,
+            isCompleted: true,
             updatedAt: Date(),
             items: [
                 ListaItemUiModel(

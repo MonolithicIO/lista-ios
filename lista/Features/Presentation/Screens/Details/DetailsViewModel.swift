@@ -9,6 +9,10 @@ import Combine
 import Foundation
 
 extension DetailsScreen {
+    
+    enum Events: Equatable {
+        case deleteSuccess
+    }
 
     @MainActor
     class ViewModel: ObservableObject {
@@ -25,6 +29,7 @@ extension DetailsScreen {
         @Published private(set) var isArchived: Bool = false
         @Published private(set) var isCompleted: Bool = false
         @Published private(set) var updatedAt: Date? = nil
+        @Published private(set) var events: Events? = nil
         private var listId: String!
 
         init(
@@ -119,6 +124,7 @@ extension DetailsScreen {
             Task {
                 do {
                     try await deleteListService.remove(listId: listId)
+                    events = .deleteSuccess
                 } catch {
                     print(
                         "Error deleting list: \(listId ?? ""). Error: \(error)"
