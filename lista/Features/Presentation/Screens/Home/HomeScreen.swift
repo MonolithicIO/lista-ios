@@ -96,7 +96,7 @@ private struct HomeScreenView: View {
                     )
                     .listRowBackground(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(AppColors.card)
+                            .fill(AppColors.accent)
                     )
                 }
                 .listStyle(.plain)

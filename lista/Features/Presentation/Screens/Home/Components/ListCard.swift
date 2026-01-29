@@ -15,13 +15,13 @@ struct ListaCardView: View {
         HStack {
             Text(item.title)
                 .font(.body.weight(.medium))
-                .foregroundStyle(AppColors.cardForeground)
+                .foregroundStyle(AppColors.accentForeground)
                 .lineLimit(1)
 
             Spacer()
             Image(systemName: "chevron.right")
                 .font(.subheadline.weight(.medium))
-                .foregroundStyle(AppColors.cardForeground)
+                .foregroundStyle(AppColors.accentForeground)
         }
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
