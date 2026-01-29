@@ -83,13 +83,25 @@ private struct HomeScreenView: View {
                     Button {
                         onAction(.onItemTap(item))
                     } label: {
-                        Text(item.title)
-                            .font(.body)
+                        ListaCardView(item: item)
                     }
+                    .listRowSeparator(.hidden)
+                    .listRowInsets(
+                        .init(top: 6, leading: 0, bottom: 6, trailing: 0)
+                    )
+                    .listRowBackground(
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(AppColors.card)
+                    )
                 }
-                .listStyle(.insetGrouped)
+                .listStyle(.plain)
+                .listRowSpacing(12)
+                .scrollContentBackground(.hidden)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 16)
+        .background(AppColors.background.ignoresSafeArea())
         .navigationTitle("Lists")
         .searchable(
             text: $searchText,

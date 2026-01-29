@@ -8,35 +8,22 @@
 import Foundation
 import SwiftUI
 
-struct ListCard: View {
+struct ListaCardView: View {
     let item: ListaUiModel
-    let onTap: () -> Void
 
     var body: some View {
-        Button {
-            onTap()
-        } label: {
-            HStack(spacing: 8) {
-                Text(item.title)
-                    .font(.headline)
-                    .foregroundStyle(AppColors.cardForeground)
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundStyle(AppColors.cardForeground)
-                    .font(.title3)
-            }
-            .padding(16)
-            .frame(maxWidth: .infinity, alignment: .leading)  // <- chave!
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(AppColors.card)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(AppColors.border, lineWidth: 1)
-            )
-            .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
-            .contentShape(Rectangle())
-        }.buttonStyle(.plain)
+        HStack {
+            Text(item.title)
+                .font(.body.weight(.medium))
+                .foregroundStyle(AppColors.cardForeground)
+                .lineLimit(1)
+
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.subheadline.weight(.medium))
+                .foregroundStyle(AppColors.cardForeground)
+        }
+        .padding(.vertical, 12)
+        .padding(.horizontal, 16)
     }
 }
