@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct AddListView: View {
-    @Environment(\.dismiss) private var dismiss
+    let onDismiss: () -> Void
     let onSubmit: (String) -> Void
 
     @State private var listTitle: String = ""
@@ -31,14 +31,13 @@ struct AddListView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                    dismiss()
+                    onDismiss()
                 }
             }
 
             ToolbarItem(placement: .confirmationAction) {
                 Button("Add") {
                     onSubmit(listTitle)
-                    dismiss()
                 }.disabled(!isAddButtonEnabled)
             }
         }

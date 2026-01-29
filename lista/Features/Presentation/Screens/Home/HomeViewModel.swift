@@ -17,6 +17,10 @@ extension HomeScreen {
 
         var id: String { rawValue }
     }
+    
+    enum Presentation {
+        case addList
+    }
 
     @MainActor
     class ViewModel: ObservableObject {

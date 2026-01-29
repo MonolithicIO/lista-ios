@@ -100,7 +100,11 @@ private struct DetailsScreenView: View {
                 EmptyStateView(
                     title: "No items yet",
                     description: "Tap the + button to add your first item.",
-                    iconName: "list.bullet"
+                    iconName: "list.bullet",
+                    actionTitle: "Create item",
+                    onAction: {
+                        presentation = .addItem
+                    }
                 )
                 .frame(
                     maxWidth: .infinity,

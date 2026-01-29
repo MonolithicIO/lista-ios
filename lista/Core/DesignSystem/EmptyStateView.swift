@@ -13,6 +13,8 @@ struct EmptyStateView: View {
     let title: String
     let description: String
     let iconName: String
+    let actionTitle: String?
+    let onAction: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 16) {
@@ -31,9 +33,17 @@ struct EmptyStateView: View {
                     .foregroundStyle(AppColors.mutedForeground)
                     .multilineTextAlignment(.center)
             }
+            if let actionTitle, let onAction {
+                Button(action: onAction) {
+                    Text(actionTitle)
+                        .font(.headline)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 10)
+                }
+                .buttonStyle(.borderedProminent)
+            }
         }
         .padding(.horizontal, 32)
         .accessibilityElement(children: .combine)
     }
 }
-

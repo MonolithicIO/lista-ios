@@ -12,7 +12,7 @@ struct HomeScreen: View {
         NavigationCoordinator
 
     @StateObject private var viewModel: HomeScreen.ViewModel
-    @State private var isPresentingNewList: Bool = false
+    @State private var presentation: Presentation? = nil
 
     init(
         viewModel: HomeScreen.ViewModel = InstanceKeeper.shared
@@ -26,29 +26,26 @@ struct HomeScreen: View {
             items: viewModel.items,
             searchText: .constant(""),
             selectedFilter: .constant(.active),
+            presentation: $presentation,
             onAction: { action in
                 switch action {
                 case .onAddTap:
-                    isPresentingNewList = true
+                    presentation = .addList
                 case .onItemTap(let item):
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
                     )
                 case .onSettingsTap:
                     coordinator.push(.settings)
+                case .onAddItem(let title):
+                    viewModel.addList(title: title)
+                    presentation = nil
                 }
             }
         ).task {
             await viewModel.onAppear()
         }
-        .sheet(isPresented: $isPresentingNewList) {
-            NavigationStack {
-                AddListView { title in
-                    viewModel.addList(title: title)
-                    isPresentingNewList = true
-                }
-            }
-        }
+
     }
 }
 
@@ -56,6 +53,7 @@ extension HomeScreenView {
     enum Actions {
         case onSettingsTap
         case onAddTap
+        case onAddItem(String)
         case onItemTap(ListaUiModel)
     }
 }
@@ -64,6 +62,7 @@ private struct HomeScreenView: View {
     let items: [ListaUiModel]
     @Binding var searchText: String
     @Binding var selectedFilter: HomeScreen.Filter
+    @Binding var presentation: HomeScreen.Presentation?
     let onAction: (Actions) -> Void
 
     var body: some View {
@@ -72,8 +71,12 @@ private struct HomeScreenView: View {
                 EmptyStateView(
                     title: "No lists created",
                     description:
-                        "Tap the plus button to create your first list.",
-                    iconName: "list.bullet"
+                        "Create your first list and start tracking your tasks!",
+                    iconName: "list.bullet",
+                    actionTitle: "Create list",
+                    onAction: {
+                        onAction(.onAddTap)
+                    }
                 )
             } else {
                 List(items) { item in
@@ -94,7 +97,7 @@ private struct HomeScreenView: View {
             prompt: "Search lists"
         )
         .toolbar {
-            // Settings
+
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: {
                     onAction(.onSettingsTap)
@@ -103,7 +106,6 @@ private struct HomeScreenView: View {
                 }
             }
 
-            // Add
             ToolbarItem(placement: .topBarTrailing) {
                 Button(action: {
                     onAction(.onAddTap)
@@ -113,7 +115,6 @@ private struct HomeScreenView: View {
                 .accessibilityLabel("New lsit")
             }
 
-            // Filtro
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Picker("Filter", selection: $selectedFilter) {
@@ -124,6 +125,19 @@ private struct HomeScreenView: View {
                 } label: {
                     Image(systemName: "line.3.horizontal.decrease.circle")
                 }
+            }
+        }
+        .sheet(isPresented: .constant(presentation == .addList)) {
+            NavigationStack {
+                AddListView(
+                    onDismiss: {
+                        presentation = nil
+                    },
+                    onSubmit: {
+                        title in
+                        onAction(.onAddItem(title))
+                    }
+                )
             }
         }
     }
@@ -138,6 +152,7 @@ private struct HomeScreenView: View {
             ],
             searchText: .constant(""),
             selectedFilter: .constant(.active),
+            presentation: .constant(nil),
             onAction: { _ in }
         )
     }
