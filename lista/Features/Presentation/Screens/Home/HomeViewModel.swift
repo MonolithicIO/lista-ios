@@ -50,10 +50,10 @@ extension HomeScreen {
         }
 
         @Published private(set) var items: [ListaUiModel] = []
-        @Published private(set) var filter: Filter = .active
-        @Published private(set) var searchQuery: String = ""
+        @Published var filter: Filter = .active
+        @Published var searchQuery: String = ""
 
-        func onAppear()  {
+        func onAppear() {
             fetchLists()
         }
 

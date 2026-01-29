@@ -24,8 +24,8 @@ struct HomeScreen: View {
     var body: some View {
         HomeScreenView(
             items: viewModel.items,
-            searchText: .constant(""),
-            selectedFilter: .constant(.active),
+            searchText: $viewModel.searchQuery,
+            selectedFilter: $viewModel.filter,
             presentation: $presentation,
             onAction: { action in
                 switch action {
