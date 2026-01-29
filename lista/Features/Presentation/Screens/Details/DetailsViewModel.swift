@@ -137,12 +137,11 @@ extension DetailsScreen {
         func setArchiveState(state: Bool) {
             Task {
                 do {
-                    let newState = !self.isArchived
                     try await archiveListService.archive(
                         listaId: listId,
-                        isArchived: newState
+                        isArchived: state
                     )
-                    self.isArchived = newState
+                    self.isArchived = state
                     self.updatedAt = try dateProvider.currentDate()
                 } catch {
                     print(
