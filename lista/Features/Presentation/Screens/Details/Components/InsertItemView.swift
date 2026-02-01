@@ -20,6 +20,7 @@ struct InsertItemView: View {
     @State private var isAddImagePromptVisible = false
     @State private var isGalleryPickerVisible = false
     @State private var galleryPickerSelection: PhotosPickerItem?
+    @State private var isCameraPickerVisible: Bool = false
     @State private var image: UIImage?
 
     var body: some View {
@@ -80,12 +81,24 @@ struct InsertItemView: View {
                                 Button("Select from gallery") {
                                     isGalleryPickerVisible = true
                                 }
+                                
+                                Button("Take photo") {
+                                    isCameraPickerVisible = true
+                                }
                             }
                             .photosPicker(
                                 isPresented: $isGalleryPickerVisible,
                                 selection: $galleryPickerSelection,
                                 matching: .images
                             )
+                            .fullScreenCover(isPresented: $isCameraPickerVisible) {
+                                CameraPickerView(
+                                    onImagePicked: { uiImage in
+                                        self.image = uiImage
+                                    }
+                                )
+                            }
+
                             Spacer()
                             if let imageToDisplay = self.image {
                                 Image(uiImage: imageToDisplay)
