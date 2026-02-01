@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import PhotosUI
 import SwiftUI
 
 struct InsertItemView: View {
@@ -16,6 +17,10 @@ struct InsertItemView: View {
     @State private var description: String = ""
     @State private var url: String = ""
     @State private var addMore: Bool = false
+    @State private var isAddImagePromptVisible = false
+    @State private var isGalleryPickerVisible = false
+    @State private var galleryPickerSelection: PhotosPickerItem?
+    @State private var image: UIImage?
 
     var body: some View {
         NavigationStack {
@@ -31,7 +36,7 @@ struct InsertItemView: View {
                     )
                     .listRowBackground(AppColors.accent)
                 }
-                
+
                 Section(
                     header: HStack {
                         Text("Description").foregroundStyle(
@@ -50,7 +55,60 @@ struct InsertItemView: View {
                     )
                     .listRowBackground(AppColors.accent)
                 }
-                
+
+                Section(
+                    header: HStack {
+                        Text("Image").foregroundStyle(
+                            AppColors.foreground
+                        )
+                        Spacer()
+                        Text("Optional").foregroundStyle(
+                            AppColors.mutedForeground
+                        )
+                        .font(.caption)
+                    },
+                    content: {
+                        HStack {
+                            Button("Attach image") {
+                                self.isAddImagePromptVisible = true
+                            }
+                            .confirmationDialog(
+                                "",
+                                isPresented: $isAddImagePromptVisible,
+                                titleVisibility: .hidden
+                            ) {
+                                Button("Select from gallery") {
+                                    isGalleryPickerVisible = true
+                                }
+                            }
+                            .photosPicker(
+                                isPresented: $isGalleryPickerVisible,
+                                selection: $galleryPickerSelection,
+                                matching: .images
+                            )
+                            Spacer()
+                            if let imageToDisplay = self.image {
+                                Image(uiImage: imageToDisplay)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(maxWidth: 100, maxHeight: 100)
+                            }
+                        }
+                        .listRowBackground(AppColors.accent)
+                    }
+                )
+                .onChange(of: galleryPickerSelection) { oldValue, newValue in
+                    Task {
+                        if let data = try? await newValue?.loadTransferable(
+                            type: Data.self
+                        ),
+                            let uiImage = UIImage(data: data)
+                        {
+                            self.image = uiImage
+                        }
+                    }
+                }
+
                 Toggle(
                     isOn: $addMore
                 ) {
