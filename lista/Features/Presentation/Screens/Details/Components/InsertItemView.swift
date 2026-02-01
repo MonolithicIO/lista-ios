@@ -5,23 +5,44 @@
 //  Created by Lucca Beurmann on 26/01/26.
 //
 
+import Combine
 import Foundation
 import PhotosUI
 import SwiftUI
+
+final class InsertItemViewModel: ObservableObject {
+    @Published var title: String = ""
+    @Published var description: String = ""
+    @Published var url: String = ""
+    @Published var addMore: Bool = false
+    @Published var galleryPickerSelection: PhotosPickerItem?
+    @Published var image: UIImage?
+
+    var isSubmitEnabled: Bool {
+        return !title.trimmingCharacters(in: .whitespacesAndNewlines)
+            .isEmpty
+    }
+
+    init() {}
+
+    func clearState() {
+        title = ""
+        description = ""
+        url = ""
+        galleryPickerSelection = nil
+        image = nil
+    }
+}
 
 struct InsertItemView: View {
     let onSubmit: (AddListaItemUiModel) -> Void
     let onDismiss: () -> Void
 
-    @State private var title: String = ""
-    @State private var description: String = ""
-    @State private var url: String = ""
-    @State private var addMore: Bool = false
+    @StateObject private var viewModel: InsertItemViewModel =
+        InsertItemViewModel()
     @State private var isAddImagePromptVisible = false
     @State private var isGalleryPickerVisible = false
-    @State private var galleryPickerSelection: PhotosPickerItem?
     @State private var isCameraPickerVisible: Bool = false
-    @State private var image: UIImage?
 
     var body: some View {
         NavigationStack {
@@ -33,7 +54,7 @@ struct InsertItemView: View {
                 ) {
                     TextField(
                         "Something cool",
-                        text: $title,
+                        text: $viewModel.title,
                     )
                     .listRowBackground(AppColors.accent)
                 }
@@ -52,7 +73,7 @@ struct InsertItemView: View {
                 ) {
                     TextField(
                         "Extra notes",
-                        text: $description,
+                        text: $viewModel.description,
                     )
                     .listRowBackground(AppColors.accent)
                 }
@@ -81,26 +102,28 @@ struct InsertItemView: View {
                                 Button("Select from gallery") {
                                     isGalleryPickerVisible = true
                                 }
-                                
+
                                 Button("Take photo") {
                                     isCameraPickerVisible = true
                                 }
                             }
                             .photosPicker(
                                 isPresented: $isGalleryPickerVisible,
-                                selection: $galleryPickerSelection,
+                                selection: $viewModel.galleryPickerSelection,
                                 matching: .images
                             )
-                            .fullScreenCover(isPresented: $isCameraPickerVisible) {
+                            .fullScreenCover(
+                                isPresented: $isCameraPickerVisible
+                            ) {
                                 CameraPickerView(
                                     onImagePicked: { uiImage in
-                                        self.image = uiImage
+                                        viewModel.image = uiImage
                                     }
                                 )
                             }
 
                             Spacer()
-                            if let imageToDisplay = self.image {
+                            if let imageToDisplay = viewModel.image {
                                 Image(uiImage: imageToDisplay)
                                     .resizable()
                                     .scaledToFit()
@@ -110,20 +133,22 @@ struct InsertItemView: View {
                         .listRowBackground(AppColors.accent)
                     }
                 )
-                .onChange(of: galleryPickerSelection) { oldValue, newValue in
+                .onChange(of: viewModel.galleryPickerSelection) {
+                    oldValue,
+                    newValue in
                     Task {
                         if let data = try? await newValue?.loadTransferable(
                             type: Data.self
                         ),
                             let uiImage = UIImage(data: data)
                         {
-                            self.image = uiImage
+                            viewModel.image = uiImage
                         }
                     }
                 }
 
                 Toggle(
-                    isOn: $addMore
+                    isOn: $viewModel.addMore
                 ) {
                     Text("Add more")
                         .foregroundStyle(AppColors.accentForeground)
@@ -145,30 +170,20 @@ struct InsertItemView: View {
                     Button("Add") {
                         onSubmit(
                             AddListaItemUiModel(
-                                title: title,
-                                description: description,
-                                url: url
+                                title: viewModel.title,
+                                description: viewModel.description,
+                                url: viewModel.url
                             ),
                         )
-                        if addMore {
-                            clearState()
-                            return
+                        if viewModel.addMore {
+                            viewModel.clearState()
                         }
                         onDismiss()
                     }
-                    .disabled(
-                        title.trimmingCharacters(in: .whitespacesAndNewlines)
-                            .isEmpty
-                    )
+                    .disabled(viewModel.isSubmitEnabled)
                 }
             }
         }
-    }
-
-    private func clearState() {
-        title = ""
-        description = ""
-        url = ""
     }
 }
 
