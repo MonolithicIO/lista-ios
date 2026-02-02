@@ -16,4 +16,5 @@ struct ListaItem {
     let updatedAt: Date
     let createdAt: Date
     let isCompleted: Bool
+    let imageUrl: String?
 }

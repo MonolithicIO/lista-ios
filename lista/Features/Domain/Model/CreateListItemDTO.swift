@@ -6,10 +6,12 @@
 //
 
 import Foundation
+import UIKit
 
 struct CreateListItemDTO {
     let listId: UUID
     let title: String
     let description: String?
     let url: String?
+    let image: UIImage?
 }

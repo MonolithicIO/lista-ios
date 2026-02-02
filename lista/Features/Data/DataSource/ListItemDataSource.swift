@@ -14,22 +14,42 @@ protocol ListItemDataSourceProtocol {
 }
 
 final class ListItemDataSource: ListItemDataSourceProtocol {
+
     private let context: NSManagedObjectContext
     private let dateProvider: DateProviderProtocol
+    private let diskManager: DiskManagerProtocol
+    private let uuidProvider: UUIDProviderProtocol
 
-    init(context: NSManagedObjectContext, dateProvider: DateProviderProtocol) {
+    init(
+        context: NSManagedObjectContext,
+        dateProvider: DateProviderProtocol,
+        diskManager: DiskManagerProtocol,
+        uuidProvider: UUIDProviderProtocol
+    ) {
         self.context = context
         self.dateProvider = dateProvider
+        self.diskManager = diskManager
+        self.uuidProvider = uuidProvider
     }
 
-    func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem {
+    func createItem(item dto: CreateListItemDTO) async throws -> ListaItem {
         try await context.perform {
+
+            var imageUrl: String?
+
+            if let attachedImage = dto.image {
+                imageUrl = try self.diskManager.saveImage(
+                    image: attachedImage,
+                    fileName: self.uuidProvider.provide().uuidString
+                )
+            }
+
             let listRequest: NSFetchRequest<ListaEntity> =
                 ListaEntity.fetchRequest()
             listRequest.fetchLimit = 1
             listRequest.predicate = NSPredicate(
                 format: "id == %@",
-                _dto.listId as CVarArg
+                dto.listId as CVarArg
             )
 
             guard let lista = try self.context.fetch(listRequest).first else {
@@ -38,19 +58,21 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                     code: 404,
                     userInfo: [
                         NSLocalizedDescriptionKey:
-                            "List with id \(_dto.listId.uuidString) not found"
+                            "List with id \(dto.listId.uuidString) not found"
                     ]
                 )
             }
             let listaItem = ListaItemEntity(context: self.context)
-            listaItem.id = UUID()
-            listaItem.title = _dto.title
-            listaItem.note = _dto.description
-            listaItem.link = _dto.url
+            listaItem.id = self.uuidProvider.provide()
+            listaItem.title = dto.title
+            listaItem.note = dto.description
+            listaItem.link = dto.url
             listaItem.updatedAt = try self.dateProvider.currentDate()
             listaItem.createdAt = try self.dateProvider.currentDate()
             listaItem.lista = lista
             listaItem.isCompleted = false
+            listaItem.imageUrl = imageUrl
+            
             lista.updatedAt = try self.dateProvider.currentDate()
 
             if self.context.hasChanges {
@@ -65,7 +87,8 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 url: listaItem.link,
                 updatedAt: listaItem.updatedAt!,
                 createdAt: listaItem.createdAt!,
-                isCompleted: listaItem.isCompleted
+                isCompleted: listaItem.isCompleted,
+                imageUrl: listaItem.imageUrl
             )
         }
     }
@@ -78,8 +101,9 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 format: "id ==%@",
                 itemId as CVarArg
             )
-            
-            guard let listItem = try self.context.fetch(listItemRequset).first else {
+
+            guard let listItem = try self.context.fetch(listItemRequset).first
+            else {
                 throw NSError(
                     domain: "ListItemDataSource",
                     code: 404,
@@ -89,10 +113,10 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                     ]
                 )
             }
-            
+
             listItem.isCompleted = isActive
             listItem.lista?.updatedAt = try self.dateProvider.currentDate()
-            
+
             if self.context.hasChanges {
                 try self.context.save()
             }

@@ -400,6 +400,10 @@
 				DEVELOPMENT_TEAM = 7H62BDWNNL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to attach images to list items";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to attach audio notes to list items";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We use the photo library to attach images to list items";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -432,6 +436,10 @@
 				DEVELOPMENT_TEAM = 7H62BDWNNL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to attach images to list items";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to attach audio notes to list items";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "We use the photo library to attach images to list items";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

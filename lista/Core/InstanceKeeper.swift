@@ -27,6 +27,14 @@ class InstanceKeeper {
     func provideDateProvider() -> DateProviderProtocol {
         return DateProvider()
     }
+    
+    func provideUuidProvider() -> UUIDProviderProtocol {
+        return UUIDProvider()
+    }
+    
+    func provideDiskManager() -> DiskManagerProtocol {
+        return DiskManager()
+    }
 
     // MARK: - Data Providers
     func provideContext() -> NSManagedObjectContext {
@@ -56,7 +64,10 @@ class InstanceKeeper {
         guard let dataSource = listItemDatasource else {
             let newInstance = ListItemDataSource(
                 context: provideContext(),
-                dateProvider: provideDateProvider()
+                dateProvider: provideDateProvider(),
+                diskManager: provideDiskManager(),
+                uuidProvider: provideUuidProvider()
+                
             )
             self.listItemDatasource = newInstance
 
@@ -129,8 +140,8 @@ class InstanceKeeper {
         )
     }
 
-    func provideDetailsViewModel() -> DetailsScreen.ViewModel {
-        return DetailsScreen.ViewModel(
+    func provideDetailsViewModel() -> DetailsViewModel {
+        return DetailsViewModel(
             fetchDetailsService: provideFetchListDetailsService(),
             createItemService: provideCreateListItemService(),
             updateItemStatusService: provideUpdateItemStatusService(),

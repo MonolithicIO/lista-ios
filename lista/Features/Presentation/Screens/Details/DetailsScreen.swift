@@ -12,10 +12,10 @@ struct DetailsScreen: View {
     let listaTitle: String
 
     @Environment(\.dismiss) private var dismiss
-    @StateObject var viewModel: DetailsScreen.ViewModel
+    @StateObject var viewModel: DetailsViewModel
 
     init(
-        viewModel: DetailsScreen.ViewModel = InstanceKeeper.shared
+        viewModel: DetailsViewModel = InstanceKeeper.shared
             .provideDetailsViewModel(),
         listaId: String,
         listaTitle: String
@@ -61,7 +61,7 @@ struct DetailsScreen: View {
         }
     }
 
-    private func handleEvent(event: Events) {
+    private func handleEvent(event: DetailsViewModel.Events) {
         switch event {
 
         case .deleteSuccess:
@@ -222,7 +222,7 @@ private struct DetailsScreenView: View {
                 )
             }
         )
-        .sheet(isPresented: .constant(presentation == .addItem)) {
+        .fullScreenCover(isPresented: .constant(presentation == .addItem)) {
             InsertItemView(
                 onSubmit: { newItem in
                     onAction(.onAddItem(newItem))
@@ -268,7 +268,8 @@ extension DetailsScreenView {
                     title: "Buy groceries",
                     description: "Milk, eggs, bread",
                     url: nil,
-                    isCompleted: false
+                    isCompleted: false,
+                    image: nil
                 )
             ],
             onAction: { _ in }
