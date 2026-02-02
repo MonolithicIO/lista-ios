@@ -71,7 +71,8 @@ extension DetailsScreen {
                             description: self.sanitizeString(
                                 input: item.description
                             ),
-                            url: self.sanitizeString(input: item.url)
+                            url: self.sanitizeString(input: item.url),
+                            image: item.attachedImage
                         )
                     )
                     items.append(newItem.toUiModel())
@@ -110,7 +111,8 @@ extension DetailsScreen {
                         title: item.title,
                         description: item.description,
                         url: item.url,
-                        isCompleted: newState
+                        isCompleted: newState,
+                        image: item.image
                     )
                     updatedAt = try dateProvider.currentDate()
                 } catch {

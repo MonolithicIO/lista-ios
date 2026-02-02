@@ -25,6 +25,15 @@ final class InsertItemViewModel: ObservableObject {
 
     init() {}
 
+    func mergeState() -> AddListaItemUiModel {
+        return AddListaItemUiModel(
+            title: self.title,
+            description: self.description,
+            url: self.url,
+            attachedImage: self.image
+        )
+    }
+
     func clearState() {
         title = ""
         description = ""
@@ -169,11 +178,7 @@ struct InsertItemView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
                         onSubmit(
-                            AddListaItemUiModel(
-                                title: viewModel.title,
-                                description: viewModel.description,
-                                url: viewModel.url
-                            ),
+                            self.viewModel.mergeState()
                         )
                         if viewModel.addMore {
                             viewModel.clearState()

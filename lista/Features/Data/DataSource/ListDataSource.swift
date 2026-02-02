@@ -22,7 +22,10 @@ final class ListDataSource: ListDataSourceProtocol {
     private let context: NSManagedObjectContext
     private let dateProvider: DateProviderProtocol
 
-    init(context: NSManagedObjectContext, dateProvider: DateProviderProtocol) {
+    init(
+        context: NSManagedObjectContext,
+        dateProvider: DateProviderProtocol,
+    ) {
         self.context = context
         self.dateProvider = dateProvider
     }
@@ -102,7 +105,8 @@ final class ListDataSource: ListDataSourceProtocol {
 
             return entities.compactMap { entity in
                 guard let id = entity.id,
-                      let title = entity.title else {
+                    let title = entity.title
+                else {
                     return nil
                 }
 
@@ -186,6 +190,7 @@ final class ListDataSource: ListDataSourceProtocol {
                     updatedAt: updatedAt,
                     createdAt: createdAt,
                     isCompleted: item.isCompleted,
+                    imageUrl: item.imageUrl
                 )
             }
 
@@ -212,7 +217,7 @@ final class ListDataSource: ListDataSourceProtocol {
 
     func setCompletedState(id: UUID, state: Bool) async throws {
         let now = try dateProvider.currentDate()
-        
+
         try await context.perform { [context] in
 
             let request: NSFetchRequest<ListaEntity> =

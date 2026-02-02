@@ -6,9 +6,11 @@
 //
 
 import Foundation
+import UIKit
 
 struct AddListaItemUiModel {
     let title: String
     let description: String?
     let url: String?
+    let attachedImage: UIImage?
 }

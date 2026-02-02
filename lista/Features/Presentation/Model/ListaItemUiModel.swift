@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct ListaItemUiModel: Identifiable {
     let listId: String
@@ -14,6 +15,7 @@ struct ListaItemUiModel: Identifiable {
     let description: String?
     let url: String?
     let isCompleted: Bool
+    let image: UIImage?
 }
 
 extension ListaItem {
@@ -24,7 +26,8 @@ extension ListaItem {
             title: self.title,
             description: self.description,
             url: self.url,
-            isCompleted: self.isCompleted
+            isCompleted: self.isCompleted,
+            image: nil
         )
     }
 }
