@@ -27,7 +27,9 @@ extension ListaItem {
             description: self.description,
             url: self.url,
             isCompleted: self.isCompleted,
-            image: nil
+            image: self.imageUrl.flatMap({ path in
+                return UIImage(contentsOfFile: path)
+            })
         )
     }
 }
