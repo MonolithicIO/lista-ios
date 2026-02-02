@@ -68,51 +68,11 @@ struct ItemFormView: View {
 
                 // URL Section - Only shown if has content or in write mode
                 if viewModel.isWriteMode || !viewModel.url.isEmpty {
-                    Section(
-                        header: HStack {
-                            Text("URL").foregroundStyle(AppColors.foreground)
-                            if viewModel.isWriteMode {
-                                Spacer()
-                                Text("Optional").foregroundStyle(
-                                    AppColors.mutedForeground
-                                )
-                                .font(.caption)
-                            }
-                        }
-                    ) {
-                        VStack(alignment: .leading, spacing: 8) {
-                            if viewModel.isWriteMode {
-                                TextField(
-                                    "https://example.com",
-                                    text: $viewModel.url
-                                )
-                                .textContentType(.URL)
-                                .keyboardType(.URL)
-                                .autocapitalization(.none)
-                            } else {
-                                Text(viewModel.url)
-                                    .foregroundStyle(AppColors.foreground)
-                            }
-
-                            // Open in Safari button (visible in both modes if URL is valid)
-                            if !viewModel.url.isEmpty,
-                                let url = URL(string: viewModel.url),
-                                UIApplication.shared.canOpenURL(url)
-                            {
-                                Button {
-                                    showSafari = true
-                                } label: {
-                                    HStack {
-                                        Image(systemName: "safari")
-                                        Text("Open in Safari")
-                                    }
-                                    .font(.footnote)
-                                    .foregroundStyle(AppColors.blue)
-                                }
-                            }
-                        }
-                        .listRowBackground(AppColors.accent)
-                    }
+                    ItemUrlSectionView(
+                        isWriteMode: viewModel.isWriteMode,
+                        showSafari: $showSafari,
+                        url: $viewModel.url
+                    )
                 }
 
                 //                ItemFormImageSection(
@@ -242,20 +202,6 @@ struct ItemFormView: View {
             }
         }
     }
-}
-
-// MARK: - Safari View
-struct SafariView: UIViewControllerRepresentable {
-    let url: URL
-
-    func makeUIViewController(context: Context) -> SFSafariViewController {
-        return SFSafariViewController(url: url)
-    }
-
-    func updateUIViewController(
-        _ uiViewController: SFSafariViewController,
-        context: Context
-    ) {}
 }
 
 #Preview("Create Mode") {
