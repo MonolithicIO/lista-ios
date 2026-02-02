@@ -11,6 +11,7 @@ import Foundation
 protocol ListItemDataSourceProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
     func updateStatus(itemId: UUID, isActive: Bool) async throws
+    func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
 }
 
 final class ListItemDataSource: ListItemDataSourceProtocol {
@@ -120,6 +121,76 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
             if self.context.hasChanges {
                 try self.context.save()
             }
+        }
+    }
+
+    func updateItem(item dto: UpdateListItemDTO) async throws -> ListaItem {
+        try await context.perform {
+            let itemRequest = ListaItemEntity.fetchRequest()
+            itemRequest.fetchLimit = 1
+            itemRequest.predicate = NSPredicate(
+                format: "id == %@",
+                dto.itemId as CVarArg
+            )
+
+            guard let listItem = try self.context.fetch(itemRequest).first else {
+                throw NSError(
+                    domain: "ListItemDataSource",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey:
+                            "ListItem with id \(dto.itemId.uuidString) not found"
+                    ]
+                )
+            }
+
+            // Handle image updates
+            var newImageUrl: String? = listItem.imageUrl
+
+            if dto.shouldRemoveImage {
+                // Delete old image if exists
+                if let oldImageUrl = listItem.imageUrl {
+                    try? self.diskManager.deleteImage(fileName: oldImageUrl)
+                }
+                newImageUrl = nil
+            } else if let newImage = dto.image {
+                // Delete old image if exists
+                if let oldImageUrl = listItem.imageUrl {
+                    try? self.diskManager.deleteImage(fileName: oldImageUrl)
+                }
+                // Save new image
+                newImageUrl = try self.diskManager.saveImage(
+                    image: newImage,
+                    fileName: self.uuidProvider.provide().uuidString
+                )
+            }
+
+            // Update fields
+            listItem.title = dto.title
+            listItem.note = dto.description
+            listItem.link = dto.url
+            listItem.isCompleted = dto.isCompleted
+            listItem.imageUrl = newImageUrl
+            listItem.updatedAt = try self.dateProvider.currentDate()
+
+            // Update parent list's updatedAt
+            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
+
+            if self.context.hasChanges {
+                try self.context.save()
+            }
+
+            return ListaItem(
+                listId: listItem.lista?.id ?? UUID(),
+                id: listItem.id!,
+                title: listItem.title!,
+                description: listItem.note,
+                url: listItem.link,
+                updatedAt: listItem.updatedAt!,
+                createdAt: listItem.createdAt!,
+                isCompleted: listItem.isCompleted,
+                imageUrl: listItem.imageUrl
+            )
         }
     }
 }
