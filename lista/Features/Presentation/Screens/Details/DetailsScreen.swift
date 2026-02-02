@@ -222,7 +222,7 @@ private struct DetailsScreenView: View {
                 )
             }
         )
-        .sheet(isPresented: .constant(presentation == .addItem)) {
+        .fullScreenCover(isPresented: .constant(presentation == .addItem)) {
             InsertItemView(
                 onSubmit: { newItem in
                     onAction(.onAddItem(newItem))

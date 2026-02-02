@@ -42,4 +42,8 @@ final class InsertItemViewModel: ObservableObject {
         galleryPickerSelection = nil
         image = nil
     }
+    
+    func onClearImage() {
+        image = nil
+    }
 }
