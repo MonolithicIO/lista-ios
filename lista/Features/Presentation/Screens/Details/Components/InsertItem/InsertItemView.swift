@@ -16,7 +16,12 @@ struct InsertItemView: View {
     @StateObject private var viewModel: InsertItemViewModel =
         InsertItemViewModel()
 
-    @State var presentation: InsertItemView.ImagePresentation? = nil
+    @State var presentation: InsertItemView.ImagePresentation? = nil {
+        didSet {
+            print(presentation ?? "no presentation")
+        }
+    }
+    
 
     var body: some View {
         NavigationStack {
@@ -137,10 +142,12 @@ private struct InsertItemImageView: View {
                         HStack(spacing: 12) {
                             Image(systemName: "photo")
                                 .font(.title3)
+                                .foregroundStyle(AppColors.blue)
 
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("Attach image")
                                     .font(.headline)
+                                    .foregroundStyle(AppColors.blue)
 
                                 Text("Gallery or camera")
                                     .font(.caption)
