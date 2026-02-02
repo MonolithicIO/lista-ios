@@ -8,9 +8,10 @@
 import Foundation
 import PhotosUI
 import SwiftUI
+import UIKit
 
 // MARK: - UI State
-enum ImagePickerPresentation {
+enum ImageSource {
     case gallery
     case camera
 }
@@ -23,8 +24,7 @@ struct InsertItemView: View {
     @StateObject private var viewModel: InsertItemViewModel =
         InsertItemViewModel()
 
-    @State var isImagePromptPresented: Bool = false
-    @State var imagePickerPresentation: ImagePickerPresentation? = nil
+    @State var imagePickerSource: ImageSource? = nil
 
     var body: some View {
         NavigationStack {
@@ -61,8 +61,9 @@ struct InsertItemView: View {
                 }
 
                 InsertItemImageView(
-                    presentation: $imagePickerPresentation,
-                    isPickerPromptPresented: $isImagePromptPresented,
+                    onImageSourceSelected: { source in
+                        imagePickerSource = source
+                    },
                     galleryPickerSelection: $viewModel.galleryPickerSelection,
                     selectedImage: $viewModel.image
                 )
@@ -103,16 +104,46 @@ struct InsertItemView: View {
                     .disabled(viewModel.isSubmitEnabled)
                 }
             }
+            .photosPicker(
+                isPresented: Binding(
+                    get: { imagePickerSource == .gallery },
+                    set: { isPresented in
+                        if !isPresented {
+                            imagePickerSource = nil
+                        }
+                    }
+                ),
+                selection: $viewModel.galleryPickerSelection,
+                matching: .images
+            )
+            .fullScreenCover(
+                isPresented: Binding(
+                    get: { imagePickerSource == .camera },
+                    set: { isPresented in
+                        if !isPresented {
+                            imagePickerSource = nil
+                        }
+                    }
+                )
+            ) {
+                CameraPickerView(
+                    onImagePicked: { uiImage in
+                        viewModel.image = uiImage
+                        imagePickerSource = nil
+                    }
+                )
+            }
         }
     }
 }
 
 // MARK: - Select Image View
 private struct InsertItemImageView: View {
-    @Binding var presentation: ImagePickerPresentation?
-    @Binding var isPickerPromptPresented: Bool
+    let onImageSourceSelected: (ImageSource) -> Void
     @Binding var galleryPickerSelection: PhotosPickerItem?
     @Binding var selectedImage: UIImage?
+    
+    @State private var isConfirmationDialogPresented: Bool = false
 
     var body: some View {
         Section(
@@ -130,7 +161,7 @@ private struct InsertItemImageView: View {
             VStack(spacing: 12) {
                 if selectedImage == nil {
                     Button {
-                        isPickerPromptPresented = true
+                        isConfirmationDialogPresented = true
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: "photo")
@@ -161,15 +192,17 @@ private struct InsertItemImageView: View {
                     }
                     .confirmationDialog(
                         "",
-                        isPresented: $isPickerPromptPresented,
+                        isPresented: $isConfirmationDialogPresented,
                         titleVisibility: .hidden
                     ) {
                         Button("Select from gallery") {
-                            presentation = .gallery
+                            onImageSourceSelected(.gallery)
                         }
 
-                        Button("Take photo") {
-                            presentation = .camera
+                        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                            Button("Take photo") {
+                                onImageSourceSelected(.camera)
+                            }
                         }
                     }
                 }
@@ -200,35 +233,6 @@ private struct InsertItemImageView: View {
             }
             .padding(.vertical, 8)
             .listRowBackground(AppColors.accent)
-        }
-        .photosPicker(
-            isPresented: Binding(
-                get: { presentation == .gallery },
-                set: { isPresented in
-                    if !isPresented {
-                        presentation = nil
-                    }
-                }
-            ),
-            selection: $galleryPickerSelection,
-            matching: .images
-        )
-        .fullScreenCover(
-            isPresented: Binding(
-                get: { presentation == .camera },
-                set: { isPresented in
-                    if !isPresented {
-                        presentation = nil
-                    }
-                }
-            )
-        ) {
-            CameraPickerView(
-                onImagePicked: { uiImage in
-                    selectedImage = uiImage
-                    presentation = nil
-                }
-            )
         }
     }
 }
