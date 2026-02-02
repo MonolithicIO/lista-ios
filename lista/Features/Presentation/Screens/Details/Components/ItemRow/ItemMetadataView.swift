@@ -16,14 +16,8 @@ struct ItemMetadataView: View {
         HStack(spacing: 8) {
             ForEach(metadata, id: \.self) { metadata in
                 ZStack {
-                    switch metadata {
-                    case .description:
-                        Image(systemName: "text.page")
-                    case .link:
-                        Image(systemName: "link")
-                    case .image:
-                        Image(systemName: "photo")
-                    }
+                    Image(systemName: metadata.systemName)
+                        .foregroundStyle(AppColors.foreground.opacity(0.5))
                 }
             }
         }
@@ -34,4 +28,19 @@ enum ItemMetadata {
     case description
     case link
     case image
+
+    var systemName: String {
+        switch self {
+        case .description:
+            return "text.page"
+        case .link:
+            return "link"
+        case .image:
+            return "camera"
+        }
+    }
+}
+
+#Preview {
+    ItemMetadataView(metadata: [.description, .image, .link])
 }

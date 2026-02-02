@@ -100,19 +100,11 @@ final class ItemFormViewModel: ObservableObject {
         self.url = item.url ?? ""
         self.isCompleted = item.isCompleted
         self.updatedAt = item.updatedAt
-        self.image = nil
         self.shouldRemoveImage = false
         self.galleryPickerSelection = nil
-
-        // Load existing image if available
+        
         if let imagePath = item.image {
-            Task {
-                if let loadedImage = try? DiskManager().loadImage(fileName: imagePath) {
-                    await MainActor.run {
-                        self.image = loadedImage
-                    }
-                }
-            }
+            self.image = UIImage(contentsOfFile: imagePath)
         }
     }
 
