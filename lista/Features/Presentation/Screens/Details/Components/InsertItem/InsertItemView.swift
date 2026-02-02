@@ -9,6 +9,7 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+// MARK: - Main View
 struct InsertItemView: View {
     let onSubmit: (AddListaItemUiModel) -> Void
     let onDismiss: () -> Void
@@ -106,6 +107,7 @@ extension InsertItemView {
     }
 }
 
+// MARK: - Select Image View
 private struct InsertItemImageView: View {
     @Binding var presentation: InsertItemView.ImagePresentation?
     @Binding var galleryPickerSelection: PhotosPickerItem?
