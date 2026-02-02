@@ -8,7 +8,7 @@
 import Foundation
 
 protocol UpdateItemStatusServiceProtocol {
-    func updateItemStatus(itemId: String, isCompleted: Bool) async throws
+    func updateItemStatus(itemId: String, isCompleted: Bool) async throws -> ListaItem
 }
 
 final class UpdateItemStatusService: UpdateItemStatusServiceProtocol {
@@ -18,7 +18,7 @@ final class UpdateItemStatusService: UpdateItemStatusServiceProtocol {
         self.repository = repository
     }
 
-    func updateItemStatus(itemId: String, isCompleted: Bool) async throws {
+    func updateItemStatus(itemId: String, isCompleted: Bool) async throws -> ListaItem {
         guard let itemUuid = UUID(uuidString: itemId) else {
             throw NSError(
                 domain: "UpdateItemStatusService",

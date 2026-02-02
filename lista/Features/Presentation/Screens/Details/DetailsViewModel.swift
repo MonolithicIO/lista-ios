@@ -15,6 +15,7 @@ class DetailsViewModel: ObservableObject {
     private let archiveListService: ArchiveListServiceProtocol
     private let createItemService: CreateListItemServiceProtocol
     private let updateItemStatusService: UpdateItemStatusServiceProtocol
+    private let updateItemService: UpdateListItemServiceProtocol
     private let completeListService: CompleteListServiceProtocol
     private let revertCompleteListService: RevertCompleteServiceProtocol
     private let dateProvider: DateProviderProtocol
@@ -34,7 +35,8 @@ class DetailsViewModel: ObservableObject {
         archiveListService: ArchiveListServiceProtocol,
         dateProvider: DateProviderProtocol,
         completeListService: CompleteListServiceProtocol,
-        revertCompleteListService: RevertCompleteServiceProtocol
+        revertCompleteListService: RevertCompleteServiceProtocol,
+        updateItemService: UpdateListItemServiceProtocol
     ) {
         self.fetchDetailsService = fetchDetailsService
         self.createItemService = createItemService
@@ -44,6 +46,7 @@ class DetailsViewModel: ObservableObject {
         self.dateProvider = dateProvider
         self.completeListService = completeListService
         self.revertCompleteListService = revertCompleteListService
+        self.updateItemService = updateItemService
     }
 
     func onAppear(listaId: String) {
@@ -92,23 +95,13 @@ class DetailsViewModel: ObservableObject {
             do {
                 let newState = !item.isCompleted
 
-                try await updateItemStatusService.updateItemStatus(
+                let updatedItem = try await updateItemStatusService.updateItemStatus(
                     itemId: item.id,
                     isCompleted: newState
                 )
 
-                let item = items[itemIndex]
-
-                items[itemIndex] = ListaItemUiModel(
-                    listId: item.listId,
-                    id: item.id,
-                    title: item.title,
-                    description: item.description,
-                    url: item.url,
-                    isCompleted: newState,
-                    image: item.image
-                )
-                updatedAt = try dateProvider.currentDate()
+                items[itemIndex] = updatedItem.toUiModel()
+                updatedAt = updatedItem.updatedAt
             } catch {
                 print("Error updating item \(item.id). Error: \(error) ")
             }
@@ -163,6 +156,22 @@ class DetailsViewModel: ObservableObject {
                 print(
                     "Error updating archived list state: \(listId ?? ""). Error: \(error)"
                 )
+            }
+        }
+    }
+
+    func onUpdateItem(dto: UpdateListItemDTO) {
+        Task {
+            do {
+                let updatedItem = try await updateItemService.update(item: dto)
+
+                // Find and update the item in the local array
+                if let index = items.firstIndex(where: { $0.id == updatedItem.id.uuidString }) {
+                    items[index] = updatedItem.toUiModel()
+                    updatedAt = updatedItem.updatedAt
+                }
+            } catch {
+                print("Error updating item: \(dto.itemId). Error: \(error)")
             }
         }
     }

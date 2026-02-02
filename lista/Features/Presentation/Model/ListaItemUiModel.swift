@@ -16,6 +16,7 @@ struct ListaItemUiModel: Identifiable {
     let url: String?
     let isCompleted: Bool
     let image: String?
+    let updatedAt: Date?
 }
 
 extension ListaItem {
@@ -27,7 +28,8 @@ extension ListaItem {
             description: self.description,
             url: self.url,
             isCompleted: self.isCompleted,
-            image: self.imageUrl
+            image: self.imageUrl,
+            updatedAt: self.updatedAt
         )
     }
 }
