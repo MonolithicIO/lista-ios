@@ -17,6 +17,7 @@ struct ItemMetadataView: View {
             ForEach(metadata, id: \.self) { metadata in
                 ZStack {
                     Image(systemName: metadata.systemName)
+                        .font(.caption)
                         .foregroundStyle(AppColors.foreground.opacity(0.5))
                 }
             }
