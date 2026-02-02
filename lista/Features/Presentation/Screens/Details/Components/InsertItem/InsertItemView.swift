@@ -59,16 +59,7 @@ struct InsertItemView: View {
                 .onChange(of: viewModel.galleryPickerSelection) {
                     oldValue,
                     newValue in
-                    Task {
-                        if let data = try? await newValue?.loadTransferable(
-                            type: Data.self
-                        ),
-                            let uiImage = UIImage(data: data)
-                        {
-                            viewModel.image = uiImage
-                            viewModel.galleryPickerSelection = nil
-                        }
-                    }
+                    viewModel.handleGallerySelection(newValue)
                 }
 
                 Toggle(
@@ -92,7 +83,7 @@ struct InsertItemView: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Add") {
                         onSubmit(
-                            self.viewModel.mergeState()
+                            viewModel.mergeState()
                         )
                         if viewModel.addMore {
                             viewModel.clearState()
