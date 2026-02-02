@@ -16,6 +16,8 @@ struct InsertItemView: View {
     @StateObject private var viewModel: InsertItemViewModel =
         InsertItemViewModel()
 
+    @State var presentation: InsertItemView.ImagePresentation? = nil
+
     var body: some View {
         NavigationStack {
             List {
@@ -51,6 +53,7 @@ struct InsertItemView: View {
                 }
 
                 InsertItemImageView(
+                    presentation: $presentation,
                     galleryPickerSelection: $viewModel.galleryPickerSelection,
                     selectedImage: viewModel.image,
                     onClearImage: viewModel.onClearImage,
@@ -60,6 +63,7 @@ struct InsertItemView: View {
                     oldValue,
                     newValue in
                     viewModel.handleGallerySelection(newValue)
+                    presentation = nil
                 }
 
                 Toggle(
@@ -97,10 +101,16 @@ struct InsertItemView: View {
     }
 }
 
+extension InsertItemView {
+    enum ImagePresentation {
+        case gallery
+        case camera
+        case prompt
+    }
+}
+
 private struct InsertItemImageView: View {
-    @State private var isAddImagePromptVisible = false
-    @State private var isGalleryPickerVisible = false
-    @State private var isCameraPickerVisible: Bool = false
+    @Binding var presentation: InsertItemView.ImagePresentation?
     @Binding var galleryPickerSelection: PhotosPickerItem?
     let selectedImage: UIImage?
     let onClearImage: () -> Void
@@ -122,7 +132,7 @@ private struct InsertItemImageView: View {
             VStack(spacing: 12) {
                 if selectedImage == nil {
                     Button {
-                        isAddImagePromptVisible = true
+                        presentation = .prompt
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: "photo")
@@ -148,6 +158,19 @@ private struct InsertItemImageView: View {
                                 )
                                 .foregroundStyle(AppColors.mutedForeground)
                         )
+                    }
+                    .confirmationDialog(
+                        "",
+                        isPresented: .constant(presentation == .prompt),
+                        titleVisibility: .hidden
+                    ) {
+                        Button("Select from gallery") {
+                            presentation = .gallery
+                        }
+
+                        Button("Take photo") {
+                            presentation = .camera
+                        }
                     }
                 }
 
@@ -178,30 +201,29 @@ private struct InsertItemImageView: View {
             .padding(.vertical, 8)
             .listRowBackground(AppColors.accent)
         }
-        .confirmationDialog(
-            "",
-            isPresented: $isAddImagePromptVisible,
-            titleVisibility: .hidden
-        ) {
-            Button("Select from gallery") {
-                isGalleryPickerVisible = true
-            }
-
-            Button("Take photo") {
-                isCameraPickerVisible = true
-            }
-        }
         .photosPicker(
-            isPresented: $isGalleryPickerVisible,
+            isPresented: Binding(
+                get: { presentation == .gallery },
+                set: { isPresented in
+                    if !isPresented {
+                        presentation = nil
+                    }
+                }
+            ),
             selection: $galleryPickerSelection,
             matching: .images
         )
-        .fullScreenCover(isPresented: $isCameraPickerVisible) {
-            CameraPickerView { uiImage in
-                onSelectImage(uiImage)
-            }
+        .fullScreenCover(isPresented: .constant(presentation == .camera)) {
+            CameraPickerView(
+                dismiss: {
+                    presentation = nil
+                },
+                onImagePicked: { uiImage in
+                    onSelectImage(uiImage)
+                    presentation = nil
+                }
+            )
         }
-
     }
 }
 
