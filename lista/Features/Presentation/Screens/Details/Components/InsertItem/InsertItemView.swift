@@ -60,9 +60,7 @@ struct InsertItemView: View {
                 InsertItemImageView(
                     presentation: $presentation,
                     galleryPickerSelection: $viewModel.galleryPickerSelection,
-                    selectedImage: viewModel.image,
-                    onClearImage: viewModel.onClearImage,
-                    onSelectImage: { image in viewModel.image = image }
+                    selectedImage: $viewModel.image
                 )
                 .onChange(of: viewModel.galleryPickerSelection) {
                     oldValue,
@@ -117,9 +115,7 @@ extension InsertItemView {
 private struct InsertItemImageView: View {
     @Binding var presentation: InsertItemView.ImagePresentation?
     @Binding var galleryPickerSelection: PhotosPickerItem?
-    let selectedImage: UIImage?
-    let onClearImage: () -> Void
-    let onSelectImage: (UIImage) -> Void
+    @Binding var selectedImage: UIImage?
 
     var body: some View {
         Section(
@@ -192,7 +188,7 @@ private struct InsertItemImageView: View {
 
                         Button {
                             withAnimation {
-                                onClearImage()
+                                selectedImage = nil
                             }
                         } label: {
                             Image(systemName: "xmark.circle.fill")
@@ -226,7 +222,7 @@ private struct InsertItemImageView: View {
                     presentation = nil
                 },
                 onImagePicked: { uiImage in
-                    onSelectImage(uiImage)
+                    selectedImage = uiImage
                     presentation = nil
                 }
             )

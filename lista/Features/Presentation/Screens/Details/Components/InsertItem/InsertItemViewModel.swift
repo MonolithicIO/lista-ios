@@ -43,10 +43,6 @@ final class InsertItemViewModel: ObservableObject {
         image = nil
     }
     
-    func onClearImage() {
-        image = nil
-    }
-    
     func handleGallerySelection(_ item: PhotosPickerItem?) {
         guard let item else { return }
 
