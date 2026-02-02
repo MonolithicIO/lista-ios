@@ -22,10 +22,11 @@ struct ItemFormImageSection: View {
                 formImageSource: $formImageSource,
                 image: $imageToDisplay
             )
-        };
-        // For Read mode omit image if null
-        if let imageToDisplay {
-            ReadModeImage(image: imageToDisplay)
+        } else {
+            // For Read mode omit image if null
+            if let imageToDisplay {
+                ReadModeImage(image: imageToDisplay)
+            }
         }
     }
 }
