@@ -9,6 +9,12 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+// MARK: - UI State
+enum ImagePickerPresentation {
+    case gallery
+    case camera
+}
+
 // MARK: - Main View
 struct InsertItemView: View {
     let onSubmit: (AddListaItemUiModel) -> Void
@@ -16,7 +22,9 @@ struct InsertItemView: View {
 
     @StateObject private var viewModel: InsertItemViewModel =
         InsertItemViewModel()
-    @State var presentation: InsertItemView.ImagePresentation? = nil
+
+    @State var isImagePromptPresented: Bool = false
+    @State var imagePickerPresentation: ImagePickerPresentation? = nil
 
     var body: some View {
         NavigationStack {
@@ -53,7 +61,8 @@ struct InsertItemView: View {
                 }
 
                 InsertItemImageView(
-                    presentation: $presentation,
+                    presentation: $imagePickerPresentation,
+                    isPickerPromptPresented: $isImagePromptPresented,
                     galleryPickerSelection: $viewModel.galleryPickerSelection,
                     selectedImage: $viewModel.image
                 )
@@ -61,7 +70,6 @@ struct InsertItemView: View {
                     oldValue,
                     newValue in
                     viewModel.handleGallerySelection(newValue)
-                    presentation = nil
                 }
 
                 Toggle(
@@ -99,17 +107,10 @@ struct InsertItemView: View {
     }
 }
 
-extension InsertItemView {
-    enum ImagePresentation {
-        case gallery
-        case camera
-        case prompt
-    }
-}
-
 // MARK: - Select Image View
 private struct InsertItemImageView: View {
-    @Binding var presentation: InsertItemView.ImagePresentation?
+    @Binding var presentation: ImagePickerPresentation?
+    @Binding var isPickerPromptPresented: Bool
     @Binding var galleryPickerSelection: PhotosPickerItem?
     @Binding var selectedImage: UIImage?
 
@@ -129,7 +130,7 @@ private struct InsertItemImageView: View {
             VStack(spacing: 12) {
                 if selectedImage == nil {
                     Button {
-                        presentation = .prompt
+                        isPickerPromptPresented = true
                     } label: {
                         HStack(spacing: 12) {
                             Image(systemName: "photo")
@@ -160,7 +161,7 @@ private struct InsertItemImageView: View {
                     }
                     .confirmationDialog(
                         "",
-                        isPresented: .constant(presentation == .prompt),
+                        isPresented: $isPickerPromptPresented,
                         titleVisibility: .hidden
                     ) {
                         Button("Select from gallery") {
