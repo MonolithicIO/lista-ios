@@ -15,7 +15,7 @@ struct ListaItemUiModel: Identifiable {
     let description: String?
     let url: String?
     let isCompleted: Bool
-    let image: UIImage?
+    let image: String?
 }
 
 extension ListaItem {
@@ -27,9 +27,7 @@ extension ListaItem {
             description: self.description,
             url: self.url,
             isCompleted: self.isCompleted,
-            image: self.imageUrl.flatMap({ path in
-                return UIImage(contentsOfFile: path)
-            })
+            image: self.imageUrl
         )
     }
 }
