@@ -26,21 +26,18 @@ struct ListaItemRowView: View {
                     isEnabled: enableToggle
                 )
 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text(item.title)
                         .font(.headline)
                         .foregroundStyle(AppColors.cardForeground)
                         .lineLimit(1)
-                        .strikethrough(item.isCompleted, pattern: .solid, color: AppColors.cardForeground)
+                        .strikethrough(
+                            item.isCompleted,
+                            pattern: .solid,
+                            color: AppColors.cardForeground
+                        )
+                    ItemMetadataView(metadata: item.getMetadata())
 
-                    if let description = item.description, !description.isEmpty
-                    {
-                        Text(description)
-                            .font(.subheadline)
-                            .foregroundStyle(AppColors.mutedForeground)
-                            .lineLimit(2)
-                            .strikethrough(item.isCompleted, pattern: .dash, color: AppColors.cardForeground)
-                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -65,6 +62,28 @@ struct ListaItemRowView: View {
     }
 }
 
+extension ListaItemUiModel {
+    fileprivate func getMetadata() -> [ItemMetadata] {
+        var response: [ItemMetadata] = []
+        
+        if let description {
+            if !description.isEmpty {
+                response.append(.description)
+            }
+        }
+
+        if self.url != nil {
+            response.append(.link)
+        }
+
+        if self.image != nil {
+            response.append(.image)
+        }
+
+        return response
+    }
+}
+
 #Preview {
     ListaItemRowView(
         item: ListaItemUiModel(
@@ -76,7 +95,8 @@ struct ListaItemRowView: View {
             isCompleted: false,
             image: nil,
             updatedAt: nil
-        ), enableToggle: false
+        ),
+        enableToggle: false
     ) { item in
 
     } onTap: { item in
@@ -86,7 +106,7 @@ struct ListaItemRowView: View {
     } onEdit: { item in
 
     }
-    
+
     ListaItemRowView(
         item: ListaItemUiModel(
             listId: "123",
@@ -97,7 +117,8 @@ struct ListaItemRowView: View {
             isCompleted: true,
             image: nil,
             updatedAt: nil
-        ), enableToggle: false
+        ),
+        enableToggle: false
     ) { item in
 
     } onTap: { item in
