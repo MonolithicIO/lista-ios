@@ -15,13 +15,7 @@ struct InsertItemView: View {
 
     @StateObject private var viewModel: InsertItemViewModel =
         InsertItemViewModel()
-
-    @State var presentation: InsertItemView.ImagePresentation? = nil {
-        didSet {
-            print(presentation ?? "no presentation")
-        }
-    }
-    
+    @State var presentation: InsertItemView.ImagePresentation? = nil
 
     var body: some View {
         NavigationStack {
@@ -216,11 +210,17 @@ private struct InsertItemImageView: View {
             selection: $galleryPickerSelection,
             matching: .images
         )
-        .fullScreenCover(isPresented: .constant(presentation == .camera)) {
+        .fullScreenCover(
+            isPresented: Binding(
+                get: { presentation == .camera },
+                set: { isPresented in
+                    if !isPresented {
+                        presentation = nil
+                    }
+                }
+            )
+        ) {
             CameraPickerView(
-                dismiss: {
-                    presentation = nil
-                },
                 onImagePicked: { uiImage in
                     selectedImage = uiImage
                     presentation = nil
