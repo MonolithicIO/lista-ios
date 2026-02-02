@@ -19,6 +19,7 @@ class DetailsViewModel: ObservableObject {
     private let completeListService: CompleteListServiceProtocol
     private let revertCompleteListService: RevertCompleteServiceProtocol
     private let dateProvider: DateProviderProtocol
+    private let deleteItemService: DeleteListItemServiceProtocol
 
     @Published private(set) var items: [ListaItemUiModel] = []
     @Published private(set) var isArchived: Bool = false
@@ -36,7 +37,8 @@ class DetailsViewModel: ObservableObject {
         dateProvider: DateProviderProtocol,
         completeListService: CompleteListServiceProtocol,
         revertCompleteListService: RevertCompleteServiceProtocol,
-        updateItemService: UpdateListItemServiceProtocol
+        updateItemService: UpdateListItemServiceProtocol,
+        deleteItemService: DeleteListItemServiceProtocol
     ) {
         self.fetchDetailsService = fetchDetailsService
         self.createItemService = createItemService
@@ -47,6 +49,7 @@ class DetailsViewModel: ObservableObject {
         self.completeListService = completeListService
         self.revertCompleteListService = revertCompleteListService
         self.updateItemService = updateItemService
+        self.deleteItemService = deleteItemService
     }
 
     func onAppear(listaId: String) {

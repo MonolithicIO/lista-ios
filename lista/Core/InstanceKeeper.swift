@@ -125,6 +125,12 @@ class InstanceKeeper {
         )
     }
 
+    func provideDeleteListItemService() -> DeleteListItemServiceProtocol {
+        return DeleteListItemService(
+            repository: provideListItemRepository()
+        )
+    }
+
     func provideArchiveListService() -> ArchiveListServiceProtocol {
         return ArchiveListService(repository: provideListRepository())
     }
@@ -156,7 +162,8 @@ class InstanceKeeper {
             dateProvider: provideDateProvider(),
             completeListService: provideCompleteListService(),
             revertCompleteListService: provideRevertCompleteService(),
-            updateItemService: provideUpdateListItemService()
+            updateItemService: provideUpdateListItemService(),
+            deleteItemService: provideDeleteListItemService()
         )
     }
 }

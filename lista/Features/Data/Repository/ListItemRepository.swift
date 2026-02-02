@@ -11,6 +11,7 @@ protocol ListItemRepositoryProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
     func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
+    func deleteItem(itemId: UUID) async throws
 }
 
 final class ListItemRepository: ListItemRepositoryProtocol {
@@ -34,5 +35,9 @@ final class ListItemRepository: ListItemRepositoryProtocol {
 
     func updateItem(item: UpdateListItemDTO) async throws -> ListaItem {
         return try await datasource.updateItem(item: item)
+    }
+
+    func deleteItem(itemId: UUID) async throws {
+        try await datasource.deleteItem(itemId: itemId)
     }
 }

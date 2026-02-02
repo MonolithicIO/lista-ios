@@ -12,6 +12,7 @@ protocol ListItemDataSourceProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
     func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
+    func deleteItem(itemId: UUID) async throws
 }
 
 final class ListItemDataSource: ListItemDataSourceProtocol {
@@ -206,6 +207,43 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 isCompleted: listItem.isCompleted,
                 imageUrl: listItem.imageUrl
             )
+        }
+    }
+
+    func deleteItem(itemId: UUID) async throws {
+        try await context.perform {
+            let itemRequest = ListaItemEntity.fetchRequest()
+            itemRequest.fetchLimit = 1
+            itemRequest.predicate = NSPredicate(
+                format: "id == %@",
+                itemId as CVarArg
+            )
+
+            guard let listItem = try self.context.fetch(itemRequest).first else {
+                throw NSError(
+                    domain: "ListItemDataSource",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey:
+                            "ListItem with id \(itemId.uuidString) not found"
+                    ]
+                )
+            }
+
+            // Delete associated image if exists
+            if let imageUrl = listItem.imageUrl {
+                try? self.diskManager.deleteImage(fileName: imageUrl)
+            }
+
+            // Delete the item
+            self.context.delete(listItem)
+
+            // Update parent list's updatedAt
+            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
+
+            if self.context.hasChanges {
+                try self.context.save()
+            }
         }
     }
 }
