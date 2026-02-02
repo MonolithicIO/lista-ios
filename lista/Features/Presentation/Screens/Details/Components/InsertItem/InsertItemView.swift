@@ -132,6 +132,7 @@ struct InsertItemView: View {
                         imagePickerSource = nil
                     }
                 )
+                .ignoresSafeArea()
             }
         }
     }
