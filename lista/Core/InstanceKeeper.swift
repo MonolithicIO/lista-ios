@@ -140,8 +140,8 @@ class InstanceKeeper {
         )
     }
 
-    func provideDetailsViewModel() -> DetailsScreen.ViewModel {
-        return DetailsScreen.ViewModel(
+    func provideDetailsViewModel() -> DetailsViewModel {
+        return DetailsViewModel(
             fetchDetailsService: provideFetchListDetailsService(),
             createItemService: provideCreateListItemService(),
             updateItemStatusService: provideUpdateItemStatusService(),

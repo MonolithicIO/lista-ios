@@ -5,43 +5,9 @@
 //  Created by Lucca Beurmann on 26/01/26.
 //
 
-import Combine
 import Foundation
 import PhotosUI
 import SwiftUI
-
-final class InsertItemViewModel: ObservableObject {
-    @Published var title: String = ""
-    @Published var description: String = ""
-    @Published var url: String = ""
-    @Published var addMore: Bool = false
-    @Published var galleryPickerSelection: PhotosPickerItem?
-    @Published var image: UIImage?
-
-    var isSubmitEnabled: Bool {
-        return !title.trimmingCharacters(in: .whitespacesAndNewlines)
-            .isEmpty
-    }
-
-    init() {}
-
-    func mergeState() -> AddListaItemUiModel {
-        return AddListaItemUiModel(
-            title: self.title,
-            description: self.description,
-            url: self.url,
-            attachedImage: self.image
-        )
-    }
-
-    func clearState() {
-        title = ""
-        description = ""
-        url = ""
-        galleryPickerSelection = nil
-        image = nil
-    }
-}
 
 struct InsertItemView: View {
     let onSubmit: (AddListaItemUiModel) -> Void
