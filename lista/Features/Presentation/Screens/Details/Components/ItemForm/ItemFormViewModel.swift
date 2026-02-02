@@ -25,6 +25,7 @@ final class ItemFormViewModel: ObservableObject {
     @Published var description: String = ""
     @Published var url: String = ""
     @Published var isCompleted: Bool = false
+    @Published var updatedAt: Date? = nil
     @Published var galleryPickerSelection: PhotosPickerItem?
     @Published var image: UIImage?
     @Published var shouldRemoveImage: Bool = false
@@ -98,6 +99,7 @@ final class ItemFormViewModel: ObservableObject {
         self.description = item.description ?? ""
         self.url = item.url ?? ""
         self.isCompleted = item.isCompleted
+        self.updatedAt = item.updatedAt
         self.image = nil
         self.shouldRemoveImage = false
         self.galleryPickerSelection = nil
@@ -119,6 +121,7 @@ final class ItemFormViewModel: ObservableObject {
         description = ""
         url = ""
         isCompleted = false
+        updatedAt = nil
         galleryPickerSelection = nil
         image = nil
         shouldRemoveImage = false
@@ -130,6 +133,7 @@ final class ItemFormViewModel: ObservableObject {
         description = ""
         url = ""
         isCompleted = false
+        updatedAt = nil
         galleryPickerSelection = nil
         image = nil
         shouldRemoveImage = false

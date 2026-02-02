@@ -8,7 +8,6 @@ import SwiftUI
 
 struct ItemStatusBadge: View {
     let isItemCompleted: Bool
-    let isParentListCompleted: Bool
 
     var body: some View {
         Label {
@@ -28,17 +27,15 @@ struct ItemStatusBadge: View {
     }
 
     private var title: String {
-        if isParentListCompleted {
-            return "List Completed"
-        } else if isItemCompleted {
-            return "Completed"
+        if isItemCompleted {
+            "Completed"
         } else {
-            return "Active"
+            "Active"
         }
     }
 
     private var systemImage: String {
-        if isParentListCompleted || isItemCompleted {
+        if isItemCompleted {
             return "checkmark.circle.fill"
         } else {
             return "circle"
@@ -46,7 +43,7 @@ struct ItemStatusBadge: View {
     }
 
     private var foregroundStyle: Color {
-        if isParentListCompleted || isItemCompleted {
+        if isItemCompleted {
             return AppColors.green
         } else {
             return .secondary
@@ -54,7 +51,7 @@ struct ItemStatusBadge: View {
     }
 
     private var backgroundStyle: Color {
-        if isParentListCompleted || isItemCompleted {
+        if  isItemCompleted {
             return AppColors.green.opacity(0.15)
         } else {
             return AppColors.blue.opacity(0.15)
@@ -68,21 +65,14 @@ struct ItemStatusBadge: View {
 
 #Preview("Active Item in Active List") {
     HStack {
-        ItemStatusBadge(isItemCompleted: false, isParentListCompleted: false)
+        ItemStatusBadge(isItemCompleted: false)
     }
     .padding()
 }
 
 #Preview("Completed Item in Active List") {
     HStack {
-        ItemStatusBadge(isItemCompleted: true, isParentListCompleted: false)
-    }
-    .padding()
-}
-
-#Preview("Item in Completed List") {
-    HStack {
-        ItemStatusBadge(isItemCompleted: false, isParentListCompleted: true)
+        ItemStatusBadge(isItemCompleted: true)
     }
     .padding()
 }

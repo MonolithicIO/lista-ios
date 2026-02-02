@@ -28,12 +28,23 @@ struct ItemFormView: View {
     var body: some View {
         NavigationStack {
             List {
+
+                if !viewModel.isWriteMode, let updatedAt = viewModel.updatedAt {
+                    LastUpdatedView(date: updatedAt)
+                        .listRowBackground(Color.clear)
+                        .listRowInsets(
+                            .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+                        )
+                        .listRowSeparator(.hidden)
+                }
+
                 ItemStatusBadge(
                     isItemCompleted: viewModel.isCompleted,
-                    isParentListCompleted: isParentListCompleted
                 )
                 .listRowBackground(Color.clear)
-                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+                .listRowInsets(
+                    .init(top: 0, leading: 0, bottom: 0, trailing: 0)
+                )
 
                 Section(
                     header: Text("Title").foregroundStyle(AppColors.foreground)
@@ -509,7 +520,8 @@ struct SafariView: UIViewControllerRepresentable {
                 description: "A sample description",
                 url: "https://example.com",
                 isCompleted: false,
-                image: nil
+                image: nil,
+                updatedAt: Date()
             )
         ),
         isParentListCompleted: false,
@@ -529,7 +541,8 @@ struct SafariView: UIViewControllerRepresentable {
                 description: "A sample description",
                 url: "https://example.com",
                 isCompleted: false,
-                image: nil
+                image: nil,
+                updatedAt: nil
             )
         ),
         isParentListCompleted: true,
@@ -550,7 +563,8 @@ struct SafariView: UIViewControllerRepresentable {
                     description: "A sample description",
                     url: "https://example.com",
                     isCompleted: false,
-                    image: nil
+                    image: nil,
+                    updatedAt: nil
                 )
             )
         ),

@@ -319,7 +319,8 @@ extension DetailsScreenView {
                     description: "Milk, eggs, bread",
                     url: nil,
                     isCompleted: false,
-                    image: nil
+                    image: nil,
+                    updatedAt: nil
                 )
             ],
             onAction: { _ in }

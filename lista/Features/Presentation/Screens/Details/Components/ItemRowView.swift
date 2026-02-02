@@ -74,7 +74,8 @@ struct ListaItemRowView: View {
             description: "Milk, eggs, bread",
             url: nil,
             isCompleted: false,
-            image: nil
+            image: nil,
+            updatedAt: nil
         ), enableToggle: false
     ) { item in
 
@@ -94,7 +95,8 @@ struct ListaItemRowView: View {
             description: "Milk, eggs, bread",
             url: nil,
             isCompleted: true,
-            image: nil
+            image: nil,
+            updatedAt: nil
         ), enableToggle: false
     ) { item in
 

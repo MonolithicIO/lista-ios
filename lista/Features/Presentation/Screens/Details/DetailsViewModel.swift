@@ -109,7 +109,8 @@ class DetailsViewModel: ObservableObject {
                     description: item.description,
                     url: item.url,
                     isCompleted: newState,
-                    image: item.image
+                    image: item.image,
+                    updatedAt: item.updatedAt
                 )
                 updatedAt = try dateProvider.currentDate()
             } catch {
