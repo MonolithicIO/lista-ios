@@ -42,11 +42,11 @@ struct ItemFormView: View {
                     }
                 }
 
-                // Status Badge Section - Always shown in read mode, toggle in write mode
-                Section(
-                    header: Text("Status").foregroundStyle(AppColors.foreground)
-                ) {
-                    if viewModel.isWriteMode {
+                // Status Toggle - Only shown in write mode when editing existing items
+                if viewModel.isWriteMode && !viewModel.isCreateMode {
+                    Section(
+                        header: Text("Status").foregroundStyle(AppColors.foreground)
+                    ) {
                         Toggle(isOn: $viewModel.isCompleted) {
                             HStack {
                                 Image(systemName: viewModel.isCompleted ? "checkmark.circle.fill" : "circle")
@@ -55,17 +55,9 @@ struct ItemFormView: View {
                                     .foregroundStyle(AppColors.foreground)
                             }
                         }
-                    } else {
-                        HStack {
-                            ItemStatusBadge(
-                                isItemCompleted: viewModel.isCompleted,
-                                isParentListCompleted: isParentListCompleted
-                            )
-                            Spacer()
-                        }
                     }
+                    .listRowBackground(AppColors.accent)
                 }
-                .listRowBackground(AppColors.accent)
 
                 // Description Section - Only shown if has content or in write mode
                 if viewModel.isWriteMode || !viewModel.description.isEmpty {
@@ -141,12 +133,43 @@ struct ItemFormView: View {
                         }
                     )
                 }
+
+                // Create More Toggle - Only shown when creating new items
+                if viewModel.isCreateMode {
+                    Section {
+                        Toggle(isOn: $viewModel.createMore) {
+                            HStack {
+                                Image(systemName: viewModel.createMore ? "checkmark.circle.fill" : "circle")
+                                    .foregroundStyle(viewModel.createMore ? AppColors.green : AppColors.mutedForeground)
+                                Text("Create another")
+                                    .foregroundStyle(AppColors.foreground)
+                            }
+                        }
+                    }
+                    .listRowBackground(AppColors.accent)
+                }
             }
             .scrollDismissesKeyboard(.interactively)
             .scrollContentBackground(.hidden)
             .background(AppColors.background)
-            .navigationTitle(viewModel.navigationTitle)
             .toolbar {
+                // Custom title with status badge for read mode
+                ToolbarItem(placement: .principal) {
+                    if !viewModel.isWriteMode {
+                        VStack(spacing: 4) {
+                            Text(viewModel.navigationTitle)
+                                .font(.headline)
+                            ItemStatusBadge(
+                                isItemCompleted: viewModel.isCompleted,
+                                isParentListCompleted: isParentListCompleted
+                            )
+                        }
+                    } else {
+                        Text(viewModel.navigationTitle)
+                            .font(.headline)
+                    }
+                }
+
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         onDismiss()
@@ -222,13 +245,20 @@ struct ItemFormView: View {
             if let dto = viewModel.mergeStateForUpdate() {
                 onUpdate?(dto)
             }
+            onDismiss()
         case .write(.create):
             // Create new item
             if let newItem = viewModel.mergeStateForCreate() {
                 onCreate?(newItem)
+                if viewModel.createMore {
+                    // Clear fields and stay open for next item
+                    viewModel.prepareForNextItem()
+                } else {
+                    // Dismiss the view
+                    onDismiss()
+                }
             }
         }
-        onDismiss()
     }
 }
 

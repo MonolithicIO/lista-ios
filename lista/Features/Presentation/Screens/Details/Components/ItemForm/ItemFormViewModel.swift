@@ -29,6 +29,7 @@ final class ItemFormViewModel: ObservableObject {
     @Published var image: UIImage?
     @Published var shouldRemoveImage: Bool = false
     @Published var isWriteMode: Bool = false
+    @Published var createMore: Bool = false
 
     // MARK: - Private Properties
     private(set) var originalItem: ListaItemUiModel?
@@ -59,6 +60,10 @@ final class ItemFormViewModel: ObservableObject {
         } else {
             return "Add Item"
         }
+    }
+
+    var isCreateMode: Bool {
+        return isWriteMode && !isEditMode
     }
 
     // MARK: - Initialization
@@ -117,6 +122,18 @@ final class ItemFormViewModel: ObservableObject {
         galleryPickerSelection = nil
         image = nil
         shouldRemoveImage = false
+        createMore = false
+    }
+
+    func prepareForNextItem() {
+        title = ""
+        description = ""
+        url = ""
+        isCompleted = false
+        galleryPickerSelection = nil
+        image = nil
+        shouldRemoveImage = false
+        // Keep createMore as is so user preference is preserved
     }
 
     // MARK: - Actions
