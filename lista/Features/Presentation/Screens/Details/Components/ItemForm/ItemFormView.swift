@@ -28,7 +28,13 @@ struct ItemFormView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Title Section - Always shown
+                ItemStatusBadge(
+                    isItemCompleted: viewModel.isCompleted,
+                    isParentListCompleted: isParentListCompleted
+                )
+                .listRowBackground(Color.clear)
+                .listRowInsets(.init(top: 0, leading: 0, bottom: 0, trailing: 0))
+
                 Section(
                     header: Text("Title").foregroundStyle(AppColors.foreground)
                 ) {
@@ -45,14 +51,26 @@ struct ItemFormView: View {
                 // Status Toggle - Only shown in write mode when editing existing items
                 if viewModel.isWriteMode && !viewModel.isCreateMode {
                     Section(
-                        header: Text("Status").foregroundStyle(AppColors.foreground)
+                        header: Text("Status").foregroundStyle(
+                            AppColors.foreground
+                        )
                     ) {
                         Toggle(isOn: $viewModel.isCompleted) {
                             HStack {
-                                Image(systemName: viewModel.isCompleted ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(viewModel.isCompleted ? AppColors.green : AppColors.mutedForeground)
-                                Text(viewModel.isCompleted ? "Completed" : "Not completed")
-                                    .foregroundStyle(AppColors.foreground)
+                                Image(
+                                    systemName: viewModel.isCompleted
+                                        ? "checkmark.circle.fill" : "circle"
+                                )
+                                .foregroundStyle(
+                                    viewModel.isCompleted
+                                        ? AppColors.green
+                                        : AppColors.mutedForeground
+                                )
+                                Text(
+                                    viewModel.isCompleted
+                                        ? "Completed" : "Not completed"
+                                )
+                                .foregroundStyle(AppColors.foreground)
                             }
                         }
                     }
@@ -63,11 +81,15 @@ struct ItemFormView: View {
                 if viewModel.isWriteMode || !viewModel.description.isEmpty {
                     Section(
                         header: HStack {
-                            Text("Description").foregroundStyle(AppColors.foreground)
+                            Text("Description").foregroundStyle(
+                                AppColors.foreground
+                            )
                             if viewModel.isWriteMode {
                                 Spacer()
-                                Text("Optional").foregroundStyle(AppColors.mutedForeground)
-                                    .font(.caption)
+                                Text("Optional").foregroundStyle(
+                                    AppColors.mutedForeground
+                                )
+                                .font(.caption)
                             }
                         }
                     ) {
@@ -90,24 +112,32 @@ struct ItemFormView: View {
                             Text("URL").foregroundStyle(AppColors.foreground)
                             if viewModel.isWriteMode {
                                 Spacer()
-                                Text("Optional").foregroundStyle(AppColors.mutedForeground)
-                                    .font(.caption)
+                                Text("Optional").foregroundStyle(
+                                    AppColors.mutedForeground
+                                )
+                                .font(.caption)
                             }
                         }
                     ) {
                         VStack(alignment: .leading, spacing: 8) {
                             if viewModel.isWriteMode {
-                                TextField("https://example.com", text: $viewModel.url)
-                                    .textContentType(.URL)
-                                    .keyboardType(.URL)
-                                    .autocapitalization(.none)
+                                TextField(
+                                    "https://example.com",
+                                    text: $viewModel.url
+                                )
+                                .textContentType(.URL)
+                                .keyboardType(.URL)
+                                .autocapitalization(.none)
                             } else {
                                 Text(viewModel.url)
                                     .foregroundStyle(AppColors.foreground)
                             }
 
                             // Open in Safari button (visible in both modes if URL is valid)
-                            if !viewModel.url.isEmpty, let url = URL(string: viewModel.url), UIApplication.shared.canOpenURL(url) {
+                            if !viewModel.url.isEmpty,
+                                let url = URL(string: viewModel.url),
+                                UIApplication.shared.canOpenURL(url)
+                            {
                                 Button {
                                     showSafari = true
                                 } label: {
@@ -125,7 +155,10 @@ struct ItemFormView: View {
                 }
 
                 // Image Section - Only shown if has image or in write mode
-                if viewModel.isWriteMode || viewModel.image != nil || (viewModel.originalItem?.image != nil && !viewModel.shouldRemoveImage) {
+                if viewModel.isWriteMode || viewModel.image != nil
+                    || (viewModel.originalItem?.image != nil
+                        && !viewModel.shouldRemoveImage)
+                {
                     ItemFormImageSection(
                         viewModel: viewModel,
                         onImageSourceSelected: { source in
@@ -139,8 +172,15 @@ struct ItemFormView: View {
                     Section {
                         Toggle(isOn: $viewModel.createMore) {
                             HStack {
-                                Image(systemName: viewModel.createMore ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(viewModel.createMore ? AppColors.green : AppColors.mutedForeground)
+                                Image(
+                                    systemName: viewModel.createMore
+                                        ? "checkmark.circle.fill" : "circle"
+                                )
+                                .foregroundStyle(
+                                    viewModel.createMore
+                                        ? AppColors.green
+                                        : AppColors.mutedForeground
+                                )
                                 Text("Create another")
                                     .foregroundStyle(AppColors.foreground)
                             }
@@ -152,24 +192,8 @@ struct ItemFormView: View {
             .scrollDismissesKeyboard(.interactively)
             .scrollContentBackground(.hidden)
             .background(AppColors.background)
+            .navigationTitle(viewModel.navigationTitle)
             .toolbar {
-                // Custom title with status badge for read mode
-                ToolbarItem(placement: .principal) {
-                    if !viewModel.isWriteMode {
-                        VStack(spacing: 4) {
-                            Text(viewModel.navigationTitle)
-                                .font(.headline)
-                            ItemStatusBadge(
-                                isItemCompleted: viewModel.isCompleted,
-                                isParentListCompleted: isParentListCompleted
-                            )
-                        }
-                    } else {
-                        Text(viewModel.navigationTitle)
-                            .font(.headline)
-                    }
-                }
-
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
                         onDismiss()
@@ -182,7 +206,9 @@ struct ItemFormView: View {
                         Button("Save") {
                             saveAction()
                         }
-                        .disabled(!viewModel.isSubmitEnabled || !viewModel.hasChanges)
+                        .disabled(
+                            !viewModel.isSubmitEnabled || !viewModel.hasChanges
+                        )
                     } else {
                         // Edit button in read mode
                         Button("Edit") {
@@ -228,7 +254,9 @@ struct ItemFormView: View {
                 .ignoresSafeArea()
             }
             .sheet(isPresented: $showSafari) {
-                if let url = URL(string: viewModel.url), UIApplication.shared.canOpenURL(url) {
+                if let url = URL(string: viewModel.url),
+                    UIApplication.shared.canOpenURL(url)
+                {
                     SafariView(url: url)
                 }
             }
@@ -300,7 +328,9 @@ private struct ItemFormImageSection: View {
 
                                     Text("Gallery or camera")
                                         .font(.caption)
-                                        .foregroundStyle(AppColors.mutedForeground)
+                                        .foregroundStyle(
+                                            AppColors.mutedForeground
+                                        )
                                 }
 
                                 Spacer()
@@ -310,7 +340,10 @@ private struct ItemFormImageSection: View {
                             .background(
                                 RoundedRectangle(cornerRadius: 12)
                                     .strokeBorder(
-                                        style: StrokeStyle(lineWidth: 1, dash: [5])
+                                        style: StrokeStyle(
+                                            lineWidth: 1,
+                                            dash: [5]
+                                        )
                                     )
                                     .foregroundStyle(AppColors.mutedForeground)
                             )
@@ -323,7 +356,9 @@ private struct ItemFormImageSection: View {
                             Button("Select from gallery") {
                                 onImageSourceSelected(.gallery)
                             }
-                            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                            if UIImagePickerController.isSourceTypeAvailable(
+                                .camera
+                            ) {
                                 Button("Take photo") {
                                     onImageSourceSelected(.camera)
                                 }
@@ -355,10 +390,14 @@ private struct ItemFormImageSection: View {
                                     VStack {
                                         Image(systemName: "photo.slash")
                                             .font(.largeTitle)
-                                            .foregroundStyle(AppColors.mutedForeground)
+                                            .foregroundStyle(
+                                                AppColors.mutedForeground
+                                            )
                                         Text("Image removed")
                                             .font(.caption)
-                                            .foregroundStyle(AppColors.mutedForeground)
+                                            .foregroundStyle(
+                                                AppColors.mutedForeground
+                                            )
                                     }
                                 )
                         }
@@ -366,7 +405,9 @@ private struct ItemFormImageSection: View {
                         // Action buttons (only in write mode)
                         if viewModel.isWriteMode {
                             HStack(spacing: 8) {
-                                if viewModel.image != nil || viewModel.shouldRemoveImage {
+                                if viewModel.image != nil
+                                    || viewModel.shouldRemoveImage
+                                {
                                     Button {
                                         withAnimation {
                                             viewModel.removeImage()
@@ -386,11 +427,14 @@ private struct ItemFormImageSection: View {
                                             viewModel.cancelImageRemoval()
                                         }
                                     } label: {
-                                        Image(systemName: "arrow.uturn.backward.circle.fill")
-                                            .font(.title3)
-                                            .foregroundStyle(AppColors.blue)
-                                            .background(.white)
-                                            .clipShape(Circle())
+                                        Image(
+                                            systemName:
+                                                "arrow.uturn.backward.circle.fill"
+                                        )
+                                        .font(.title3)
+                                        .foregroundStyle(AppColors.blue)
+                                        .background(.white)
+                                        .clipShape(Circle())
                                     }
                                 }
 
@@ -413,7 +457,9 @@ private struct ItemFormImageSection: View {
                                 Button("Select from gallery") {
                                     onImageSourceSelected(.gallery)
                                 }
-                                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                                if UIImagePickerController.isSourceTypeAvailable(
+                                    .camera
+                                ) {
                                     Button("Take photo") {
                                         onImageSourceSelected(.camera)
                                     }
@@ -437,7 +483,10 @@ struct SafariView: UIViewControllerRepresentable {
         return SFSafariViewController(url: url)
     }
 
-    func updateUIViewController(_ uiViewController: SFSafariViewController, context: Context) {}
+    func updateUIViewController(
+        _ uiViewController: SFSafariViewController,
+        context: Context
+    ) {}
 }
 
 #Preview("Create Mode") {
@@ -452,15 +501,17 @@ struct SafariView: UIViewControllerRepresentable {
 
 #Preview("Read Mode - Active List") {
     ItemFormView(
-        mode: .read(ListaItemUiModel(
-            listId: "123",
-            id: UUID().uuidString,
-            title: "Sample Item",
-            description: "A sample description",
-            url: "https://example.com",
-            isCompleted: false,
-            image: nil
-        )),
+        mode: .read(
+            ListaItemUiModel(
+                listId: "123",
+                id: UUID().uuidString,
+                title: "Sample Item",
+                description: "A sample description",
+                url: "https://example.com",
+                isCompleted: false,
+                image: nil
+            )
+        ),
         isParentListCompleted: false,
         onCreate: nil,
         onUpdate: { _ in },
@@ -470,15 +521,17 @@ struct SafariView: UIViewControllerRepresentable {
 
 #Preview("Read Mode - Completed List") {
     ItemFormView(
-        mode: .read(ListaItemUiModel(
-            listId: "123",
-            id: UUID().uuidString,
-            title: "Sample Item",
-            description: "A sample description",
-            url: "https://example.com",
-            isCompleted: false,
-            image: nil
-        )),
+        mode: .read(
+            ListaItemUiModel(
+                listId: "123",
+                id: UUID().uuidString,
+                title: "Sample Item",
+                description: "A sample description",
+                url: "https://example.com",
+                isCompleted: false,
+                image: nil
+            )
+        ),
         isParentListCompleted: true,
         onCreate: nil,
         onUpdate: { _ in },
@@ -488,15 +541,19 @@ struct SafariView: UIViewControllerRepresentable {
 
 #Preview("Edit Mode") {
     ItemFormView(
-        mode: .write(.edit(ListaItemUiModel(
-            listId: "123",
-            id: UUID().uuidString,
-            title: "Sample Item",
-            description: "A sample description",
-            url: "https://example.com",
-            isCompleted: false,
-            image: nil
-        ))),
+        mode: .write(
+            .edit(
+                ListaItemUiModel(
+                    listId: "123",
+                    id: UUID().uuidString,
+                    title: "Sample Item",
+                    description: "A sample description",
+                    url: "https://example.com",
+                    isCompleted: false,
+                    image: nil
+                )
+            )
+        ),
         isParentListCompleted: false,
         onCreate: nil,
         onUpdate: { _ in },
