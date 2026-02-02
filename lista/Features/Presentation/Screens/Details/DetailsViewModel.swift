@@ -95,24 +95,13 @@ class DetailsViewModel: ObservableObject {
             do {
                 let newState = !item.isCompleted
 
-                try await updateItemStatusService.updateItemStatus(
+                let updatedItem = try await updateItemStatusService.updateItemStatus(
                     itemId: item.id,
                     isCompleted: newState
                 )
 
-                let item = items[itemIndex]
-
-                items[itemIndex] = ListaItemUiModel(
-                    listId: item.listId,
-                    id: item.id,
-                    title: item.title,
-                    description: item.description,
-                    url: item.url,
-                    isCompleted: newState,
-                    image: item.image,
-                    updatedAt: item.updatedAt
-                )
-                updatedAt = try dateProvider.currentDate()
+                items[itemIndex] = updatedItem.toUiModel()
+                updatedAt = updatedItem.updatedAt
             } catch {
                 print("Error updating item \(item.id). Error: \(error) ")
             }

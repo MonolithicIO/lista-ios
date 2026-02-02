@@ -10,7 +10,7 @@ import Foundation
 
 protocol ListItemDataSourceProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
-    func updateStatus(itemId: UUID, isActive: Bool) async throws
+    func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
     func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
 }
 
@@ -94,7 +94,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
         }
     }
 
-    func updateStatus(itemId: UUID, isActive: Bool) async throws {
+    func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem {
         try await context.perform {
             let listItemRequset = ListaItemEntity.fetchRequest()
             listItemRequset.fetchLimit = 1
@@ -114,13 +114,28 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                     ]
                 )
             }
+            
+            let newDate = try self.dateProvider.currentDate()
 
             listItem.isCompleted = isActive
-            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
+            listItem.updatedAt = newDate
+            listItem.lista?.updatedAt = newDate
 
             if self.context.hasChanges {
                 try self.context.save()
             }
+            
+            return ListaItem(
+                listId: listItem.lista?.id ?? UUID(),
+                id: listItem.id!,
+                title: listItem.title!,
+                description: listItem.note,
+                url: listItem.link,
+                updatedAt: listItem.updatedAt!,
+                createdAt: listItem.createdAt!,
+                isCompleted: listItem.isCompleted,
+                imageUrl: listItem.imageUrl
+            )
         }
     }
 
