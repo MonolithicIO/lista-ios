@@ -293,7 +293,11 @@ private struct DetailsScreenView: View {
                         detailsToPresent = nil
                         onAction(.onUpdateItem(itemDetails))
                     },
-                    enableEdit: !self.isArchived && !self.isCompleted
+                    onToggle: {
+                        onAction(.onToggleItemState(itemDetails))
+                        detailsToPresent = nil
+                    },
+                    enableEdit: listEditEnabled
                 )
             }
         }
