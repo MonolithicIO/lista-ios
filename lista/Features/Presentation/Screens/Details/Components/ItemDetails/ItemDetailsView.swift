@@ -9,11 +9,11 @@ import SafariServices
 import SwiftUI
 import UIKit
 
-
 struct ItemDetailsView: View {
     @Environment(\.dismiss) private var dismiss
     let item: ListaItemUiModel
-    let onUpdate: (ListaItemUiModel) -> Void
+    let onUpdate: () -> Void
+    let enableEdit: Bool
 
     @State private var showSafari: Bool = false
 
@@ -101,6 +101,17 @@ struct ItemDetailsView: View {
             .scrollContentBackground(.hidden)
             .background(AppColors.background)
             .navigationTitle("Item Details")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        onUpdate()
+                    }) {
+                        Image(systemName: "pencil")
+                    }
+                    .accessibilityLabel("Edit Item")
+                    .disabled(!enableEdit)
+                }
+            }
             .sheet(isPresented: $showSafari) {
                 if let itemUrl = item.url, let url = URL(string: itemUrl) {
                     SafariView(url: url)
@@ -123,6 +134,7 @@ struct ItemDetailsView: View {
             image: nil,
             updatedAt: Date()
         ),
-        onUpdate: { _ in },
+        onUpdate: {},
+        enableEdit: false
     )
 }

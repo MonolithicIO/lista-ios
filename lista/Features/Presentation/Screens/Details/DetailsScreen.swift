@@ -271,7 +271,11 @@ private struct DetailsScreenView: View {
             if let itemDetails = detailsToPresent {
                 ItemDetailsView(
                     item: itemDetails,
-                    onUpdate: { item in onAction(.onUpdateItem(item)) },
+                    onUpdate: {
+                        detailsToPresent = nil
+                        onAction(.onUpdateItem(itemDetails))
+                    },
+                    enableEdit: !self.isArchived && !self.isCompleted
                 )
             }
         }
