@@ -6,8 +6,8 @@
 //
 
 import Foundation
-import SwiftUI
 import PhotosUI
+import SwiftUI
 
 struct InsertItemView: View {
     // MARK: - Env
@@ -43,6 +43,7 @@ struct InsertItemView: View {
     var body: some View {
         InsertItemContentView(
             navTitle: screenTitle,
+            isEditing: self.viewModel.isEditing,
             onAction: { action in
                 switch action {
 
@@ -50,9 +51,11 @@ struct InsertItemView: View {
                     self.viewModel.insertItem(listId: self.listId)
                 }
             },
-            itemTitle: $viewModel.title,
-            itemDescription: $viewModel.description,
-            itemUrl: $viewModel.url
+            presentedImagePicker: self.$presentedImagePicker,
+            itemTitle: self.$viewModel.title,
+            itemDescription: self.$viewModel.description,
+            itemUrl: self.$viewModel.url,
+            selectedImage: self.$viewModel.selectedImage
         )
         .task {
             viewModel.initialize(itemId: itemId)
@@ -112,11 +115,14 @@ extension InsertItemView {
 
 struct InsertItemContentView: View {
     let navTitle: String
+    let isEditing: Bool
     let onAction: (Action) -> Void
 
+    @Binding var presentedImagePicker: InsertItemView.PresentedImagePicker?
     @Binding var itemTitle: String
     @Binding var itemDescription: String
     @Binding var itemUrl: String
+    @Binding var selectedImage: UIImage?
 
     var body: some View {
         Form {
@@ -140,6 +146,14 @@ struct InsertItemContentView: View {
                 isOptional: true
             ) {
                 TextField("Item title", text: $itemUrl)
+            }
+
+            InsertSection(title: "Image", isOptional: true) {
+                InsertItemImageView(
+                    isEditing: isEditing,
+                    formImageSource: $presentedImagePicker,
+                    imageToDisplay: $selectedImage
+                )
             }
 
         }
