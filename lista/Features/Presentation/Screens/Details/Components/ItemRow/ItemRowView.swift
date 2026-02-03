@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ListaItemRowView: View {
     let item: ListaItemUiModel
-    let enableToggle: Bool
     let onToggle: (ListaItemUiModel) -> Void
     let onTap: (ListaItemUiModel) -> Void
     var onDelete: ((ListaItemUiModel) -> Void)? = nil
@@ -20,22 +19,17 @@ struct ListaItemRowView: View {
             onTap(item)
         } label: {
             HStack(spacing: 12) {
-                RadioButton(
-                    isChecked: item.isCompleted,
-                    onToggle: { onToggle(item) },
-                    isEnabled: enableToggle
-                )
+                // Status indicator strip
+                statusIndicator
+                    .frame(width: 4)
+                    .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(item.title)
                         .font(.headline)
                         .foregroundStyle(AppColors.cardForeground)
                         .lineLimit(1)
-                        .strikethrough(
-                            item.isCompleted,
-                            pattern: .solid,
-                            color: AppColors.cardForeground
-                        )
+                        .opacity(item.isCompleted ? 0.6 : 1.0)
                     ItemMetadataView(metadata: item.getMetadata())
 
                 }
@@ -46,19 +40,26 @@ struct ListaItemRowView: View {
                     .foregroundStyle(AppColors.mutedForeground)
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 12)
+            .padding(.vertical, 16)
             .padding(.horizontal, 12)
             .background(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(AppColors.card)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(AppColors.border, lineWidth: 1)
+                    .shadow(
+                        color: Color.black.opacity(0.08),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
             )
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
+    }
+
+    private var statusIndicator: some View {
+        Rectangle()
+            .fill(item.isCompleted ? AppColors.green : AppColors.orange)
     }
 }
 
@@ -96,7 +97,6 @@ extension ListaItemUiModel {
             image: nil,
             updatedAt: nil
         ),
-        enableToggle: false
     ) { item in
 
     } onTap: { item in
@@ -118,7 +118,6 @@ extension ListaItemUiModel {
             image: nil,
             updatedAt: nil
         ),
-        enableToggle: false
     ) { item in
 
     } onTap: { item in

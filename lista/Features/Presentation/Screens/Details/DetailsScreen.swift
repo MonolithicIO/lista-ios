@@ -58,6 +58,8 @@ struct DetailsScreen: View {
                     coordinator.push(
                         .insertItem(listId: self.listaId, itemId: item.id)
                     )
+                case .onDeleteItem(let item):
+                    viewModel.onDeleteItem(itemId: item.id)
                 }
             }
         )
@@ -91,27 +93,6 @@ private struct DetailsScreenView: View {
 
     @State private var presentation: DetailsScreenPresentation? = nil
     @State private var detailsToPresent: ListaItemUiModel? = nil
-
-    private var isConfirmDeletePresented: Bool {
-        if case .confirmDelete = presentation {
-            return true
-        }
-        return false
-    }
-
-    private var isConfirmArchivePresented: Bool {
-        if case .confirmArchive = presentation {
-            return true
-        }
-        return false
-    }
-
-    private var isConfirmCompletePresented: Bool {
-        if case .confirmComplete = presentation {
-            return true
-        }
-        return false
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -148,9 +129,16 @@ private struct DetailsScreenView: View {
             } else {
                 List {
                     ForEach(items) { item in
+                        var actionOpacity: Double {
+                            if listEditEnabled {
+                                return 1.0
+                            } else {
+                                return 0.3
+                            }
+                        }
+
                         ListaItemRowView(
                             item: item,
-                            enableToggle: !isArchived && !isCompleted,
                             onToggle: { item in
                                 onAction(.onToggleItemState(item))
                             },
@@ -163,6 +151,36 @@ private struct DetailsScreenView: View {
                         .listRowInsets(
                             .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                         )
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                onAction(.onToggleItemState(item))
+                            } label: {
+                                Label(
+                                    item.isCompleted ? "Undo" : "Complete",
+                                    systemImage: item.isCompleted
+                                        ? "arrow.uturn.backward" : "checkmark"
+                                )
+                            }
+                            .tint(
+                                item.isCompleted
+                                    ? AppColors.orange.opacity(
+                                        actionOpacity
+                                    )
+                                    : AppColors.green.opacity(
+                                        actionOpacity
+                                    )
+                            )
+                            .disabled(!listEditEnabled)
+                        }
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                onAction(.onDeleteItem(item))
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .tint(AppColors.destructive.opacity(actionOpacity))
+                            .disabled(!listEditEnabled)
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -282,6 +300,34 @@ private struct DetailsScreenView: View {
     }
 }
 
+// MARK: - Derived States
+extension DetailsScreenView {
+    private var isConfirmDeletePresented: Bool {
+        if case .confirmDelete = presentation {
+            return true
+        }
+        return false
+    }
+
+    private var isConfirmArchivePresented: Bool {
+        if case .confirmArchive = presentation {
+            return true
+        }
+        return false
+    }
+
+    private var isConfirmCompletePresented: Bool {
+        if case .confirmComplete = presentation {
+            return true
+        }
+        return false
+    }
+
+    private var listEditEnabled: Bool {
+        return !isArchived && !isCompleted
+    }
+}
+
 extension DetailsScreenView {
     enum DetailsScreenPresentation {
         case confirmDelete
@@ -298,6 +344,7 @@ extension DetailsScreenView {
         case onComplete
         case onUndoComplete
         case onUpdateItem(ListaItemUiModel)
+        case onDeleteItem(ListaItemUiModel)
     }
 }
 

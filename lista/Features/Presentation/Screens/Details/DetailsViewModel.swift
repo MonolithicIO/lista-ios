@@ -179,6 +179,20 @@ class DetailsViewModel: ObservableObject {
         }
     }
 
+    func onDeleteItem(itemId: String) {
+        Task {
+            do {
+                try await deleteItemService.deleteItem(itemId: itemId)
+
+                // Remove item from local array
+                items.removeAll { $0.id == itemId }
+                updatedAt = try dateProvider.currentDate()
+            } catch {
+                print("Error deleting item: \(itemId). Error: \(error)")
+            }
+        }
+    }
+
     private func loadList() {
         Task {
             guard let uuid = UUID(uuidString: self.listId) else { return }
