@@ -58,6 +58,8 @@ struct DetailsScreen: View {
                     coordinator.push(
                         .insertItem(listId: self.listaId, itemId: item.id)
                     )
+                case .onDeleteItem(let item):
+                    viewModel.onDeleteItem(itemId: item.id)
                 }
             }
         )
@@ -163,6 +165,14 @@ private struct DetailsScreenView: View {
                         .listRowInsets(
                             .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                         )
+                        .swipeActions(edge: .trailing) {
+                            Button(role: .destructive) {
+                                onAction(.onDeleteItem(item))
+                            } label: {
+                                Label("Delete", systemImage: "trash")
+                            }
+                            .disabled(isArchived || isCompleted)
+                        }
                     }
                 }
                 .listStyle(.plain)
@@ -298,6 +308,7 @@ extension DetailsScreenView {
         case onComplete
         case onUndoComplete
         case onUpdateItem(ListaItemUiModel)
+        case onDeleteItem(ListaItemUiModel)
     }
 }
 
