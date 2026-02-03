@@ -32,7 +32,6 @@ struct ItemDetailsView: View {
                 ItemStatusBadge(
                     isItemCompleted: item.isCompleted,
                 )
-                .listRowBackground(Color.clear)
                 .listRowInsets(
                     .init(top: 0, leading: 0, bottom: 0, trailing: 0)
                 )
@@ -90,12 +89,25 @@ struct ItemDetailsView: View {
                     }
                 }
 
-                //                ItemFormImageSection(
-                //                    isWriteMode: viewModel.isWriteMode,
-                //                    formImageSource: $imagePickerSource,
-                //                    imageToDisplay: $viewModel.image
-                //                )
-
+                if let imagePath = item.image,
+                    let image = UIImage(contentsOfFile: imagePath)
+                {
+                    Section(
+                        header: HStack {
+                            Text("Image").foregroundStyle(
+                                AppColors.foreground
+                            )
+                        }
+                    ) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(height: 200)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .clipped()
+                    }
+                    .listRowBackground(AppColors.accent)
+                }
             }
             .scrollDismissesKeyboard(.interactively)
             .scrollContentBackground(.hidden)
@@ -116,7 +128,6 @@ struct ItemDetailsView: View {
                 if let itemUrl = item.url, let url = URL(string: itemUrl) {
                     SafariView(url: url)
                 }
-
             }
         }
     }

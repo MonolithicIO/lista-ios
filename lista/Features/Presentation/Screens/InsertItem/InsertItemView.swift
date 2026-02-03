@@ -57,6 +57,7 @@ struct InsertItemView: View {
             itemUrl: self.$viewModel.url,
             selectedImage: self.$viewModel.selectedImage
         )
+        .background(AppColors.background.ignoresSafeArea())
         .task {
             viewModel.initialize(itemId: itemId)
         }
