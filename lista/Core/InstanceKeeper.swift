@@ -27,11 +27,11 @@ class InstanceKeeper {
     func provideDateProvider() -> DateProviderProtocol {
         return DateProvider()
     }
-    
+
     func provideUuidProvider() -> UUIDProviderProtocol {
         return UUIDProvider()
     }
-    
+
     func provideDiskManager() -> DiskManagerProtocol {
         return DiskManager()
     }
@@ -67,7 +67,7 @@ class InstanceKeeper {
                 dateProvider: provideDateProvider(),
                 diskManager: provideDiskManager(),
                 uuidProvider: provideUuidProvider()
-                
+
             )
             self.listItemDatasource = newInstance
 
@@ -143,6 +143,10 @@ class InstanceKeeper {
         return RevertCompleteService(repository: provideListRepository())
     }
 
+    func provideGetItemService() -> GetListItemServiceProtocol {
+        return GetListItemService(repository: provideListItemRepository())
+    }
+
     // MARK: - Presentation Providers
     func provideHomeViewModel() -> HomeScreen.ViewModel {
         return HomeScreen.ViewModel(
@@ -166,11 +170,12 @@ class InstanceKeeper {
             deleteItemService: provideDeleteListItemService()
         )
     }
-    
+
     func provideInsertItemViewModel() -> InsertItemViewModel {
         return InsertItemViewModel(
-            createItemService: provideCreateListItemService()
+            createItemService: provideCreateListItemService(),
+            getItemService: provideGetItemService(),
+            updateListItemService: provideUpdateListItemService()
         )
     }
 }
-

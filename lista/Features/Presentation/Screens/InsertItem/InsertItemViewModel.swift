@@ -13,13 +13,21 @@ import SwiftUI
 final class InsertItemViewModel: ObservableObject {
     // MARK: - Dependency properties
     private let createItemService: CreateListItemServiceProtocol
+    private let getItemService: GetListItemServiceProtocol
+    private let updateListItemService: UpdateListItemServiceProtocol
 
     // MARK: - Initializer
-    init(createItemService: CreateListItemServiceProtocol) {
+    init(
+        createItemService: CreateListItemServiceProtocol,
+        getItemService: GetListItemServiceProtocol,
+        updateListItemService: UpdateListItemServiceProtocol
+    ) {
         self.createItemService = createItemService
+        self.getItemService = getItemService
+        self.updateListItemService = updateListItemService
     }
 
-    // MARK: - State properties
+    // MARK: - Public State
     @Published var title: String = ""
     @Published var description: String = ""
     @Published var url: String = ""
@@ -27,9 +35,15 @@ final class InsertItemViewModel: ObservableObject {
     @Published var selectedImage: UIImage?
     @Published var event: Events? = nil
     @Published var galleryPickerSelection: PhotosPickerItem?
+    
+    // MARK: - Private State
+    private var originalItem: ListaItemUiModel?
 
     func initialize(itemId: String?) {
-        isEditing = itemId != nil
+        if let itemId {
+            loadItemData(itemId: itemId)
+            isEditing = true
+        }
     }
 
     func insertItem(listId: String) {
@@ -52,7 +66,7 @@ final class InsertItemViewModel: ObservableObject {
             }
         }
     }
-    
+
     func handleGallerySelection(_ item: PhotosPickerItem?) {
         guard let item else { return }
 
@@ -64,6 +78,24 @@ final class InsertItemViewModel: ObservableObject {
                     self.selectedImage = image
                     self.galleryPickerSelection = nil
                 }
+            }
+        }
+    }
+    
+    private func loadItemData(itemId: String) {
+        Task {
+            do {
+                let item = try await getItemService.get(id: itemId)
+                
+                title = item.title
+                description = item.description ?? ""
+                url = item.url ?? ""
+                originalItem = item.toUiModel()
+                if let imagePath = item.imageUrl {
+                    selectedImage = UIImage(contentsOfFile: imagePath)
+                }
+            } catch {
+                print("Failed to fetch item details \(error)")
             }
         }
     }

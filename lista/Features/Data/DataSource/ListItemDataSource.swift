@@ -248,42 +248,42 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 try self.context.save()
             }
         }
+    }
+    
+    func getItem(itemId: UUID) async throws -> ListaItem {
+        try await context.perform {
+            let itemRequest = ListaItemEntity.fetchRequest()
+            itemRequest.fetchLimit = 1
+            itemRequest.predicate = NSPredicate(
+                format: "id ==%@",
+                itemId as CVarArg
+            )
 
-        func getItem(itemId: UUID) async throws -> ListaItem {
-            try await context.perform {
-                let itemRequest = ListaItemEntity.fetchRequest()
-                itemRequest.fetchLimit = 1
-                itemRequest.predicate = NSPredicate(
-                    format: "id ==%@",
-                    itemId as CVarArg
-                )
-
-                guard
-                    let listItemEntity = try self.context.fetch(itemRequest)
-                        .first
-                else {
-                    throw NSError(
-                        domain: "ListItemDataSource",
-                        code: 404,
-                        userInfo: [
-                            NSLocalizedDescriptionKey:
-                                "ListItem with id \(itemId.uuidString) not found"
-                        ]
-                    )
-                }
-
-                return ListaItem(
-                    listId: listItemEntity.lista!.id!,
-                    id: listItemEntity.id!,
-                    title: listItemEntity.title!,
-                    description: listItemEntity.description,
-                    url: listItemEntity.link,
-                    updatedAt: listItemEntity.updatedAt!,
-                    createdAt: listItemEntity.createdAt!,
-                    isCompleted: listItemEntity.isCompleted,
-                    imageUrl: listItemEntity.imageUrl
+            guard
+                let listItemEntity = try self.context.fetch(itemRequest)
+                    .first
+            else {
+                throw NSError(
+                    domain: "ListItemDataSource",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey:
+                            "ListItem with id \(itemId.uuidString) not found"
+                    ]
                 )
             }
+
+            return ListaItem(
+                listId: listItemEntity.lista!.id!,
+                id: listItemEntity.id!,
+                title: listItemEntity.title!,
+                description: listItemEntity.description,
+                url: listItemEntity.link,
+                updatedAt: listItemEntity.updatedAt!,
+                createdAt: listItemEntity.createdAt!,
+                isCompleted: listItemEntity.isCompleted,
+                imageUrl: listItemEntity.imageUrl
+            )
         }
     }
 }
