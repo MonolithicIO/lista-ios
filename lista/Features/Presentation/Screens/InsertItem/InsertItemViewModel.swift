@@ -31,11 +31,12 @@ final class InsertItemViewModel: ObservableObject {
     @Published var title: String = ""
     @Published var description: String = ""
     @Published var url: String = ""
-    @Published var isEditing: Bool = false
+    @Published var isCompleted: Bool = false
     @Published var selectedImage: UIImage?
+    @Published var isEditing: Bool = false
     @Published var event: Events? = nil
     @Published var galleryPickerSelection: PhotosPickerItem?
-    
+
     // MARK: - Private State
     private var originalItem: ListaItemUiModel?
 
@@ -48,22 +49,14 @@ final class InsertItemViewModel: ObservableObject {
 
     func insertItem(listId: String) {
         guard let uuid = UUID(uuidString: listId) else { return }
-        Task {
-            do {
-                _ = try await createItemService.create(
-                    item: CreateListItemDTO(
-                        listId: uuid,
-                        title: self.title,
-                        description: sanitizeString(input: self.description),
-                        url: sanitizeString(input: self.url),
-                        image: self.selectedImage
-                    )
-                )
-                event = .onSuccess
 
-            } catch {
-                print("Failed to create item \(error)")
-            }
+        if isEditing {
+            guard let originalItemId = originalItem?.id else { return }
+            guard let originalItemUuid = UUID(uuidString: originalItemId) else { return }
+            
+            updateItem(itemId: originalItemUuid)
+        } else {
+            createNewItem(listId: uuid)
         }
     }
 
@@ -81,15 +74,60 @@ final class InsertItemViewModel: ObservableObject {
             }
         }
     }
-    
+
+    private func createNewItem(listId: UUID) {
+        Task {
+            do {
+                _ = try await createItemService.create(
+                    item: CreateListItemDTO(
+                        listId: listId,
+                        title: self.title,
+                        description: sanitizeString(input: self.description),
+                        url: sanitizeString(input: self.url),
+                        image: self.selectedImage
+                    )
+                )
+                event = .onSuccess
+
+            } catch {
+                print("Failed to create item \(error)")
+            }
+        }
+    }
+
+    private func updateItem(
+        itemId: UUID,
+    ) {
+        Task {
+            do {
+                _ = try await updateListItemService.update(
+                    item: UpdateListItemDTO(
+                        itemId: itemId,
+                        title: self.title,
+                        description: sanitizeString(input: self.description),
+                        url: sanitizeString(input: self.url),
+                        isCompleted: self.isCompleted,
+                        image: self.selectedImage,
+                        shouldRemoveImage: false
+                    )
+                )
+                event = .onSuccess
+
+            } catch {
+                print("Failed to create item \(error)")
+            }
+        }
+    }
+
     private func loadItemData(itemId: String) {
         Task {
             do {
                 let item = try await getItemService.get(id: itemId)
-                
+
                 title = item.title
                 description = item.description ?? ""
                 url = item.url ?? ""
+                isCompleted = item.isCompleted
                 originalItem = item.toUiModel()
                 if let imagePath = item.imageUrl {
                     selectedImage = UIImage(contentsOfFile: imagePath)

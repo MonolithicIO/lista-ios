@@ -277,7 +277,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 listId: listItemEntity.lista!.id!,
                 id: listItemEntity.id!,
                 title: listItemEntity.title!,
-                description: listItemEntity.description,
+                description: listItemEntity.note,
                 url: listItemEntity.link,
                 updatedAt: listItemEntity.updatedAt!,
                 createdAt: listItemEntity.createdAt!,

@@ -33,7 +33,7 @@ struct InsertItemView: View {
     }
 
     var screenTitle: String {
-        if viewModel.isEditing {
+        if itemId != nil {
             "Edit item"
         } else {
             "Create Item"
