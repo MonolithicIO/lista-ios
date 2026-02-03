@@ -2,7 +2,7 @@
 //  InsertItemView.swift
 //  lista
 //
-//  Created by Lucca Beurmann on 02/02/26.
+//  Redesigned with modern card-based layout
 //
 
 import Foundation
@@ -125,48 +125,147 @@ struct InsertItemContentView: View {
     @Binding var selectedImage: UIImage?
 
     var body: some View {
-        Form {
-            InsertSection(
-                title: "Title",
-                isOptional: false
-            ) {
-                TextField("Item title", text: $itemTitle)
-            }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 16) {
+                // Title
+                sectionHeader(title: "Title", isOptional: false)
+                titleCard
 
-            InsertSection(
-                title: "Description",
-                isOptional: true
-            ) {
-                TextEditor(text: $itemDescription)
-                    .frame(minHeight: 60, maxHeight: 100)
-            }
+                // Description
+                sectionHeader(title: "Description", isOptional: true)
+                descriptionCard
 
-            InsertSection(
-                title: "Link",
-                isOptional: true
-            ) {
-                TextField("Item title", text: $itemUrl)
-            }
+                // URL
+                sectionHeader(title: "Link", isOptional: true)
+                urlCard
 
-            InsertSection(title: "Image", isOptional: true) {
-                InsertItemImageView(
-                    isEditing: isEditing,
-                    formImageSource: $presentedImagePicker,
-                    imageToDisplay: $selectedImage
-                )
-            }
+                // Image
+                sectionHeader(title: "Image", isOptional: true)
+                imageCard
 
+                // Save CTA Button
+                saveCTAButton
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 16)
         }
-        .scrollContentBackground(.hidden)
-        .background(AppColors.background.ignoresSafeArea())
+        .scrollDismissesKeyboard(.interactively)
+        .background(AppColors.background)
         .navigationTitle(navTitle)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button("Done") {
-                    onAction(.onSubmit)
-                }
+    }
+
+    // MARK: - Card Views
+
+    private var titleCard: some View {
+        TextField("Enter item title", text: $itemTitle)
+            .font(.body)
+            .foregroundStyle(AppColors.cardForeground)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(AppColors.card)
+                    .shadow(
+                        color: Color.black.opacity(0.08),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
+            )
+    }
+
+    private var descriptionCard: some View {
+        TextEditor(text: $itemDescription)
+            .foregroundStyle(AppColors.cardForeground)
+            .font(.body)
+            .frame(minHeight: 100, maxHeight: 200)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .scrollContentBackground(.hidden)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(AppColors.card)
+                    .shadow(
+                        color: Color.black.opacity(0.08),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
+            )
+    }
+
+    private var urlCard: some View {
+        TextField("Enter URL", text: $itemUrl)
+            .font(.body)
+            .foregroundStyle(AppColors.cardForeground)
+            .padding(.vertical, 16)
+            .padding(.horizontal, 16)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(AppColors.card)
+                    .shadow(
+                        color: Color.black.opacity(0.08),
+                        radius: 8,
+                        x: 0,
+                        y: 4
+                    )
+            )
+    }
+
+    private var imageCard: some View {
+        InsertItemImageView(
+            isEditing: isEditing,
+            formImageSource: $presentedImagePicker,
+            imageToDisplay: $selectedImage
+        )
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(AppColors.card)
+                .shadow(
+                    color: Color.black.opacity(0.08),
+                    radius: 8,
+                    x: 0,
+                    y: 4
+                )
+        )
+    }
+
+    private var saveCTAButton: some View {
+        Button {
+            onAction(.onSubmit)
+        } label: {
+            Text(isEditing ? "Save Changes" : "Create Item")
+                .font(.headline.weight(.semibold))
+                .foregroundStyle(AppColors.accentForeground)
+                .frame(maxWidth: .infinity)
+                .frame(height: 50)
+        }
+        .buttonStyle(.plain)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(AppColors.accent)
+        )
+        .disabled(itemTitle.isEmpty)
+        .opacity(itemTitle.isEmpty ? 0.6 : 1.0)
+    }
+
+    // MARK: - Helpers
+
+    private func sectionHeader(title: String, isOptional: Bool) -> some View {
+        HStack {
+            Text(title)
+                .font(.subheadline.weight(.bold))
+                .foregroundStyle(AppColors.mutedForeground)
+
+            if isOptional {
+                Spacer()
+                Text("Optional")
+                    .font(.caption)
+                    .foregroundStyle(AppColors.accentForeground)
             }
         }
+        .padding(.horizontal, 4)
     }
 }
 
@@ -176,30 +275,15 @@ extension InsertItemContentView {
     }
 }
 
-private struct InsertSection<Content: View>: View {
-    let title: String
-    let isOptional: Bool
-    var content: Content
-
-    init(title: String, isOptional: Bool, @ViewBuilder content: () -> Content) {
-        self.content = content()
-        self.title = title
-        self.isOptional = isOptional
-    }
-
-    var body: some View {
-        Section(
-            header: HStack {
-                Text(title).foregroundStyle(.appForeground)
-                if isOptional {
-                    Spacer()
-                    Text("Optional")
-                        .foregroundStyle(.appAccentForeground)
-                        .font(.caption)
-                }
-            }
-        ) {
-            content
-        }
-    }
+#Preview("New Item") {
+    InsertItemContentView(
+        navTitle: "Create Item",
+        isEditing: false,
+        onAction: { _ in },
+        presentedImagePicker: .constant(nil),
+        itemTitle: .constant("Item title"),
+        itemDescription: .constant("Description"),
+        itemUrl: .constant("google.com"),
+        selectedImage: .constant(nil)
+    )
 }
