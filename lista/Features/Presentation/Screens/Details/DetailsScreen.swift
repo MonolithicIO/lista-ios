@@ -165,6 +165,18 @@ private struct DetailsScreenView: View {
                         .listRowInsets(
                             .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                         )
+                        .swipeActions(edge: .leading) {
+                            Button {
+                                onAction(.onToggleItemState(item))
+                            } label: {
+                                Label(
+                                    item.isCompleted ? "Undo" : "Complete",
+                                    systemImage: item.isCompleted ? "arrow.uturn.backward" : "checkmark"
+                                )
+                            }
+                            .tint(item.isCompleted ? .orange : .green)
+                            .disabled(isArchived || isCompleted)
+                        }
                         .swipeActions(edge: .trailing) {
                             Button(role: .destructive) {
                                 onAction(.onDeleteItem(item))
