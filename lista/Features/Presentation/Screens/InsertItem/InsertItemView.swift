@@ -36,6 +36,13 @@ struct InsertItemView: View {
     var body: some View {
         InsertItemContentView(
             navTitle: screenTitle,
+            onAction: { action in
+                switch action {
+                    
+                case .onSubmit:
+                    self.viewModel.insertItem(listId: self.listId)
+                }
+            },
             itemTitle: $viewModel.title,
             itemDescription: $viewModel.description,
             itemUrl: $viewModel.url
@@ -56,6 +63,8 @@ struct InsertItemView: View {
 
 struct InsertItemContentView: View {
     let navTitle: String
+    let onAction: (Action) -> Void
+    
     @Binding var itemTitle: String
     @Binding var itemDescription: String
     @Binding var itemUrl: String
@@ -81,11 +90,24 @@ struct InsertItemContentView: View {
                 title: "Link",
                 isOptional: true
             ) {
-                TextField("Item title", text: $itemTitle)
+                TextField("Item title", text: $itemUrl)
             }
 
         }
         .navigationTitle(navTitle)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button("Done") {
+                    onAction(.onSubmit)
+                }
+            }
+        }
+    }
+}
+
+extension InsertItemContentView {
+    enum Action {
+        case onSubmit
     }
 }
 
