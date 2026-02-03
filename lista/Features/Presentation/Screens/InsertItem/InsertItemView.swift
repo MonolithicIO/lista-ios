@@ -57,7 +57,6 @@ struct InsertItemView: View {
             itemUrl: self.$viewModel.url,
             selectedImage: self.$viewModel.selectedImage
         )
-        .background(AppColors.background.ignoresSafeArea())
         .task {
             viewModel.initialize(itemId: itemId)
         }
@@ -158,6 +157,8 @@ struct InsertItemContentView: View {
             }
 
         }
+        .scrollContentBackground(.hidden)
+        .background(AppColors.background.ignoresSafeArea())
         .navigationTitle(navTitle)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {

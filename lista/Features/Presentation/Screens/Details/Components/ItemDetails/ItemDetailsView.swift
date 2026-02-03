@@ -32,6 +32,7 @@ struct ItemDetailsView: View {
                 ItemStatusBadge(
                     isItemCompleted: item.isCompleted,
                 )
+                .listRowBackground(Color.clear)
                 .listRowInsets(
                     .init(top: 0, leading: 0, bottom: 0, trailing: 0)
                 )
@@ -90,7 +91,7 @@ struct ItemDetailsView: View {
                 }
 
                 if let imagePath = item.image,
-                    let image = UIImage(contentsOfFile: imagePath)
+                   let image = UIImage(contentsOfFile: imageURL(from: imagePath).path())
                 {
                     Section(
                         header: HStack {
@@ -103,6 +104,7 @@ struct ItemDetailsView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(height: 200)
+                            .frame(maxWidth: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 12))
                             .clipped()
                     }
