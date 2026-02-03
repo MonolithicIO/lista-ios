@@ -25,10 +25,17 @@ struct ItemFormView: View {
     @State private var imagePickerSource: ItemFormImageSource? = nil
     @State private var showSafari: Bool = false
 
+    var navigationTitle: String {
+        if viewModel.isEditMode {
+            return viewModel.isWriteMode ? "Edit Item" : "Item Details"
+        } else {
+            return "Add Item"
+        }
+    }
+
     var body: some View {
         NavigationStack {
             List {
-
                 if !viewModel.isWriteMode, let updatedAt = viewModel.updatedAt {
                     LastUpdatedView(date: updatedAt)
                         .listRowBackground(Color.clear)
@@ -106,7 +113,7 @@ struct ItemFormView: View {
             .scrollDismissesKeyboard(.interactively)
             .scrollContentBackground(.hidden)
             .background(AppColors.background)
-            .navigationTitle(viewModel.navigationTitle)
+            .navigationTitle(navigationTitle)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -120,9 +127,7 @@ struct ItemFormView: View {
                         Button("Save") {
                             saveAction()
                         }
-                        .disabled(
-                            !viewModel.isSubmitEnabled || !viewModel.hasChanges
-                        )
+                        .disabled(!viewModel.hasChanges)
                     } else {
                         // Edit button in read mode
                         Button("Edit") {
@@ -161,7 +166,7 @@ struct ItemFormView: View {
                 CameraPickerView(
                     onImagePicked: { uiImage in
                         viewModel.image = uiImage
-                        viewModel.shouldRemoveImage = false
+                        viewModel.didImageChanged = true
                         imagePickerSource = nil
                     }
                 )
@@ -193,8 +198,7 @@ struct ItemFormView: View {
             if let newItem = viewModel.mergeStateForCreate() {
                 onCreate?(newItem)
                 if viewModel.createMore {
-                    // Clear fields and stay open for next item
-                    viewModel.prepareForNextItem()
+                    viewModel.clearState()
                 } else {
                     // Dismiss the view
                     onDismiss()

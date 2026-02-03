@@ -38,6 +38,9 @@ struct listaApp: App {
 
         case .settings:
             SettingsScreen()
+            
+        case .insertItem(listId: let listId, itemId: let itemId):
+            InsertItemView(listId: listId, itemId: itemId)
         }
     }
 }

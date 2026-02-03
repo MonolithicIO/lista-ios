@@ -12,6 +12,9 @@ struct DetailsScreen: View {
     let listaTitle: String
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(NavigationCoordinator.self) private var coordinator:
+        NavigationCoordinator
+
     @StateObject var viewModel: DetailsViewModel
 
     init(
@@ -35,8 +38,8 @@ struct DetailsScreen: View {
             items: viewModel.items,
             onAction: { action in
                 switch action {
-                case .onAddItem(let newItem):
-                    viewModel.onAddNewItem(item: newItem)
+                case .onAddItem:
+                    coordinator.push(.insertItem(listId: self.listaId, itemId: nil))
                 case .onToggleItemState(let changedItem):
                     viewModel.onToogleItemState(item: changedItem)
                 case .onDelete:
@@ -84,21 +87,6 @@ private struct DetailsScreenView: View {
 
     @State private var presentation: DetailsScreenPresentation? = nil
 
-    // Helper computed properties for presentation state checks
-    private var isItemFormPresented: Bool {
-        if case .itemForm = presentation {
-            return true
-        }
-        return false
-    }
-
-    private var itemFormMode: ItemFormMode? {
-        if case .itemForm(let mode) = presentation {
-            return mode
-        }
-        return nil
-    }
-
     private var isConfirmDeletePresented: Bool {
         if case .confirmDelete = presentation {
             return true
@@ -143,7 +131,9 @@ private struct DetailsScreenView: View {
                     iconName: "list.bullet",
                     actionTitle: "Create item",
                     onAction: {
-                        presentation = .itemForm(.write(.create(listId: listaId)))
+                        presentation = .itemForm(
+                            .write(.create(listId: listaId))
+                        )
                     }
                 )
                 .frame(
@@ -203,7 +193,7 @@ private struct DetailsScreenView: View {
                 )
 
                 Button(action: {
-                    presentation = .itemForm(.write(.create(listId: listaId)))
+                    onAction(.onAddItem)
                 }) {
                     Image(systemName: "plus")
                 }
@@ -263,23 +253,6 @@ private struct DetailsScreenView: View {
                 )
             }
         )
-        .fullScreenCover(isPresented: .constant(isItemFormPresented)) {
-            if let mode = itemFormMode {
-                ItemFormView(
-                    mode: mode,
-                    isParentListCompleted: isCompleted,
-                    onCreate: { newItem in
-                        onAction(.onAddItem(newItem))
-                    },
-                    onUpdate: { dto in
-                        onAction(.onUpdateItem(dto))
-                    },
-                    onDismiss: {
-                        presentation = nil
-                    }
-                )
-            }
-        }
     }
 }
 
@@ -292,7 +265,7 @@ extension DetailsScreenView {
     }
 
     enum Actions {
-        case onAddItem(AddListaItemUiModel)
+        case onAddItem
         case onToggleItemState(ListaItemUiModel)
         case onDelete
         case onArchive

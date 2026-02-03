@@ -12,6 +12,7 @@ enum Routes: Hashable {
     case home
     case details(listaId: String, listaTitle: String)
     case settings
+    case insertItem(listId: String, itemId: String?)
 }
 
 // MARK: - Navigation Coordinator

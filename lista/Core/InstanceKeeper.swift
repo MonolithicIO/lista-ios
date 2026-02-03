@@ -166,5 +166,11 @@ class InstanceKeeper {
             deleteItemService: provideDeleteListItemService()
         )
     }
+    
+    func provideInsertItemViewModel() -> InsertItemViewModel {
+        return InsertItemViewModel(
+            createItemService: provideCreateListItemService()
+        )
+    }
 }
 

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol CreateListItemServiceProtocol {
-    func create(item _dto: CreateListItemDTO) async throws -> ListaItem
+    func create(item dto: CreateListItemDTO) async throws -> ListaItem
 }
 
 final class CreateListItemService: CreateListItemServiceProtocol {

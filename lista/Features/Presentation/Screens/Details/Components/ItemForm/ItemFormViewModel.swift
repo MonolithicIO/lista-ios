@@ -28,39 +28,30 @@ final class ItemFormViewModel: ObservableObject {
     @Published var updatedAt: Date? = nil
     @Published var galleryPickerSelection: PhotosPickerItem?
     @Published var image: UIImage?
-    @Published var shouldRemoveImage: Bool = false
     @Published var isWriteMode: Bool = false
     @Published var createMore: Bool = false
+    @Published var didImageChanged: Bool = false
 
     // MARK: - Private Properties
     private(set) var originalItem: ListaItemUiModel?
+    private(set) var isEditMode: Bool = false
     private var listId: String?
-    private var isEditMode: Bool = false
 
     // MARK: - Computed Properties
     var hasChanges: Bool {
         guard let original = originalItem else {
             // Creating new item - has changes if title is not empty
-            return !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            return !title.trimmingCharacters(in: .whitespacesAndNewlines)
+                .isEmpty
         }
-        return title != original.title ||
-            description != (original.description ?? "") ||
-            url != (original.url ?? "") ||
-            isCompleted != original.isCompleted ||
-            image != nil ||
-            shouldRemoveImage
-    }
+        let titleDiff = title != original.title
+        let descriptionDiff = description != (original.description ?? "")
+        let urlDiff = url != (original.url ?? "")
+        let completionDiff = isCompleted != original.isCompleted
 
-    var isSubmitEnabled: Bool {
-        return !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
+        return titleDiff || descriptionDiff || urlDiff || completionDiff
+            || didImageChanged
 
-    var navigationTitle: String {
-        if isEditMode {
-            return isWriteMode ? "Edit Item" : "Item Details"
-        } else {
-            return "Add Item"
-        }
     }
 
     var isCreateMode: Bool {
@@ -100,15 +91,15 @@ final class ItemFormViewModel: ObservableObject {
         self.url = item.url ?? ""
         self.isCompleted = item.isCompleted
         self.updatedAt = item.updatedAt
-        self.shouldRemoveImage = false
+        self.didImageChanged = false
         self.galleryPickerSelection = nil
-        
+
         if let imagePath = item.image {
             self.image = UIImage(contentsOfFile: imagePath)
         }
     }
 
-    private func clearState() {
+    func clearState() {
         title = ""
         description = ""
         url = ""
@@ -116,20 +107,8 @@ final class ItemFormViewModel: ObservableObject {
         updatedAt = nil
         galleryPickerSelection = nil
         image = nil
-        shouldRemoveImage = false
+        didImageChanged = false
         createMore = false
-    }
-
-    func prepareForNextItem() {
-        title = ""
-        description = ""
-        url = ""
-        isCompleted = false
-        updatedAt = nil
-        galleryPickerSelection = nil
-        image = nil
-        shouldRemoveImage = false
-        // Keep createMore as is so user preference is preserved
     }
 
     // MARK: - Actions
@@ -138,27 +117,35 @@ final class ItemFormViewModel: ObservableObject {
     }
 
     func mergeStateForCreate() -> AddListaItemUiModel? {
-        guard let listId = listId else { return nil }
+        if listId == nil { return nil }
+
         return AddListaItemUiModel(
             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-            description: description.isEmpty ? nil : description.trimmingCharacters(in: .whitespacesAndNewlines),
-            url: url.isEmpty ? nil : url.trimmingCharacters(in: .whitespacesAndNewlines),
+            description: description.isEmpty
+                ? nil
+                : description.trimmingCharacters(in: .whitespacesAndNewlines),
+            url: url.isEmpty
+                ? nil : url.trimmingCharacters(in: .whitespacesAndNewlines),
             attachedImage: image
         )
     }
 
     func mergeStateForUpdate() -> UpdateListItemDTO? {
         guard let original = originalItem,
-              let itemId = UUID(uuidString: original.id) else { return nil }
+            let itemId = UUID(uuidString: original.id)
+        else { return nil }
 
         return UpdateListItemDTO(
             itemId: itemId,
             title: title.trimmingCharacters(in: .whitespacesAndNewlines),
-            description: description.isEmpty ? nil : description.trimmingCharacters(in: .whitespacesAndNewlines),
-            url: url.isEmpty ? nil : url.trimmingCharacters(in: .whitespacesAndNewlines),
+            description: description.isEmpty
+                ? nil
+                : description.trimmingCharacters(in: .whitespacesAndNewlines),
+            url: url.isEmpty
+                ? nil : url.trimmingCharacters(in: .whitespacesAndNewlines),
             isCompleted: isCompleted,
             image: image,
-            shouldRemoveImage: shouldRemoveImage
+            shouldRemoveImage: didImageChanged
         )
     }
 
@@ -168,30 +155,12 @@ final class ItemFormViewModel: ObservableObject {
 
         Task {
             if let data = try? await item.loadTransferable(type: Data.self),
-               let image = UIImage(data: data) {
+                let image = UIImage(data: data)
+            {
                 await MainActor.run {
                     self.image = image
-                    self.shouldRemoveImage = false
+                    self.didImageChanged = true
                     self.galleryPickerSelection = nil
-                }
-            }
-        }
-    }
-
-    func removeImage() {
-        image = nil
-        shouldRemoveImage = true
-    }
-
-    func cancelImageRemoval() {
-        shouldRemoveImage = false
-        // Reload original image if exists
-        if let original = originalItem, let imagePath = original.image {
-            Task {
-                if let loadedImage = try? DiskManager().loadImage(fileName: imagePath) {
-                    await MainActor.run {
-                        self.image = loadedImage
-                    }
                 }
             }
         }
