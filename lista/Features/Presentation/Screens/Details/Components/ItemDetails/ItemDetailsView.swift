@@ -23,7 +23,7 @@ struct ItemDetailsView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 16) {
                     // Status badge (subtle, centered)
                     ItemStatusBadge(isItemCompleted: item.isCompleted)
                         .padding(.top, 8)
@@ -46,7 +46,10 @@ struct ItemDetailsView: View {
 
                     // Image Card (if exists)
                     if let imagePath = item.image,
-                       let image = UIImage(contentsOfFile: imageURL(from: imagePath).path()) {
+                        let image = UIImage(
+                            contentsOfFile: imageURL(from: imagePath).path()
+                        )
+                    {
                         sectionTitle("Image")
                         imageCard(image: image)
                     }
@@ -135,8 +138,9 @@ struct ItemDetailsView: View {
     private func urlCard(url: String) -> some View {
         Button {
             if !url.isEmpty,
-               let validUrl = URL(string: url),
-               UIApplication.shared.canOpenURL(validUrl) {
+                let validUrl = URL(string: url),
+                UIApplication.shared.canOpenURL(validUrl)
+            {
                 showSafari = true
             }
         } label: {
@@ -152,7 +156,9 @@ struct ItemDetailsView: View {
 
                     Text(url)
                         .font(.caption)
-                        .foregroundStyle(AppColors.accentForeground.opacity(0.8))
+                        .foregroundStyle(
+                            AppColors.accentForeground.opacity(0.8)
+                        )
                         .lineLimit(1)
                 }
 
@@ -178,7 +184,9 @@ struct ItemDetailsView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(maxWidth: .infinity)
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .clipShape(
+                    RoundedRectangle(cornerRadius: 12, style: .continuous)
+                )
         }
         .padding(12)
         .background(
@@ -198,8 +206,11 @@ struct ItemDetailsView: View {
             onToggle()
         } label: {
             HStack(spacing: 8) {
-                Image(systemName: item.isCompleted ? "arrow.uturn.backward" : "checkmark")
-                    .font(.headline.weight(.semibold))
+                Image(
+                    systemName: item.isCompleted
+                        ? "arrow.uturn.backward" : "checkmark"
+                )
+                .font(.headline.weight(.semibold))
                 Text(item.isCompleted ? "Mark as Active" : "Mark as Complete")
                     .font(.headline.weight(.semibold))
             }
@@ -217,11 +228,13 @@ struct ItemDetailsView: View {
     }
 
     private func lastUpdatedText(date: Date) -> some View {
-        Text("Updated on \(date.formatted(date: .abbreviated, time: .shortened))")
-            .font(.caption)
-            .foregroundStyle(AppColors.mutedForeground)
-            .frame(maxWidth: .infinity, alignment: .center)
-            .padding(.top, 8)
+        Text(
+            "Updated on \(date.formatted(date: .abbreviated, time: .shortened))"
+        )
+        .font(.caption)
+        .foregroundStyle(AppColors.mutedForeground)
+        .frame(maxWidth: .infinity, alignment: .center)
+        .padding(.top, 8)
     }
 
     private func sectionTitle(_ title: String) -> some View {
@@ -239,7 +252,8 @@ struct ItemDetailsView: View {
             listId: "123",
             id: UUID().uuidString,
             title: "Buy groceries for the weekend",
-            description: "Milk, eggs, bread, and some fresh vegetables from the farmer's market",
+            description:
+                "Milk, eggs, bread, and some fresh vegetables from the farmer's market",
             url: "https://example.com/list",
             isCompleted: false,
             image: nil,
@@ -257,7 +271,8 @@ struct ItemDetailsView: View {
             listId: "123",
             id: UUID().uuidString,
             title: "Buy groceries for the weekend",
-            description: "Milk, eggs, bread, and some fresh vegetables from the farmer's market",
+            description:
+                "Milk, eggs, bread, and some fresh vegetables from the farmer's market",
             url: "https://example.com/list",
             isCompleted: true,
             image: nil,
