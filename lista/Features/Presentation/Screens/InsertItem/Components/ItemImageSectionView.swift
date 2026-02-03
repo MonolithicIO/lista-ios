@@ -8,26 +8,19 @@
 import Foundation
 import SwiftUI
 
-struct ItemFormImageSection: View {
-    let isWriteMode: Bool
+struct InsertItemImageView: View {
+    let isEditing: Bool
 
     @State private var isConfirmationDialogPresented: Bool = false
     @Binding var formImageSource: ItemFormImageSource?
     @Binding var imageToDisplay: UIImage?
 
     var body: some View {
-        if isWriteMode {
-            WriteModeView(
-                isConfirmationDialogPresented: $isConfirmationDialogPresented,
-                formImageSource: $formImageSource,
-                image: $imageToDisplay
-            )
-        } else {
-            // For Read mode omit image if null
-            if let imageToDisplay {
-                ReadModeImage(image: imageToDisplay)
-            }
-        }
+        WriteModeView(
+            isConfirmationDialogPresented: $isConfirmationDialogPresented,
+            formImageSource: $formImageSource,
+            image: $imageToDisplay
+        )
     }
 }
 
@@ -136,26 +129,6 @@ private struct WriteModeView: View {
                     }
                 }
             }
-        }
-    }
-}
-
-// MARK: - Read mode image
-private struct ReadModeImage: View {
-    let image: UIImage
-
-    var body: some View {
-        Section(
-            header: HStack {
-                Text("Image").foregroundStyle(AppColors.foreground)
-            }
-        ) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(height: 200)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .clipped()
         }
     }
 }

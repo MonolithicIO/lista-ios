@@ -7,6 +7,8 @@
 
 import Combine
 import Foundation
+import PhotosUI
+import SwiftUI
 
 final class InsertItemViewModel: ObservableObject {
     // MARK: - Dependency properties
@@ -22,7 +24,9 @@ final class InsertItemViewModel: ObservableObject {
     @Published var description: String = ""
     @Published var url: String = ""
     @Published var isEditing: Bool = false
+    @Published var selectedImage: UIImage?
     @Published var event: Events? = nil
+    @Published var galleryPickerSelection: PhotosPickerItem?
 
     func initialize(itemId: String?) {
         isEditing = itemId != nil
@@ -38,13 +42,28 @@ final class InsertItemViewModel: ObservableObject {
                         title: self.title,
                         description: sanitizeString(input: self.description),
                         url: sanitizeString(input: self.url),
-                        image: nil
+                        image: self.selectedImage
                     )
                 )
                 event = .onSuccess
 
             } catch {
                 print("Failed to create item \(error)")
+            }
+        }
+    }
+    
+    func handleGallerySelection(_ item: PhotosPickerItem?) {
+        guard let item else { return }
+
+        Task {
+            if let data = try? await item.loadTransferable(type: Data.self),
+                let image = UIImage(data: data)
+            {
+                await MainActor.run {
+                    self.selectedImage = image
+                    self.galleryPickerSelection = nil
+                }
             }
         }
     }

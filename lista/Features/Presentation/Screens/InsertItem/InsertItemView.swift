@@ -7,10 +7,17 @@
 
 import Foundation
 import SwiftUI
+import PhotosUI
 
 struct InsertItemView: View {
+    // MARK: - Env
     @Environment(\.dismiss) private var dismiss
+
+    // MARK: - State
     @StateObject var viewModel: InsertItemViewModel
+    @State var presentedImagePicker: PresentedImagePicker? = nil
+
+    // MARK: - Input properties
     let listId: String
     let itemId: String?
 
@@ -38,7 +45,7 @@ struct InsertItemView: View {
             navTitle: screenTitle,
             onAction: { action in
                 switch action {
-                    
+
                 case .onSubmit:
                     self.viewModel.insertItem(listId: self.listId)
                 }
@@ -50,7 +57,7 @@ struct InsertItemView: View {
         .task {
             viewModel.initialize(itemId: itemId)
         }
-        .onChange(of: viewModel.event) { oldValue, newValue in
+        .onChange(of: viewModel.event) { _, newValue in
             guard let event = newValue else { return }
             switch event {
 
@@ -58,13 +65,35 @@ struct InsertItemView: View {
                 dismiss()
             }
         }
+        .photosPicker(
+            isPresented: Binding(
+                get: { presentedImagePicker == .gallery },
+                set: { isPresented in
+                    if !isPresented {
+                        presentedImagePicker = nil
+                    }
+                }
+            ),
+            selection: $viewModel.galleryPickerSelection,
+            matching: .images
+        )
+        .onChange(of: viewModel.galleryPickerSelection) { _, newValue in
+            self.viewModel.handleGallerySelection(newValue)
+        }
+    }
+}
+
+extension InsertItemView {
+    enum PresentedImagePicker {
+        case gallery
+        case camera
     }
 }
 
 struct InsertItemContentView: View {
     let navTitle: String
     let onAction: (Action) -> Void
-    
+
     @Binding var itemTitle: String
     @Binding var itemDescription: String
     @Binding var itemUrl: String

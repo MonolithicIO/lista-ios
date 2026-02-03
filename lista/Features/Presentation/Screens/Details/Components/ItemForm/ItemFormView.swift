@@ -82,11 +82,11 @@ struct ItemFormView: View {
                     )
                 }
 
-                ItemFormImageSection(
-                    isWriteMode: viewModel.isWriteMode,
-                    formImageSource: $imagePickerSource,
-                    imageToDisplay: $viewModel.image
-                )
+//                ItemFormImageSection(
+//                    isWriteMode: viewModel.isWriteMode,
+//                    formImageSource: $imagePickerSource,
+//                    imageToDisplay: $viewModel.image
+//                )
 
                 // Create More Toggle - Only shown when creating new items
                 if viewModel.isCreateMode {
