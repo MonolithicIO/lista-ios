@@ -65,6 +65,7 @@ struct InsertItemView: View {
                 dismiss()
             }
         }
+        // MARK: - Gallery Picker
         .photosPicker(
             isPresented: Binding(
                 get: { presentedImagePicker == .gallery },
@@ -79,6 +80,25 @@ struct InsertItemView: View {
         )
         .onChange(of: viewModel.galleryPickerSelection) { _, newValue in
             self.viewModel.handleGallerySelection(newValue)
+        }
+        // MARK: - Camera Picker
+        .sheet(
+            isPresented: Binding(
+                get: { presentedImagePicker == .camera },
+                set: { isPresented in
+                    if !isPresented {
+                        presentedImagePicker = nil
+                    }
+                }
+            )
+        ) {
+            CameraPickerView(
+                onImagePicked: { uiImage in
+                    viewModel.selectedImage = uiImage
+                    presentedImagePicker = nil
+                }
+            )
+            .ignoresSafeArea()
         }
     }
 }
