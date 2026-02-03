@@ -39,7 +39,9 @@ struct DetailsScreen: View {
             onAction: { action in
                 switch action {
                 case .onAddItem:
-                    coordinator.push(.insertItem(listId: self.listaId, itemId: nil))
+                    coordinator.push(
+                        .insertItem(listId: self.listaId, itemId: nil)
+                    )
                 case .onToggleItemState(let changedItem):
                     viewModel.onToogleItemState(item: changedItem)
                 case .onDelete:
@@ -52,8 +54,10 @@ struct DetailsScreen: View {
                     viewModel.setCompletedState(state: true)
                 case .onUndoComplete:
                     viewModel.setCompletedState(state: false)
-                case .onUpdateItem(let dto):
-                    viewModel.onUpdateItem(dto: dto)
+                case .onUpdateItem(let item):
+                    coordinator.push(
+                        .insertItem(listId: self.listaId, itemId: item.id)
+                    )
                 }
             }
         )
@@ -86,6 +90,7 @@ private struct DetailsScreenView: View {
     let onAction: (DetailsScreenView.Actions) -> Void
 
     @State private var presentation: DetailsScreenPresentation? = nil
+    @State private var detailsToPresent: ListaItemUiModel? = nil
 
     private var isConfirmDeletePresented: Bool {
         if case .confirmDelete = presentation {
@@ -131,9 +136,7 @@ private struct DetailsScreenView: View {
                     iconName: "list.bullet",
                     actionTitle: "Create item",
                     onAction: {
-                        presentation = .itemForm(
-                            .write(.create(listId: listaId))
-                        )
+                        onAction(.onAddItem)
                     }
                 )
                 .frame(
@@ -152,7 +155,7 @@ private struct DetailsScreenView: View {
                                 onAction(.onToggleItemState(item))
                             },
                             onTap: { item in
-                                presentation = .itemForm(.read(item))
+                                detailsToPresent = item
                             }
                         )
                         .listRowBackground(AppColors.background)
@@ -253,12 +256,30 @@ private struct DetailsScreenView: View {
                 )
             }
         )
+        .sheet(
+            isPresented: Binding(
+                get: {
+                    detailsToPresent != nil
+                },
+                set: { isPresented in
+                    if !isPresented {
+                        detailsToPresent = nil
+                    }
+                }
+            )
+        ) {
+            if let itemDetails = detailsToPresent {
+                ItemDetailsView(
+                    item: itemDetails,
+                    onUpdate: { item in onAction(.onUpdateItem(item)) },
+                )
+            }
+        }
     }
 }
 
 extension DetailsScreenView {
     enum DetailsScreenPresentation {
-        case itemForm(ItemFormMode)
         case confirmDelete
         case confirmArchive
         case confirmComplete
@@ -272,7 +293,7 @@ extension DetailsScreenView {
         case onUndoArchive
         case onComplete
         case onUndoComplete
-        case onUpdateItem(UpdateListItemDTO)
+        case onUpdateItem(ListaItemUiModel)
     }
 }
 
