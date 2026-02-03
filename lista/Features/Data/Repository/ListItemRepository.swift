@@ -12,10 +12,11 @@ protocol ListItemRepositoryProtocol {
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
     func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
     func deleteItem(itemId: UUID) async throws
+    func getItem(itemId: UUID) async throws -> ListaItem
 }
 
 final class ListItemRepository: ListItemRepositoryProtocol {
-
+    
     private let datasource: ListItemDataSourceProtocol
 
     init(datasource: ListItemDataSourceProtocol) {
@@ -39,5 +40,9 @@ final class ListItemRepository: ListItemRepositoryProtocol {
 
     func deleteItem(itemId: UUID) async throws {
         try await datasource.deleteItem(itemId: itemId)
+    }
+    
+    func getItem(itemId: UUID) async throws -> ListaItem {
+        return try await datasource.getItem(itemId: itemId)
     }
 }
