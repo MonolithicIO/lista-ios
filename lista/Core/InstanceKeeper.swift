@@ -27,11 +27,11 @@ class InstanceKeeper {
     func provideDateProvider() -> DateProviderProtocol {
         return DateProvider()
     }
-    
+
     func provideUuidProvider() -> UUIDProviderProtocol {
         return UUIDProvider()
     }
-    
+
     func provideDiskManager() -> DiskManagerProtocol {
         return DiskManager()
     }
@@ -67,7 +67,7 @@ class InstanceKeeper {
                 dateProvider: provideDateProvider(),
                 diskManager: provideDiskManager(),
                 uuidProvider: provideUuidProvider()
-                
+
             )
             self.listItemDatasource = newInstance
 
@@ -125,6 +125,12 @@ class InstanceKeeper {
         )
     }
 
+    func provideDeleteListItemService() -> DeleteListItemServiceProtocol {
+        return DeleteListItemService(
+            repository: provideListItemRepository()
+        )
+    }
+
     func provideArchiveListService() -> ArchiveListServiceProtocol {
         return ArchiveListService(repository: provideListRepository())
     }
@@ -135,6 +141,10 @@ class InstanceKeeper {
 
     func provideRevertCompleteService() -> RevertCompleteServiceProtocol {
         return RevertCompleteService(repository: provideListRepository())
+    }
+
+    func provideGetItemService() -> GetListItemServiceProtocol {
+        return GetListItemService(repository: provideListItemRepository())
     }
 
     // MARK: - Presentation Providers
@@ -156,8 +166,16 @@ class InstanceKeeper {
             dateProvider: provideDateProvider(),
             completeListService: provideCompleteListService(),
             revertCompleteListService: provideRevertCompleteService(),
-            updateItemService: provideUpdateListItemService()
+            updateItemService: provideUpdateListItemService(),
+            deleteItemService: provideDeleteListItemService()
+        )
+    }
+
+    func provideInsertItemViewModel() -> InsertItemViewModel {
+        return InsertItemViewModel(
+            createItemService: provideCreateListItemService(),
+            getItemService: provideGetItemService(),
+            updateListItemService: provideUpdateListItemService()
         )
     }
 }
-

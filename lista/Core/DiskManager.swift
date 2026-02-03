@@ -18,17 +18,19 @@ final class DiskManager: DiskManagerProtocol {
 
     func saveImage(image: UIImage, fileName: String) throws -> String {
         let data = image.jpegData(compressionQuality: 0.9)!
-        let directory = FileManager.default.urls(
-            for: .documentDirectory,
-            in: .userDomainMask
-        ).first!
 
-        let fileUrl = directory.appendingPathComponent("\(fileName).jpg")
+        let directory = FileManager.default
+            .urls(for: .documentDirectory, in: .userDomainMask)
+            .first!
+
+        let finalName = "\(fileName).jpg"
+        let fileUrl = directory.appendingPathComponent(finalName)
 
         try data.write(to: fileUrl, options: .atomic)
 
-        return fileUrl.path()
+        return finalName // ✅ só o filename
     }
+
 
     func deleteImage(fileName: String) throws {
         let directory = FileManager.default.urls(
@@ -70,4 +72,11 @@ final class DiskManager: DiskManagerProtocol {
 
         return image
     }
+}
+
+func imageURL(from fileName: String) -> URL {
+    FileManager.default
+        .urls(for: .documentDirectory, in: .userDomainMask)
+        .first!
+        .appendingPathComponent(fileName)
 }

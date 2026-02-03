@@ -12,6 +12,8 @@ protocol ListItemDataSourceProtocol {
     func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
     func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
+    func deleteItem(itemId: UUID) async throws
+    func getItem(itemId: UUID) async throws -> ListaItem
 }
 
 final class ListItemDataSource: ListItemDataSourceProtocol {
@@ -73,7 +75,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
             listaItem.lista = lista
             listaItem.isCompleted = false
             listaItem.imageUrl = imageUrl
-            
+
             lista.updatedAt = try self.dateProvider.currentDate()
 
             if self.context.hasChanges {
@@ -114,7 +116,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                     ]
                 )
             }
-            
+
             let newDate = try self.dateProvider.currentDate()
 
             listItem.isCompleted = isActive
@@ -124,7 +126,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
             if self.context.hasChanges {
                 try self.context.save()
             }
-            
+
             return ListaItem(
                 listId: listItem.lista?.id ?? UUID(),
                 id: listItem.id!,
@@ -148,7 +150,8 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 dto.itemId as CVarArg
             )
 
-            guard let listItem = try self.context.fetch(itemRequest).first else {
+            guard let listItem = try self.context.fetch(itemRequest).first
+            else {
                 throw NSError(
                     domain: "ListItemDataSource",
                     code: 404,
@@ -205,6 +208,81 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 createdAt: listItem.createdAt!,
                 isCompleted: listItem.isCompleted,
                 imageUrl: listItem.imageUrl
+            )
+        }
+    }
+
+    func deleteItem(itemId: UUID) async throws {
+        try await context.perform {
+            let itemRequest = ListaItemEntity.fetchRequest()
+            itemRequest.fetchLimit = 1
+            itemRequest.predicate = NSPredicate(
+                format: "id == %@",
+                itemId as CVarArg
+            )
+
+            guard let listItem = try self.context.fetch(itemRequest).first
+            else {
+                throw NSError(
+                    domain: "ListItemDataSource",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey:
+                            "ListItem with id \(itemId.uuidString) not found"
+                    ]
+                )
+            }
+
+            // Delete associated image if exists
+            if let imageUrl = listItem.imageUrl {
+                try? self.diskManager.deleteImage(fileName: imageUrl)
+            }
+
+            // Delete the item
+            self.context.delete(listItem)
+
+            // Update parent list's updatedAt
+            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
+
+            if self.context.hasChanges {
+                try self.context.save()
+            }
+        }
+    }
+    
+    func getItem(itemId: UUID) async throws -> ListaItem {
+        try await context.perform {
+            let itemRequest = ListaItemEntity.fetchRequest()
+            itemRequest.fetchLimit = 1
+            itemRequest.predicate = NSPredicate(
+                format: "id ==%@",
+                itemId as CVarArg
+            )
+
+            guard
+                let listItemEntity = try self.context.fetch(itemRequest)
+                    .first
+            else {
+                throw NSError(
+                    domain: "ListItemDataSource",
+                    code: 404,
+                    userInfo: [
+                        NSLocalizedDescriptionKey:
+                            "ListItem with id \(itemId.uuidString) not found"
+                    ]
+                )
+            }
+
+            return ListaItem(
+                listId: listItemEntity.lista!.id!,
+                id: listItemEntity.id!,
+                title: listItemEntity.title!,
+                description: listItemEntity.note,
+                url: listItemEntity.link,
+                updatedAt: listItemEntity.updatedAt!,
+                createdAt: listItemEntity.createdAt!,
+                isCompleted: listItemEntity.isCompleted,
+                imageUrl: listItemEntity.imageUrl
             )
         }
     }

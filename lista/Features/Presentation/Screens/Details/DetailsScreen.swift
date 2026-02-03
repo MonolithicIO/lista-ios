@@ -12,6 +12,9 @@ struct DetailsScreen: View {
     let listaTitle: String
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(NavigationCoordinator.self) private var coordinator:
+        NavigationCoordinator
+
     @StateObject var viewModel: DetailsViewModel
 
     init(
@@ -35,8 +38,10 @@ struct DetailsScreen: View {
             items: viewModel.items,
             onAction: { action in
                 switch action {
-                case .onAddItem(let newItem):
-                    viewModel.onAddNewItem(item: newItem)
+                case .onAddItem:
+                    coordinator.push(
+                        .insertItem(listId: self.listaId, itemId: nil)
+                    )
                 case .onToggleItemState(let changedItem):
                     viewModel.onToogleItemState(item: changedItem)
                 case .onDelete:
@@ -49,8 +54,10 @@ struct DetailsScreen: View {
                     viewModel.setCompletedState(state: true)
                 case .onUndoComplete:
                     viewModel.setCompletedState(state: false)
-                case .onUpdateItem(let dto):
-                    viewModel.onUpdateItem(dto: dto)
+                case .onUpdateItem(let item):
+                    coordinator.push(
+                        .insertItem(listId: self.listaId, itemId: item.id)
+                    )
                 }
             }
         )
@@ -83,21 +90,7 @@ private struct DetailsScreenView: View {
     let onAction: (DetailsScreenView.Actions) -> Void
 
     @State private var presentation: DetailsScreenPresentation? = nil
-
-    // Helper computed properties for presentation state checks
-    private var isItemFormPresented: Bool {
-        if case .itemForm = presentation {
-            return true
-        }
-        return false
-    }
-
-    private var itemFormMode: ItemFormMode? {
-        if case .itemForm(let mode) = presentation {
-            return mode
-        }
-        return nil
-    }
+    @State private var detailsToPresent: ListaItemUiModel? = nil
 
     private var isConfirmDeletePresented: Bool {
         if case .confirmDelete = presentation {
@@ -143,7 +136,7 @@ private struct DetailsScreenView: View {
                     iconName: "list.bullet",
                     actionTitle: "Create item",
                     onAction: {
-                        presentation = .itemForm(.write(.create(listId: listaId)))
+                        onAction(.onAddItem)
                     }
                 )
                 .frame(
@@ -162,7 +155,7 @@ private struct DetailsScreenView: View {
                                 onAction(.onToggleItemState(item))
                             },
                             onTap: { item in
-                                presentation = .itemForm(.read(item))
+                                detailsToPresent = item
                             }
                         )
                         .listRowBackground(AppColors.background)
@@ -203,7 +196,7 @@ private struct DetailsScreenView: View {
                 )
 
                 Button(action: {
-                    presentation = .itemForm(.write(.create(listId: listaId)))
+                    onAction(.onAddItem)
                 }) {
                     Image(systemName: "plus")
                 }
@@ -263,20 +256,26 @@ private struct DetailsScreenView: View {
                 )
             }
         )
-        .fullScreenCover(isPresented: .constant(isItemFormPresented)) {
-            if let mode = itemFormMode {
-                ItemFormView(
-                    mode: mode,
-                    isParentListCompleted: isCompleted,
-                    onCreate: { newItem in
-                        onAction(.onAddItem(newItem))
-                    },
-                    onUpdate: { dto in
-                        onAction(.onUpdateItem(dto))
-                    },
-                    onDismiss: {
-                        presentation = nil
+        .sheet(
+            isPresented: Binding(
+                get: {
+                    detailsToPresent != nil
+                },
+                set: { isPresented in
+                    if !isPresented {
+                        detailsToPresent = nil
                     }
+                }
+            )
+        ) {
+            if let itemDetails = detailsToPresent {
+                ItemDetailsView(
+                    item: itemDetails,
+                    onUpdate: {
+                        detailsToPresent = nil
+                        onAction(.onUpdateItem(itemDetails))
+                    },
+                    enableEdit: !self.isArchived && !self.isCompleted
                 )
             }
         }
@@ -285,21 +284,20 @@ private struct DetailsScreenView: View {
 
 extension DetailsScreenView {
     enum DetailsScreenPresentation {
-        case itemForm(ItemFormMode)
         case confirmDelete
         case confirmArchive
         case confirmComplete
     }
 
     enum Actions {
-        case onAddItem(AddListaItemUiModel)
+        case onAddItem
         case onToggleItemState(ListaItemUiModel)
         case onDelete
         case onArchive
         case onUndoArchive
         case onComplete
         case onUndoComplete
-        case onUpdateItem(UpdateListItemDTO)
+        case onUpdateItem(ListaItemUiModel)
     }
 }
 
