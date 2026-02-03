@@ -9,7 +9,6 @@ import SwiftUI
 
 struct ListaItemRowView: View {
     let item: ListaItemUiModel
-    let enableToggle: Bool
     let onToggle: (ListaItemUiModel) -> Void
     let onTap: (ListaItemUiModel) -> Void
     var onDelete: ((ListaItemUiModel) -> Void)? = nil
@@ -24,12 +23,6 @@ struct ListaItemRowView: View {
                 statusIndicator
                     .frame(width: 4)
                     .clipShape(RoundedRectangle(cornerRadius: 2, style: .continuous))
-
-                RadioButton(
-                    isChecked: item.isCompleted,
-                    onToggle: { onToggle(item) },
-                    isEnabled: enableToggle
-                )
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text(item.title)
@@ -104,7 +97,6 @@ extension ListaItemUiModel {
             image: nil,
             updatedAt: nil
         ),
-        enableToggle: false
     ) { item in
 
     } onTap: { item in
@@ -126,7 +118,6 @@ extension ListaItemUiModel {
             image: nil,
             updatedAt: nil
         ),
-        enableToggle: false
     ) { item in
 
     } onTap: { item in

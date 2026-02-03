@@ -31,14 +31,14 @@ struct RadioButton: View {
                 Circle()
                     .strokeBorder(
                         strokeColor,
-                        lineWidth: 2
+                        lineWidth: 1.5
                     )
-                    .frame(width: 22, height: 22)
+                    .frame(width: 18, height: 18)
 
                 if isChecked {
-                    Circle()
-                        .fill(fillColor)
-                        .frame(width: 12, height: 12)
+                    Image(systemName: "checkmark")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(fillColor)
                         .transition(
                             .scale(scale: 0.6)
                                 .combined(with: .opacity)
@@ -66,15 +66,15 @@ struct RadioButton: View {
             return AppColors.mutedForeground
         }
         return isChecked
-            ? AppColors.foreground
-            : AppColors.mutedForeground
+            ? AppColors.green
+            : AppColors.blue.opacity(0.4)
     }
 
     private var fillColor: Color {
         if !isEnabled {
             return AppColors.mutedForeground
         }
-        return AppColors.foreground
+        return AppColors.green
     }
 }
 
