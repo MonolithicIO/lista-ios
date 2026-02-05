@@ -35,6 +35,10 @@ class InstanceKeeper {
     func provideDiskManager() -> DiskManagerProtocol {
         return DiskManager()
     }
+    
+    func provideLanguageSettings() -> LanguageSettingsProtocol {
+        return LanguageSettings.shared
+    }
 
     // MARK: - Data Providers
     func provideContext() -> NSManagedObjectContext {
@@ -177,5 +181,9 @@ class InstanceKeeper {
             getItemService: provideGetItemService(),
             updateListItemService: provideUpdateListItemService()
         )
+    }
+    
+    func provideSettingsViewModel() -> SettingsViewModel {
+        return SettingsViewModel(languageSettings: provideLanguageSettings())
     }
 }
