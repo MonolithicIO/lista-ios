@@ -68,7 +68,9 @@ extension HomeScreen {
                     items.append(
                         ListaUiModel(
                             id: newList.id.uuidString,
-                            title: newList.title
+                            title: newList.title,
+                            itemCount: newList.itemCount,
+                            completedCount: newList.completedCount
                         )
                     )
                 } catch {
@@ -102,10 +104,7 @@ extension HomeScreen {
                         state: self.filter.toDomainModel()
                     )
                 ).map { domainModel in
-                    ListaUiModel(
-                        id: domainModel.id.uuidString,
-                        title: domainModel.title
-                    )
+                    domainModel.toUiModel()
                 }
             } catch {
 

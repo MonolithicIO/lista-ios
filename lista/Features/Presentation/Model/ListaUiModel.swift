@@ -10,10 +10,17 @@ import Foundation
 struct ListaUiModel: Identifiable {
     let id: String
     let title: String
+    let itemCount: Int
+    let completedCount: Int
 }
 
 extension Lista {
     func toUiModel() -> ListaUiModel {
-        return ListaUiModel(id: self.id.uuidString, title: self.title)
+        return ListaUiModel(
+            id: self.id.uuidString,
+            title: self.title,
+            itemCount: self.itemCount,
+            completedCount: self.completedCount
+        )
     }
 }

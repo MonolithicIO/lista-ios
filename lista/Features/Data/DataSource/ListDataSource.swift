@@ -110,7 +110,17 @@ final class ListDataSource: ListDataSourceProtocol {
                     return nil
                 }
 
-                return Lista(id: id, title: title)
+                // Get item counts from children relationship
+                let tasksSet = entity.children as? Set<ListaItemEntity> ?? []
+                let itemCount = tasksSet.count
+                let completedCount = tasksSet.filter { $0.isCompleted }.count
+
+                return Lista(
+                    id: id,
+                    title: title,
+                    itemCount: itemCount,
+                    completedCount: completedCount
+                )
             }
         }
     }
@@ -131,7 +141,7 @@ final class ListDataSource: ListDataSourceProtocol {
                 throw NSError(domain: "CoreData", code: 0)
             }
 
-            return Lista(id: id, title: title)
+            return Lista(id: id, title: title, itemCount: 0, completedCount: 0)
         }
     }
 

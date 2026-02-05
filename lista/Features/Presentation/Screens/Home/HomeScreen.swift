@@ -2,7 +2,7 @@
 //  HomeContentView.swift
 //  lista
 //
-//  Created by Lucca Beurmann on 14/01/26.
+//  Redesigned with modern card-based layout
 //
 
 import SwiftUI
@@ -90,17 +90,14 @@ private struct HomeScreenView: View {
                     } label: {
                         ListaCardView(item: item)
                     }
+                    .buttonStyle(.plain)
                     .listRowSeparator(.hidden)
                     .listRowInsets(
-                        .init(top: 6, leading: 0, bottom: 6, trailing: 0)
+                        .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                     )
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(AppColors.accent)
-                    )
+                    .listRowBackground(Color.clear)
                 }
                 .listStyle(.plain)
-                .listRowSpacing(12)
                 .scrollContentBackground(.hidden)
             }
         }
@@ -129,7 +126,7 @@ private struct HomeScreenView: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel("New lsit")
+                .accessibilityLabel("New list")
             }
 
             ToolbarItem(placement: .topBarTrailing) {
@@ -164,8 +161,9 @@ private struct HomeScreenView: View {
     NavigationStack {
         HomeScreenView(
             items: [
-                ListaUiModel(id: "123", title: "Presentes de natal"),
-                ListaUiModel(id: "321", title: "Presentes de natal"),
+                ListaUiModel(id: "123", title: "Groceries", itemCount: 12, completedCount: 5),
+                ListaUiModel(id: "321", title: "Weekend Tasks", itemCount: 8, completedCount: 8),
+                ListaUiModel(id: "456", title: "Work Projects", itemCount: 15, completedCount: 3),
             ],
             searchText: .constant(""),
             selectedFilter: .constant(.active),

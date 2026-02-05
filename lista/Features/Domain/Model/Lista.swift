@@ -10,4 +10,6 @@ import Foundation
 struct Lista {
     let id: UUID
     let title: String
+    let itemCount: Int
+    let completedCount: Int
 }
