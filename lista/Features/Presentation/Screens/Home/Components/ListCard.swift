@@ -11,12 +11,22 @@ import SwiftUI
 struct ListaCardView: View {
     let item: ListaUiModel
 
+    var iconColor: Color {
+        switch item.status {
+        case .active:
+            return AppColors.blue
+        case .completed:
+            return AppColors.green
+        case .archived:
+            return AppColors.orange
+        }
+    }
+
     var body: some View {
         HStack(spacing: 12) {
-            // List icon
             Image(systemName: "list.bullet")
                 .font(.title3)
-                .foregroundStyle(AppColors.blue)
+                .foregroundStyle(iconColor)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: 4) {
@@ -39,7 +49,9 @@ struct ListaCardView: View {
                         .font(.caption)
                         .foregroundStyle(completionColor)
 
-                    if item.completedCount == item.itemCount && item.itemCount > 0 {
+                    if item.completedCount == item.itemCount
+                        && item.itemCount > 0
+                    {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption)
                             .foregroundStyle(AppColors.green)
@@ -81,7 +93,8 @@ struct ListaCardView: View {
             id: "123",
             title: "Groceries",
             itemCount: 12,
-            completedCount: 5
+            completedCount: 5,
+            status: .active
         )
     )
     .padding()
@@ -93,7 +106,8 @@ struct ListaCardView: View {
             id: "123",
             title: "Weekend Tasks",
             itemCount: 8,
-            completedCount: 8
+            completedCount: 8,
+            status: .active
         )
     )
     .padding()
@@ -105,7 +119,8 @@ struct ListaCardView: View {
             id: "123",
             title: "New List",
             itemCount: 0,
-            completedCount: 0
+            completedCount: 0,
+            status: .active
         )
     )
     .padding()

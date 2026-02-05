@@ -119,7 +119,9 @@ final class ListDataSource: ListDataSourceProtocol {
                     id: id,
                     title: title,
                     itemCount: itemCount,
-                    completedCount: completedCount
+                    completedCount: completedCount,
+                    isCompleted: entity.isCompleted,
+                    isArchived: entity.isArchived
                 )
             }
         }
@@ -141,7 +143,14 @@ final class ListDataSource: ListDataSourceProtocol {
                 throw NSError(domain: "CoreData", code: 0)
             }
 
-            return Lista(id: id, title: title, itemCount: 0, completedCount: 0)
+            return Lista(
+                id: id,
+                title: title,
+                itemCount: 0,
+                completedCount: 0,
+                isCompleted: entity.isCompleted,
+                isArchived: entity.isArchived
+            )
         }
     }
 

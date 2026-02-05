@@ -47,7 +47,8 @@ class HomeViewModel: ObservableObject {
                         id: newList.id.uuidString,
                         title: newList.title,
                         itemCount: newList.itemCount,
-                        completedCount: newList.completedCount
+                        completedCount: newList.completedCount,
+                        status: newList.toStatus()
                     )
                 )
             } catch {

@@ -12,4 +12,6 @@ struct Lista {
     let title: String
     let itemCount: Int
     let completedCount: Int
+    let isCompleted: Bool
+    let isArchived: Bool
 }

@@ -64,7 +64,7 @@ extension HomeScreenView {
         case onItemTap(ListaUiModel)
         case onRemoveItem(ListaUiModel)
     }
-    
+
     enum Presentation {
         case addList
     }
@@ -108,7 +108,7 @@ private struct HomeScreenView: View {
                             onAction(.onRemoveItem(item))
                         } label: {
                             Label("Delete", systemImage: "trash")
-                            .tint(AppColors.destructive)
+                                .tint(AppColors.destructive)
                         }
                     }
                 }
@@ -176,9 +176,27 @@ private struct HomeScreenView: View {
     NavigationStack {
         HomeScreenView(
             items: [
-                ListaUiModel(id: "123", title: "Groceries", itemCount: 12, completedCount: 5),
-                ListaUiModel(id: "321", title: "Weekend Tasks", itemCount: 8, completedCount: 8),
-                ListaUiModel(id: "456", title: "Work Projects", itemCount: 15, completedCount: 3),
+                ListaUiModel(
+                    id: "123",
+                    title: "Groceries",
+                    itemCount: 12,
+                    completedCount: 5,
+                    status: .active
+                ),
+                ListaUiModel(
+                    id: "321",
+                    title: "Weekend Tasks",
+                    itemCount: 8,
+                    completedCount: 8,
+                    status: .active
+                ),
+                ListaUiModel(
+                    id: "456",
+                    title: "Work Projects",
+                    itemCount: 15,
+                    completedCount: 3,
+                    status: .active
+                ),
             ],
             searchText: .constant(""),
             selectedFilter: .constant(.active),
