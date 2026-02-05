@@ -2,7 +2,7 @@
 //  HomeContentView.swift
 //  lista
 //
-//  Created by Lucca Beurmann on 14/01/26.
+//  Redesigned with modern card-based layout
 //
 
 import SwiftUI
@@ -11,11 +11,11 @@ struct HomeScreen: View {
     @Environment(NavigationCoordinator.self) private var coordinator:
         NavigationCoordinator
 
-    @StateObject private var viewModel: HomeScreen.ViewModel
-    @State private var presentation: Presentation? = nil
+    @StateObject private var viewModel: HomeViewModel
+    @State private var presentation: HomeScreenView.Presentation? = nil
 
     init(
-        viewModel: HomeScreen.ViewModel = InstanceKeeper.shared
+        viewModel: HomeViewModel = InstanceKeeper.shared
             .provideHomeViewModel()
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -40,6 +40,8 @@ struct HomeScreen: View {
                 case .onAddItem(let title):
                     viewModel.addList(title: title)
                     presentation = nil
+                case .onRemoveItem(let item):
+                    viewModel.removeList(list: item)
                 }
             }
         ).task {
@@ -60,29 +62,47 @@ extension HomeScreenView {
         case onAddTap
         case onAddItem(String)
         case onItemTap(ListaUiModel)
+        case onRemoveItem(ListaUiModel)
+    }
+
+    enum Presentation {
+        case addList
     }
 }
 
 private struct HomeScreenView: View {
     let items: [ListaUiModel]
     @Binding var searchText: String
-    @Binding var selectedFilter: HomeScreen.Filter
-    @Binding var presentation: HomeScreen.Presentation?
+    @Binding var selectedFilter: HomeFilter
+    @Binding var presentation: Presentation?
     let onAction: (Actions) -> Void
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            // Segmented Filter Control - Always visible
+            Picker("Filter", selection: $selectedFilter) {
+                ForEach(HomeFilter.allCases) { filter in
+                    Text(filter.rawValue).tag(filter)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 4)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
+
+            // Content area - fills remaining space
             if items.isEmpty {
                 EmptyStateView(
-                    title: "No lists created",
+                    title: "No lists found",
                     description:
-                        "Create your first list and start tracking your tasks!",
+                        "Try selecting a different filter or create a new list!",
                     iconName: "list.bullet",
                     actionTitle: "Create list",
                     onAction: {
                         onAction(.onAddTap)
                     }
                 )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(items) { item in
                     Button {
@@ -90,17 +110,22 @@ private struct HomeScreenView: View {
                     } label: {
                         ListaCardView(item: item)
                     }
+                    .buttonStyle(.plain)
                     .listRowSeparator(.hidden)
                     .listRowInsets(
-                        .init(top: 6, leading: 0, bottom: 6, trailing: 0)
+                        .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                     )
-                    .listRowBackground(
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(AppColors.accent)
-                    )
+                    .listRowBackground(Color.clear)
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            onAction(.onRemoveItem(item))
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                                .tint(AppColors.destructive)
+                        }
+                    }
                 }
                 .listStyle(.plain)
-                .listRowSpacing(12)
                 .scrollContentBackground(.hidden)
             }
         }
@@ -129,19 +154,7 @@ private struct HomeScreenView: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel("New lsit")
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Picker("Filter", selection: $selectedFilter) {
-                        ForEach(HomeScreen.Filter.allCases) { filter in
-                            Text(filter.rawValue).tag(filter)
-                        }
-                    }
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                }
+                .accessibilityLabel("New list")
             }
         }
         .sheet(isPresented: .constant(presentation == .addList)) {
@@ -164,8 +177,27 @@ private struct HomeScreenView: View {
     NavigationStack {
         HomeScreenView(
             items: [
-                ListaUiModel(id: "123", title: "Presentes de natal"),
-                ListaUiModel(id: "321", title: "Presentes de natal"),
+                ListaUiModel(
+                    id: "123",
+                    title: "Groceries",
+                    itemCount: 12,
+                    completedCount: 5,
+                    status: .active
+                ),
+                ListaUiModel(
+                    id: "321",
+                    title: "Weekend Tasks",
+                    itemCount: 8,
+                    completedCount: 8,
+                    status: .active
+                ),
+                ListaUiModel(
+                    id: "456",
+                    title: "Work Projects",
+                    itemCount: 15,
+                    completedCount: 3,
+                    status: .active
+                ),
             ],
             searchText: .constant(""),
             selectedFilter: .constant(.active),

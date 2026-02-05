@@ -148,8 +148,8 @@ class InstanceKeeper {
     }
 
     // MARK: - Presentation Providers
-    func provideHomeViewModel() -> HomeScreen.ViewModel {
-        return HomeScreen.ViewModel(
+    func provideHomeViewModel() -> HomeViewModel {
+        return HomeViewModel(
             fetchListsService: provideFetchListsService(),
             createListService: provideCreateListService(),
             removeListService: provideRemoveListService()
