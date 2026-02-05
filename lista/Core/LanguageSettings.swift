@@ -23,10 +23,10 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 protocol LanguageSettingsProtocol {
     var currentLanguage: AppLanguage { get }
     func displayName(for language: AppLanguage) -> String
-    func setAppLanguage(_: AppLanguage)
+    func setAppLanguage(language: AppLanguage)
 }
 
-class LanguageSettings: LanguageSettingsProtocol, ObservableObject {
+class LanguageSettings: LanguageSettingsProtocol {
     static let shared = LanguageSettings()
 
     private let userDefaultsKey = "app.selectedLanguage"
@@ -78,10 +78,11 @@ class LanguageSettings: LanguageSettingsProtocol, ObservableObject {
             ?? language.rawValue
     }
     
-    func setAppLanguage(_: AppLanguage) {
+    func setAppLanguage(language: AppLanguage) {
         UserDefaults.standard.set(
-            currentLanguage.rawValue,
+            language.rawValue,
             forKey: userDefaultsKey
         )
+        currentLanguage = language
     }
 }

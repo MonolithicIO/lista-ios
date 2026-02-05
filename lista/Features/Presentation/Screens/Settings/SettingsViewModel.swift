@@ -15,8 +15,13 @@ class SettingsViewModel: ObservableObject {
     private let languageSettings: LanguageSettingsProtocol
 
     // MARK: - State properties
-    @State var selectedLanguage: AppLanguage
-    @State var appLanguages: [AppLanguageUiModel] = []
+    @Published var selectedLanguage: AppLanguage {
+        didSet {
+            languageSettings.setAppLanguage(language: selectedLanguage)
+            loadLanguages()
+        }
+    }
+    @Published var appLanguages: [AppLanguageUiModel] = []
     var languageDisplayName: String {
         languageSettings.displayName(for: selectedLanguage)
     }
@@ -29,14 +34,6 @@ class SettingsViewModel: ObservableObject {
     }
 
     // MARK: - Actions
-    func updateLanguage(_ language: AppLanguageUiModel) {
-        if language.id != selectedLanguage {
-            languageSettings.setAppLanguage(language.id)
-            selectedLanguage = language.id
-            loadLanguages()
-        }
-    }
-
     func loadLanguages() {
         let languages = AppLanguage.allCases.map({ language in
             AppLanguageUiModel(
