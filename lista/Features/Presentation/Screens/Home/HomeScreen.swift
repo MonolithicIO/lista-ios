@@ -11,11 +11,11 @@ struct HomeScreen: View {
     @Environment(NavigationCoordinator.self) private var coordinator:
         NavigationCoordinator
 
-    @StateObject private var viewModel: HomeScreen.ViewModel
-    @State private var presentation: Presentation? = nil
+    @StateObject private var viewModel: HomeViewModel
+    @State private var presentation: HomeScreenView.Presentation? = nil
 
     init(
-        viewModel: HomeScreen.ViewModel = InstanceKeeper.shared
+        viewModel: HomeViewModel = InstanceKeeper.shared
             .provideHomeViewModel()
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
@@ -40,6 +40,8 @@ struct HomeScreen: View {
                 case .onAddItem(let title):
                     viewModel.addList(title: title)
                     presentation = nil
+                case .onRemoveItem(let item):
+                    viewModel.removeList(list: item)
                 }
             }
         ).task {
@@ -60,14 +62,19 @@ extension HomeScreenView {
         case onAddTap
         case onAddItem(String)
         case onItemTap(ListaUiModel)
+        case onRemoveItem(ListaUiModel)
+    }
+    
+    enum Presentation {
+        case addList
     }
 }
 
 private struct HomeScreenView: View {
     let items: [ListaUiModel]
     @Binding var searchText: String
-    @Binding var selectedFilter: HomeScreen.Filter
-    @Binding var presentation: HomeScreen.Presentation?
+    @Binding var selectedFilter: HomeFilter
+    @Binding var presentation: Presentation?
     let onAction: (Actions) -> Void
 
     var body: some View {
@@ -96,6 +103,14 @@ private struct HomeScreenView: View {
                         .init(top: 8, leading: 0, bottom: 8, trailing: 0)
                     )
                     .listRowBackground(Color.clear)
+                    .swipeActions(edge: .trailing) {
+                        Button(role: .destructive) {
+                            onAction(.onRemoveItem(item))
+                        } label: {
+                            Label("Delete", systemImage: "trash")
+                            .tint(AppColors.destructive)
+                        }
+                    }
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
@@ -132,7 +147,7 @@ private struct HomeScreenView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Picker("Filter", selection: $selectedFilter) {
-                        ForEach(HomeScreen.Filter.allCases) { filter in
+                        ForEach(HomeFilter.allCases) { filter in
                             Text(filter.rawValue).tag(filter)
                         }
                     }
