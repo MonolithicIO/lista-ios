@@ -157,12 +157,20 @@ private struct HomeScreenView: View {
                 .accessibilityLabel("New list")
             }
         }
-        .sheet(isPresented: .constant(presentation == .addList)) {
+        .sheet(
+            isPresented: Binding(
+                get: {
+                    presentation == .addList
+                },
+                set: { isPresented in
+                    if !isPresented {
+                        presentation = nil
+                    }
+                }
+            )
+        ) {
             NavigationStack {
                 AddListView(
-                    onDismiss: {
-                        presentation = nil
-                    },
                     onSubmit: {
                         title in
                         onAction(.onAddItem(title))

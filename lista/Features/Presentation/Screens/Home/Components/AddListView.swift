@@ -9,14 +9,17 @@ import Foundation
 import SwiftUI
 
 struct AddListView: View {
-    let onDismiss: () -> Void
-    let onSubmit: (String) -> Void
-
-    @State private var listTitle: String = ""
+    // MARK: - Env properties
+    @Environment(\.dismiss) private var dismiss
     
+    // MARK: - State properties
+    @State private var listTitle: String = ""
     var isAddButtonEnabled: Bool {
         !listTitle.isEmpty
     }
+    
+    // MARK: - Input properties
+    let onSubmit: (String) -> Void
 
     var body: some View {
         ScrollView {
@@ -38,7 +41,7 @@ struct AddListView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button("Cancel") {
-                    onDismiss()
+                    dismiss()
                 }
             }
         }
@@ -105,7 +108,6 @@ struct AddListView: View {
 #Preview {
     NavigationStack {
         AddListView(
-            onDismiss: {},
             onSubmit: { _ in }
         )
     }
