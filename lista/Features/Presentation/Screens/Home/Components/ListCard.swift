@@ -37,7 +37,7 @@ struct ListaCardView: View {
 
                 // Stats row
                 HStack(spacing: 4) {
-                    Text("\(item.itemCount) items")
+                    Text(String(format: String(localized: "details.item_count"), item.itemCount))
                         .font(.caption)
                         .foregroundStyle(AppColors.mutedForeground)
 
@@ -45,7 +45,7 @@ struct ListaCardView: View {
                         .font(.caption)
                         .foregroundStyle(AppColors.mutedForeground)
 
-                    Text("\(item.completedCount) completed")
+                    Text(String(format: String(localized: "details.completed_count"), item.completedCount))
                         .font(.caption)
                         .foregroundStyle(completionColor)
 

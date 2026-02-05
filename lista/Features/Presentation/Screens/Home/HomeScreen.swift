@@ -80,9 +80,9 @@ private struct HomeScreenView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Segmented Filter Control - Always visible
-            Picker("Filter", selection: $selectedFilter) {
+            Picker(String(localized: "accessibility.filter"), selection: $selectedFilter) {
                 ForEach(HomeFilter.allCases) { filter in
-                    Text(filter.rawValue).tag(filter)
+                    Text(filter.displayName).tag(filter)
                 }
             }
             .pickerStyle(.segmented)
@@ -93,11 +93,10 @@ private struct HomeScreenView: View {
             // Content area - fills remaining space
             if items.isEmpty {
                 EmptyStateView(
-                    title: "No lists found",
-                    description:
-                        "Try selecting a different filter or create a new list!",
+                    title: String(localized: "empty.no_results.title"),
+                    description: String(localized: "empty.no_results.description"),
                     iconName: "list.bullet",
-                    actionTitle: "Create list",
+                    actionTitle: String(localized: "empty.no_results.button"),
                     onAction: {
                         onAction(.onAddTap)
                     }
@@ -120,7 +119,7 @@ private struct HomeScreenView: View {
                         Button(role: .destructive) {
                             onAction(.onRemoveItem(item))
                         } label: {
-                            Label("Delete", systemImage: "trash")
+                            Label(String(localized: "swipe_action.delete"), systemImage: "trash")
                                 .tint(AppColors.destructive)
                         }
                     }
@@ -132,11 +131,11 @@ private struct HomeScreenView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
         .background(AppColors.background.ignoresSafeArea())
-        .navigationTitle("Lists")
+        .navigationTitle(String(localized: "navigation.lists"))
         .searchable(
             text: $searchText,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Search lists"
+            prompt: String(localized: "placeholder.search_lists")
         )
         .toolbar {
 
@@ -154,7 +153,7 @@ private struct HomeScreenView: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel("New list")
+                .accessibilityLabel(String(localized: "accessibility.new_list"))
             }
         }
         .sheet(
