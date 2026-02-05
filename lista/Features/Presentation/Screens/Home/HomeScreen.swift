@@ -78,18 +78,31 @@ private struct HomeScreenView: View {
     let onAction: (Actions) -> Void
 
     var body: some View {
-        Group {
+        VStack(spacing: 0) {
+            // Segmented Filter Control - Always visible
+            Picker("Filter", selection: $selectedFilter) {
+                ForEach(HomeFilter.allCases) { filter in
+                    Text(filter.rawValue).tag(filter)
+                }
+            }
+            .pickerStyle(.segmented)
+            .padding(.horizontal, 4)
+            .padding(.top, 8)
+            .padding(.bottom, 12)
+
+            // Content area - fills remaining space
             if items.isEmpty {
                 EmptyStateView(
-                    title: "No lists created",
+                    title: "No lists found",
                     description:
-                        "Create your first list and start tracking your tasks!",
+                        "Try selecting a different filter or create a new list!",
                     iconName: "list.bullet",
                     actionTitle: "Create list",
                     onAction: {
                         onAction(.onAddTap)
                     }
                 )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
                 List(items) { item in
                     Button {
@@ -142,18 +155,6 @@ private struct HomeScreenView: View {
                     Image(systemName: "plus")
                 }
                 .accessibilityLabel("New list")
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Picker("Filter", selection: $selectedFilter) {
-                        ForEach(HomeFilter.allCases) { filter in
-                            Text(filter.rawValue).tag(filter)
-                        }
-                    }
-                } label: {
-                    Image(systemName: "line.3.horizontal.decrease.circle")
-                }
             }
         }
         .sheet(isPresented: .constant(presentation == .addList)) {
