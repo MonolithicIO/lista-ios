@@ -29,18 +29,18 @@ struct ItemDetailsView: View {
                         .padding(.top, 8)
 
                     // Title Card
-                    sectionTitle("Title")
+                    sectionTitle(String(localized: "section.title"))
                     titleCard
 
                     // Description Card (if exists)
                     if let itemDescription = item.description {
-                        sectionTitle("Description")
+                        sectionTitle(String(localized: "section.description"))
                         descriptionCard(description: itemDescription)
                     }
 
                     // URL Card (action-oriented button style)
                     if let itemUrl = item.url {
-                        sectionTitle("Link")
+                        sectionTitle(String(localized: "section.link"))
                         urlCard(url: itemUrl)
                     }
 
@@ -50,7 +50,7 @@ struct ItemDetailsView: View {
                             contentsOfFile: imageURL(from: imagePath).path()
                         )
                     {
-                        sectionTitle("Image")
+                        sectionTitle(String(localized: "section.image"))
                         imageCard(image: image)
                     }
 
@@ -67,7 +67,7 @@ struct ItemDetailsView: View {
             }
             .scrollDismissesKeyboard(.interactively)
             .background(AppColors.background)
-            .navigationTitle("Item Details")
+            .navigationTitle(String(localized: "navigation.item_details"))
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
@@ -75,7 +75,7 @@ struct ItemDetailsView: View {
                     }) {
                         Image(systemName: "pencil")
                     }
-                    .accessibilityLabel("Edit Item")
+                    .accessibilityLabel(String(localized: "accessibility.edit_item"))
                     .disabled(!enableEdit)
                 }
             }
@@ -150,7 +150,7 @@ struct ItemDetailsView: View {
                     .foregroundStyle(AppColors.accentForeground)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("Open Link")
+                    Text(String(localized: "button.open_link"))
                         .font(.headline.weight(.medium))
                         .foregroundStyle(AppColors.accentForeground)
 
@@ -211,7 +211,7 @@ struct ItemDetailsView: View {
                         ? "arrow.uturn.backward" : "checkmark"
                 )
                 .font(.headline.weight(.semibold))
-                Text(item.isCompleted ? "Mark as Active" : "Mark as Complete")
+                Text(item.isCompleted ? String(localized: "toggle.mark_active") : String(localized: "toggle.mark_complete"))
                     .font(.headline.weight(.semibold))
             }
             .foregroundStyle(.white)
@@ -229,7 +229,7 @@ struct ItemDetailsView: View {
 
     private func lastUpdatedText(date: Date) -> some View {
         Text(
-            "Updated on \(date.formatted(date: .abbreviated, time: .shortened))"
+            String(format: String(localized: "details.updated_on"), date.formatted(date: .abbreviated, time: .shortened))
         )
         .font(.caption)
         .foregroundStyle(AppColors.mutedForeground)

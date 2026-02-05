@@ -11,7 +11,7 @@ import SwiftUI
 @main
 struct listaApp: App {
     @State private var navigationCoordinator = NavigationCoordinator()
-    @State private var languageSettings = LanguageSettings.shared
+    @StateObject private var languageSettings = LanguageSettings.shared
 
     var body: some Scene {
         WindowGroup {
@@ -24,8 +24,9 @@ struct listaApp: App {
 }
 
 struct RootView: View {
+    @Environment(\.locale) var locale
     @State var navigationCoordinator: NavigationCoordinator
-    @State var languageSettings: LanguageSettings
+    @StateObject var languageSettings: LanguageSettings
 
     var body: some View {
         NavigationStack(path: $navigationCoordinator.path) {

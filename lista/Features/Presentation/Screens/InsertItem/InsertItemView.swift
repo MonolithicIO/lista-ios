@@ -34,9 +34,9 @@ struct InsertItemView: View {
 
     var screenTitle: String {
         if itemId != nil {
-            "Edit item"
+            String(localized: "navigation.edit_item")
         } else {
-            "Create Item"
+            String(localized: "navigation.create_item")
         }
     }
 
@@ -128,19 +128,19 @@ struct InsertItemContentView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 // Title
-                sectionHeader(title: "Title", isOptional: false)
+                sectionHeader(title: String(localized: "section.title"), isOptional: false)
                 titleCard
 
                 // Description
-                sectionHeader(title: "Description", isOptional: true)
+                sectionHeader(title: String(localized: "section.description"), isOptional: true)
                 descriptionCard
 
                 // URL
-                sectionHeader(title: "Link", isOptional: true)
+                sectionHeader(title: String(localized: "section.link"), isOptional: true)
                 urlCard
 
                 // Image
-                sectionHeader(title: "Image", isOptional: true)
+                sectionHeader(title: String(localized: "section.image"), isOptional: true)
                 imageCard
 
                 // Save CTA Button
@@ -157,7 +157,7 @@ struct InsertItemContentView: View {
     // MARK: - Card Views
 
     private var titleCard: some View {
-        TextField("Enter item title", text: $itemTitle)
+        TextField(String(localized: "placeholder.item_title"), text: $itemTitle)
             .font(.body)
             .foregroundStyle(AppColors.cardForeground)
             .padding(.vertical, 16)
