@@ -20,18 +20,19 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     }
 }
 
-protocol LanguageSettingsProtocol {
-    var currentLanguage: AppLanguage { get }
-    func displayName(for language: AppLanguage) -> String
-    func setAppLanguage(language: AppLanguage)
-}
-
-class LanguageSettings: LanguageSettingsProtocol {
+class LanguageSettings: ObservableObject {
     static let shared = LanguageSettings()
 
     private let userDefaultsKey = "app.selectedLanguage"
 
-    var currentLanguage: AppLanguage
+    @Published var currentLanguage: AppLanguage {
+        didSet {
+            UserDefaults.standard.set(
+                currentLanguage.rawValue,
+                forKey: userDefaultsKey
+            )
+        }
+    }
 
     private init() {
         // Check if user has manually selected a language
@@ -76,13 +77,5 @@ class LanguageSettings: LanguageSettingsProtocol {
         let currentLocale = currentLanguage.locale
         return currentLocale.localizedString(forLanguageCode: language.rawValue)
             ?? language.rawValue
-    }
-    
-    func setAppLanguage(language: AppLanguage) {
-        UserDefaults.standard.set(
-            language.rawValue,
-            forKey: userDefaultsKey
-        )
-        currentLanguage = language
     }
 }

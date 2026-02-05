@@ -15,15 +15,27 @@ struct listaApp: App {
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $navigationCoordinator.path) {
-                HomeScreen()
-                    .navigationDestination(for: Routes.self) { route in
-                        destinationView(for: route)
-                    }
-            }
-            .environment(navigationCoordinator)
-            .environment(\.locale, languageSettings.currentLanguage.locale)
+            RootView(
+                navigationCoordinator: navigationCoordinator,
+                languageSettings: languageSettings
+            )
         }
+    }
+}
+
+struct RootView: View {
+    @State var navigationCoordinator: NavigationCoordinator
+    @State var languageSettings: LanguageSettings
+
+    var body: some View {
+        NavigationStack(path: $navigationCoordinator.path) {
+            HomeScreen()
+                .navigationDestination(for: Routes.self) { route in
+                    destinationView(for: route)
+                }
+        }
+        .environment(navigationCoordinator)
+        .environment(\.locale, languageSettings.currentLanguage.locale)
     }
 
     @ViewBuilder
@@ -40,7 +52,7 @@ struct listaApp: App {
 
         case .settings:
             SettingsScreen()
-            
+
         case .insertItem(listId: let listId, itemId: let itemId):
             InsertItemView(listId: listId, itemId: itemId)
         }

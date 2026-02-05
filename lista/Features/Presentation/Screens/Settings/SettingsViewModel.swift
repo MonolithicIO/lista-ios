@@ -12,12 +12,12 @@ import SwiftUI
 class SettingsViewModel: ObservableObject {
 
     // MARK: - Input properties
-    private let languageSettings: LanguageSettingsProtocol
+    private let languageSettings: LanguageSettings
 
     // MARK: - State properties
     @Published var selectedLanguage: AppLanguage {
         didSet {
-            languageSettings.setAppLanguage(language: selectedLanguage)
+            languageSettings.currentLanguage = selectedLanguage
             loadLanguages()
         }
     }
@@ -27,7 +27,7 @@ class SettingsViewModel: ObservableObject {
     }
 
     // MARK: - Initializer
-    init(languageSettings: LanguageSettingsProtocol) {
+    init(languageSettings: LanguageSettings) {
         self.languageSettings = languageSettings
         self.selectedLanguage = languageSettings.currentLanguage
         loadLanguages()
