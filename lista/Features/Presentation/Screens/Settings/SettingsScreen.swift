@@ -49,6 +49,8 @@ struct SettingsContentView: View {
             }
         }
         .navigationTitle(String(localized: "settings.title"))
+        .scrollContentBackground(.hidden)
+        .background(AppColors.background.ignoresSafeArea())
     }
 }
 
