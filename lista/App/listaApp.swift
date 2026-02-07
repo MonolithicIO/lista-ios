@@ -52,7 +52,7 @@ struct RootView: View {
         case .settings:
             SettingsScreen()
 
-        case .insertItem(listId: let listId, itemId: let itemId):
+        case .insertItem(let listId, let itemId):
             InsertItemView(listId: listId, itemId: itemId)
         }
     }
