@@ -28,9 +28,9 @@ struct ItemStatusBadge: View {
 
     private var title: String {
         if isItemCompleted {
-            "Completed"
+            String(localized: "status.completed")
         } else {
-            "Active"
+            String(localized: "status.active")
         }
     }
 

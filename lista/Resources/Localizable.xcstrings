@@ -89,54 +89,6 @@
         }
       }
     },
-    "accessibility.item_status" : {
-      "comment" : "Accessibility label for item status badge",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Item status: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado del elemento: %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Status do item: %@"
-          }
-        }
-      }
-    },
-    "accessibility.list_status" : {
-      "comment" : "Accessibility label for list status badge",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "List status: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estado de la lista: %@"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Status da lista: %@"
-          }
-        }
-      }
-    },
     "accessibility.new_list" : {
       "comment" : "Accessibility label for new list button",
       "localizations" : {
@@ -185,78 +137,6 @@
     },
     "alert.archive_list.title" : {
       "comment" : "Title for archive list confirmation alert",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archive this list?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Archivar esta lista?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arquivar esta lista?"
-          }
-        }
-      }
-    },
-    "alert.archive.button" : {
-      "comment" : "Archive button in confirmation alert",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archive"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archivar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arquivar"
-          }
-        }
-      }
-    },
-    "alert.archive.message" : {
-      "comment" : "Archive confirmation message",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Archived lists cannot be edited. Restore this list before making changes."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las listas archivadas no se pueden editar. Restaura esta lista antes de hacer cambios."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listas arquivadas não podem ser editadas. Restaure esta lista antes de fazer alterações."
-          }
-        }
-      }
-    },
-    "alert.archive.title" : {
-      "comment" : "Archive confirmation alert title",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -370,30 +250,6 @@
         }
       }
     },
-    "alert.cancel" : {
-      "comment" : "Cancel button in alerts",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancelar"
-          }
-        }
-      }
-    },
     "alert.complete_list.message" : {
       "comment" : "Message for complete list confirmation alert",
       "localizations" : {
@@ -419,78 +275,6 @@
     },
     "alert.complete_list.title" : {
       "comment" : "Title for complete list confirmation alert",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complete this list?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Completar esta lista?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completar esta lista?"
-          }
-        }
-      }
-    },
-    "alert.complete.button" : {
-      "comment" : "Complete button in confirmation alert",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Complete"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completar"
-          }
-        }
-      }
-    },
-    "alert.complete.message" : {
-      "comment" : "Complete confirmation message",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completing a list will mark all items as done. Once completed, a list cannot be edited. Undo this action before making changes."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completar una lista marcará todos los elementos como hechos. Una vez completada, una lista no se puede editar. Deshaga esta acción antes de hacer cambios."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completar uma lista marcará todos os itens como concluídos. Uma vez completada, uma lista não pode ser editada. Desfaça esta ação antes de fazer alterações."
-          }
-        }
-      }
-    },
-    "alert.complete.title" : {
-      "comment" : "Complete confirmation alert title",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -558,113 +342,8 @@
         }
       }
     },
-    "alert.delete.button" : {
-      "comment" : "Delete button in confirmation alert",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Eliminar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Excluir"
-          }
-        }
-      }
-    },
-    "alert.delete.message" : {
-      "comment" : "Delete confirmation message",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This action cannot be undone."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta acción no se puede deshacer."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Esta ação não pode ser desfeita."
-          }
-        }
-      }
-    },
-    "alert.delete.title" : {
-      "comment" : "Delete confirmation alert title",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure you want to delete this list?"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Estás seguro de que quieres eliminar esta lista?"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tem certeza de que deseja excluir esta lista?"
-          }
-        }
-      }
-    },
-    "Archive" : {
-      "comment" : "A menu item that archives an item.",
-      "isCommentAutoGenerated" : true
-    },
-    "Attach image" : {
-      "comment" : "A label describing the action of attaching an image to an item.",
-      "isCommentAutoGenerated" : true
-    },
-    "button.add_list" : {
-      "comment" : "Add list button label",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add List"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agregar Lista"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar Lista"
-          }
-        }
-      }
-    },
     "button.attach_image" : {
       "comment" : "Attach image button label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -711,7 +390,6 @@
     },
     "button.create_item" : {
       "comment" : "Create item button label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -756,78 +434,6 @@
         }
       }
     },
-    "button.done" : {
-      "comment" : "Done button label",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Done"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Listo"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pronto"
-          }
-        }
-      }
-    },
-    "button.edit" : {
-      "comment" : "Edit button label",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Editar"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Editar"
-          }
-        }
-      }
-    },
-    "button.gallery_or_camera" : {
-      "comment" : "Subtitle for image picker",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gallery or camera"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Galería o cámara"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Galeria ou câmera"
-          }
-        }
-      }
-    },
     "button.open_link" : {
       "comment" : "Open link button label",
       "localizations" : {
@@ -853,7 +459,6 @@
     },
     "button.save_changes" : {
       "comment" : "Save changes button label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -877,7 +482,6 @@
     },
     "button.select_gallery" : {
       "comment" : "Select from gallery dialog option",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -901,7 +505,6 @@
     },
     "button.take_photo" : {
       "comment" : "Take photo dialog option",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -922,14 +525,6 @@
           }
         }
       }
-    },
-    "Create Item" : {
-      "comment" : "A button that triggers the creation or update of an item.",
-      "isCommentAutoGenerated" : true
-    },
-    "Delete" : {
-      "comment" : "The text of a button that deletes an item.",
-      "isCommentAutoGenerated" : true
     },
     "details.completed_count" : {
       "comment" : "Number of completed items",
@@ -1023,54 +618,6 @@
         }
       }
     },
-    "dialog.select_gallery" : {
-      "comment" : "Select from gallery dialog button",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select from gallery"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seleccionar de la galería"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Selecionar da galeria"
-          }
-        }
-      }
-    },
-    "dialog.take_photo" : {
-      "comment" : "Take photo dialog button",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take photo"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tomar foto"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tirar foto"
-          }
-        }
-      }
-    },
     "empty.no_items.button" : {
       "comment" : "Button to create first item",
       "localizations" : {
@@ -1136,78 +683,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ainda não há itens"
-          }
-        }
-      }
-    },
-    "empty.no_lists.button" : {
-      "comment" : "Button to create first list",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create list"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear lista"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Criar lista"
-          }
-        }
-      }
-    },
-    "empty.no_lists.description" : {
-      "comment" : "Description for empty lists state",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create your first list and start tracking your tasks!"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¡Crea tu primera lista y comienza a organizar tus tareas!"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie sua primeira lista e comece a organizar suas tarefas!"
-          }
-        }
-      }
-    },
-    "empty.no_lists.title" : {
-      "comment" : "Title for empty lists state",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No lists created"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No hay listas creadas"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nenhuma lista criada"
           }
         }
       }
@@ -1280,10 +755,6 @@
           }
         }
       }
-    },
-    "Enter URL" : {
-      "comment" : "A placeholder text for a text field where a user can enter a URL.",
-      "isCommentAutoGenerated" : true
     },
     "field.optional" : {
       "comment" : "Optional field indicator",
@@ -1377,17 +848,8 @@
         }
       }
     },
-    "Gallery or camera" : {
-      "comment" : "A description of how to add an image to an item.",
-      "isCommentAutoGenerated" : true
-    },
-    "Mark as completed" : {
-      "comment" : "A menu item that marks an item as completed.",
-      "isCommentAutoGenerated" : true
-    },
     "menu.archive" : {
       "comment" : "Archive menu item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1411,7 +873,6 @@
     },
     "menu.delete" : {
       "comment" : "Delete menu item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1435,7 +896,6 @@
     },
     "menu.mark_completed" : {
       "comment" : "Mark as completed menu item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1459,7 +919,6 @@
     },
     "menu.undo_archive" : {
       "comment" : "Undo archive menu item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1483,7 +942,6 @@
     },
     "menu.undo_completion" : {
       "comment" : "Undo completion menu item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1620,34 +1078,6 @@
         }
       }
     },
-    "Optional" : {
-      "comment" : "A label indicating that a field is optional.",
-      "isCommentAutoGenerated" : true
-    },
-    "placeholder.description" : {
-      "comment" : "Placeholder for description field",
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter description"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ingresar descripción"
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Digitar descrição"
-          }
-        }
-      }
-    },
     "placeholder.item_title" : {
       "comment" : "Placeholder for item title field",
       "localizations" : {
@@ -1719,7 +1149,6 @@
     },
     "placeholder.url" : {
       "comment" : "Placeholder for URL field",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1740,10 +1169,6 @@
           }
         }
       }
-    },
-    "Save Changes" : {
-      "comment" : "A button label that saves changes to an item.",
-      "isCommentAutoGenerated" : true
     },
     "section.description" : {
       "comment" : "Description section header",
@@ -1860,10 +1285,6 @@
         }
       }
     },
-    "Select from gallery" : {
-      "comment" : "A button that lets the user select an image from their photo library.",
-      "isCommentAutoGenerated" : true
-    },
     "settings.language.title" : {
       "comment" : "Language picker title",
       "localizations" : {
@@ -1935,7 +1356,6 @@
     },
     "status.active" : {
       "comment" : "Active status label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1959,7 +1379,6 @@
     },
     "status.archived" : {
       "comment" : "Archived status label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1983,7 +1402,6 @@
     },
     "status.completed" : {
       "comment" : "Completed status label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2007,7 +1425,6 @@
     },
     "subtitle.gallery_or_camera" : {
       "comment" : "Subtitle for image picker",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -2098,10 +1515,6 @@
         }
       }
     },
-    "Take photo" : {
-      "comment" : "A button that allows the user to take a photo.",
-      "isCommentAutoGenerated" : true
-    },
     "toggle.mark_active" : {
       "comment" : "Button to mark item as active",
       "localizations" : {
@@ -2147,14 +1560,6 @@
           }
         }
       }
-    },
-    "Undo archive" : {
-      "comment" : "A menu item that undoes the archiving of a task.",
-      "isCommentAutoGenerated" : true
-    },
-    "Undo completion" : {
-      "comment" : "A menu item that undoes the completion of an item.",
-      "isCommentAutoGenerated" : true
     }
   },
   "version" : "1.1"

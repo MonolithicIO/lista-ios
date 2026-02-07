@@ -26,7 +26,7 @@ struct DetailsContextMenuView: View {
         Menu {
             if isCompleted {
                 Button(
-                    "Undo completion",
+                    String(localized: "menu.undo_completion"),
                     systemImage: "arrow.uturn.backward.circle"
                 ) {
                     onAction(.undoComplete)
@@ -34,26 +34,26 @@ struct DetailsContextMenuView: View {
                 .disabled(isArquived)
             } else {
                 Button(
-                    "Mark as completed",
+                    String(localized: "menu.mark_completed"),
                     systemImage: "checkmark.circle"
                 ) {
                     onAction(.complete)
                 }
                 .disabled(isArquived)
             }
-            
+
             if isArquived {
                 Button(
-                    "Undo archive",
+                    String(localized: "menu.undo_archive"),
                     systemImage: "arrow.uturn.backward.circle"
                 ) {
                     onAction(.undoArchive)
                 }
                 .disabled(isCompleted)
-                
+
             } else {
                 Button(
-                    "Archive",
+                    String(localized: "menu.archive"),
                     systemImage: "archivebox"
                 ) {
                     onAction(.archive)
@@ -64,7 +64,7 @@ struct DetailsContextMenuView: View {
             Divider()
 
             Button(
-                "Delete",
+                String(localized: "menu.delete"),
                 systemImage: "trash",
                 role: .destructive
             ) {

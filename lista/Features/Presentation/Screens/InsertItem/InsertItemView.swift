@@ -195,7 +195,7 @@ struct InsertItemContentView: View {
     }
 
     private var urlCard: some View {
-        TextField("Enter URL", text: $itemUrl)
+        TextField(String(localized: "placeholder.url"), text: $itemUrl)
             .font(.body)
             .foregroundStyle(AppColors.cardForeground)
             .padding(.vertical, 16)
@@ -235,7 +235,7 @@ struct InsertItemContentView: View {
         Button {
             onAction(.onSubmit)
         } label: {
-            Text(isEditing ? "Save Changes" : "Create Item")
+            Text(isEditing ? String(localized: "button.save_changes") : String(localized: "button.create_item"))
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(AppColors.accentForeground)
                 .frame(maxWidth: .infinity)
@@ -260,7 +260,7 @@ struct InsertItemContentView: View {
 
             if isOptional {
                 Spacer()
-                Text("Optional")
+                Text(String(localized: "field.optional"))
                     .font(.caption)
                     .foregroundStyle(AppColors.accentForeground)
             }

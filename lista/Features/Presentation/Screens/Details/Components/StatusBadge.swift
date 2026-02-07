@@ -37,11 +37,11 @@ struct ListStatusBadge: View {
     private var title: String {
         switch status {
         case .active:
-            return "Active"
+            return String(localized: "status.active")
         case .completed:
-            return "Completed"
+            return String(localized: "status.completed")
         case .archived:
-            return "Archived"
+            return String(localized: "status.archived")
         }
     }
 
