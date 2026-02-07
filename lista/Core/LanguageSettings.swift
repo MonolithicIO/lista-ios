@@ -10,7 +10,7 @@ import SwiftUI
 
 enum AppLanguage: String, CaseIterable, Identifiable {
     case english = "en"
-    case portuguese = "pt-BR"
+    case portuguese = "pt_BR"
     case spanish = "es"
 
     var id: String { rawValue }

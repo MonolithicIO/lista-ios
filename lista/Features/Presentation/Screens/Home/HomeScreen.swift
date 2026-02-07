@@ -8,9 +8,7 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    @Environment(NavigationCoordinator.self) private var coordinator:
-        NavigationCoordinator
-
+    @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject private var viewModel: HomeViewModel
     @State private var presentation: HomeScreenView.Presentation? = nil
 
@@ -80,7 +78,10 @@ private struct HomeScreenView: View {
     var body: some View {
         VStack(spacing: 0) {
             // Segmented Filter Control - Always visible
-            Picker(String(localized: "accessibility.filter"), selection: $selectedFilter) {
+            Picker(
+                String(localized: "accessibility.filter"),
+                selection: $selectedFilter
+            ) {
                 ForEach(HomeFilter.allCases) { filter in
                     Text(filter.displayName).tag(filter)
                 }
@@ -94,7 +95,9 @@ private struct HomeScreenView: View {
             if items.isEmpty {
                 EmptyStateView(
                     title: String(localized: "empty.no_results.title"),
-                    description: String(localized: "empty.no_results.description"),
+                    description: String(
+                        localized: "empty.no_results.description"
+                    ),
                     iconName: "list.bullet",
                     actionTitle: String(localized: "empty.no_results.button"),
                     onAction: {
@@ -119,8 +122,11 @@ private struct HomeScreenView: View {
                         Button(role: .destructive) {
                             onAction(.onRemoveItem(item))
                         } label: {
-                            Label(String(localized: "swipe_action.delete"), systemImage: "trash")
-                                .tint(AppColors.destructive)
+                            Label(
+                                String(localized: "swipe_action.delete"),
+                                systemImage: "trash"
+                            )
+                            .tint(AppColors.destructive)
                         }
                     }
                 }

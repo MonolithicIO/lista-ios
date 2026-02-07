@@ -12,7 +12,7 @@ struct DetailsScreen: View {
     let listaTitle: String
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(NavigationCoordinator.self) private var coordinator:
+    @EnvironmentObject private var coordinator:
         NavigationCoordinator
 
     @StateObject var viewModel: DetailsViewModel

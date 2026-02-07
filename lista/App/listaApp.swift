@@ -10,23 +10,21 @@ import SwiftUI
 
 @main
 struct listaApp: App {
-    @State private var navigationCoordinator = NavigationCoordinator()
+    @StateObject private var navigationCoordinator = NavigationCoordinator()
     @StateObject private var languageSettings = LanguageSettings.shared
 
     var body: some Scene {
         WindowGroup {
-            RootView(
-                navigationCoordinator: navigationCoordinator,
-                languageSettings: languageSettings
-            )
+            RootView()
         }
+        .environmentObject(navigationCoordinator)
+        .environmentObject(languageSettings)
     }
 }
 
 struct RootView: View {
-    @Environment(\.locale) var locale
-    @State var navigationCoordinator: NavigationCoordinator
-    @StateObject var languageSettings: LanguageSettings
+    @EnvironmentObject var navigationCoordinator: NavigationCoordinator
+    @EnvironmentObject var languageSettings: LanguageSettings
 
     var body: some View {
         NavigationStack(path: $navigationCoordinator.path) {
@@ -35,7 +33,7 @@ struct RootView: View {
                     destinationView(for: route)
                 }
         }
-        .environment(navigationCoordinator)
+        .environmentObject(navigationCoordinator)
         .environment(\.locale, languageSettings.currentLanguage.locale)
     }
 
