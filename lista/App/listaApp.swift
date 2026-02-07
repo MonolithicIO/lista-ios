@@ -10,18 +10,31 @@ import SwiftUI
 
 @main
 struct listaApp: App {
-    @State private var navigationCoordinator = NavigationCoordinator()
+    @StateObject private var navigationCoordinator = NavigationCoordinator()
+    @StateObject private var languageSettings = LanguageSettings.shared
 
     var body: some Scene {
         WindowGroup {
-            NavigationStack(path: $navigationCoordinator.path) {
-                HomeScreen()
-                    .navigationDestination(for: Routes.self) { route in
-                        destinationView(for: route)
-                    }
-            }
-            .environment(navigationCoordinator)
+            RootView()
         }
+        .environmentObject(navigationCoordinator)
+        .environmentObject(languageSettings)
+    }
+}
+
+struct RootView: View {
+    @EnvironmentObject var navigationCoordinator: NavigationCoordinator
+    @EnvironmentObject var languageSettings: LanguageSettings
+
+    var body: some View {
+        NavigationStack(path: $navigationCoordinator.path) {
+            HomeScreen()
+                .navigationDestination(for: Routes.self) { route in
+                    destinationView(for: route)
+                }
+        }
+        .environmentObject(navigationCoordinator)
+        .environment(\.locale, languageSettings.currentLanguage.locale)
     }
 
     @ViewBuilder
@@ -38,8 +51,8 @@ struct listaApp: App {
 
         case .settings:
             SettingsScreen()
-            
-        case .insertItem(listId: let listId, itemId: let itemId):
+
+        case .insertItem(let listId, let itemId):
             InsertItemView(listId: listId, itemId: itemId)
         }
     }

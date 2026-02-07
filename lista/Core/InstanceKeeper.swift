@@ -178,4 +178,8 @@ class InstanceKeeper {
             updateListItemService: provideUpdateListItemService()
         )
     }
+    
+    func provideSettingsViewModel() -> SettingsViewModel {
+        return SettingsViewModel(languageSettings: LanguageSettings.shared)
+    }
 }

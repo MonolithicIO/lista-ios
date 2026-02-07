@@ -12,7 +12,7 @@ struct DetailsScreen: View {
     let listaTitle: String
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(NavigationCoordinator.self) private var coordinator:
+    @EnvironmentObject private var coordinator:
         NavigationCoordinator
 
     @StateObject var viewModel: DetailsViewModel
@@ -112,10 +112,10 @@ private struct DetailsScreenView: View {
 
             if items.isEmpty {
                 EmptyStateView(
-                    title: "No items yet",
-                    description: "Tap the + button to add your first item.",
+                    title: String(localized: "empty.no_items.title"),
+                    description: String(localized: "empty.no_items.description"),
                     iconName: "list.bullet",
-                    actionTitle: "Create item",
+                    actionTitle: String(localized: "empty.no_items.button"),
                     onAction: {
                         onAction(.onAddItem)
                     }
@@ -156,7 +156,7 @@ private struct DetailsScreenView: View {
                                 onAction(.onToggleItemState(item))
                             } label: {
                                 Label(
-                                    item.isCompleted ? "Undo" : "Complete",
+                                    item.isCompleted ? String(localized: "swipe_action.undo") : String(localized: "swipe_action.complete"),
                                     systemImage: item.isCompleted
                                         ? "arrow.uturn.backward" : "checkmark"
                                 )
@@ -176,7 +176,7 @@ private struct DetailsScreenView: View {
                             Button(role: .destructive) {
                                 onAction(.onDeleteItem(item))
                             } label: {
-                                Label("Delete", systemImage: "trash")
+                                Label(String(localized: "swipe_action.delete"), systemImage: "trash")
                             }
                             .tint(AppColors.destructive.opacity(actionOpacity))
                             .disabled(!listEditEnabled)
@@ -218,60 +218,54 @@ private struct DetailsScreenView: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel("Add Item")
+                .accessibilityLabel(String(localized: "accessibility.add_item"))
                 .disabled(isArchived || isCompleted)
             }
         }
         .alert(
-            "Are you sure you want to delete this list?",
+            String(localized: "alert.delete_list.title"),
             isPresented: .constant(isConfirmDeletePresented),
         ) {
-            Button("Delete", role: .destructive) {
+            Button(String(localized: "alert.button.delete"), role: .destructive) {
                 onAction(.onDelete)
                 presentation = nil
             }
-            Button("Cancel", role: .cancel) {
+            Button(String(localized: "alert.button.cancel"), role: .cancel) {
                 presentation = nil
             }
         } message: {
-            Text(
-                "This action cannot be undone."
-            )
+            Text(String(localized: "alert.delete_list.message"))
         }
         .alert(
-            "Archive this list?",
+            String(localized: "alert.archive_list.title"),
             isPresented: .constant(isConfirmArchivePresented),
             actions: {
-                Button("Archive", role: .destructive) {
+                Button(String(localized: "alert.button.archive"), role: .destructive) {
                     onAction(.onArchive)
                     presentation = nil
                 }
-                Button("Cancel", role: .cancel) {
+                Button(String(localized: "alert.button.cancel"), role: .cancel) {
                     presentation = nil
                 }
             },
             message: {
-                Text(
-                    "Archived lists cannot be edited. Restore this list before making changes"
-                )
+                Text(String(localized: "alert.archive_list.message"))
             }
         )
         .alert(
-            "Complete this list?",
+            String(localized: "alert.complete_list.title"),
             isPresented: .constant(isConfirmCompletePresented),
             actions: {
-                Button("Complete", role: .destructive) {
+                Button(String(localized: "alert.button.complete"), role: .destructive) {
                     onAction(.onComplete)
                     presentation = nil
                 }
-                Button("Cancel", role: .cancel) {
+                Button(String(localized: "alert.button.cancel"), role: .cancel) {
                     presentation = nil
                 }
             },
             message: {
-                Text(
-                    "Completing a list will mark all items as done. Once completed a list cannot be edited, undo this action before making changes "
-                )
+                Text(String(localized: "alert.complete_list.message"))
             }
         )
         .sheet(

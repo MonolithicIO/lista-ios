@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 // MARK: - Routes & Destinations
 enum Routes: Hashable {
@@ -16,9 +17,8 @@ enum Routes: Hashable {
 }
 
 // MARK: - Navigation Coordinator
-@Observable
-class NavigationCoordinator {
-    var path = NavigationPath()
+class NavigationCoordinator: ObservableObject {
+    @Published var path = NavigationPath()
 
     func push(_ route: Routes) {
         path.append(route)

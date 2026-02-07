@@ -15,7 +15,7 @@ struct LastUpdatedView: View {
         HStack(spacing: 6) {
             Image(systemName: "clock")
                 .font(.caption)
-            Text("Last updated \(date.formatted(.relative(presentation: .named)))")
+            Text("\(String(localized: "details.last_updated")) \(date.formatted(.relative(presentation: .named)))")
         }
         .font(.footnote)
         .foregroundStyle(.secondary)

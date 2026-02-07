@@ -25,7 +25,7 @@ struct AddListView: View {
         ScrollView {
             VStack(spacing: 16) {
                 // List Name Section
-                sectionHeader(title: "List Name", isOptional: false)
+                sectionHeader(title: String(localized: "section.list_name"), isOptional: false)
                 titleCard
 
                 // Create List CTA Button
@@ -36,11 +36,11 @@ struct AddListView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
-        .navigationTitle("New List")
+        .navigationTitle(String(localized: "navigation.new_list"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel") {
+                Button(String(localized: "button.cancel")) {
                     dismiss()
                 }
             }
@@ -50,7 +50,7 @@ struct AddListView: View {
     // MARK: - Card Views
 
     private var titleCard: some View {
-        TextField("Enter list name", text: $listTitle)
+        TextField(String(localized: "placeholder.list_name"), text: $listTitle)
             .font(.body)
             .foregroundStyle(AppColors.cardForeground)
             .padding(.vertical, 16)
@@ -71,7 +71,7 @@ struct AddListView: View {
         Button {
             onSubmit(listTitle)
         } label: {
-            Text("Create List")
+            Text(String(localized: "button.create_list"))
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(AppColors.accentForeground)
                 .frame(maxWidth: .infinity)
@@ -96,7 +96,7 @@ struct AddListView: View {
 
             if isOptional {
                 Spacer()
-                Text("Optional")
+                Text(String(localized: "field.optional"))
                     .font(.caption)
                     .foregroundStyle(AppColors.accent)
             }
