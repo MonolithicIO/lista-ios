@@ -180,6 +180,9 @@ class InstanceKeeper {
     }
     
     func provideSettingsViewModel() -> SettingsViewModel {
-        return SettingsViewModel(languageSettings: LanguageSettings.shared)
+        return SettingsViewModel(
+            languageSettings: LanguageSettings.shared,
+            themeSettings: ThemeSettings.shared
+        )
     }
 }

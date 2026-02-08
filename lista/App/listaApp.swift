@@ -12,6 +12,7 @@ import SwiftUI
 struct listaApp: App {
     @StateObject private var navigationCoordinator = NavigationCoordinator()
     @StateObject private var languageSettings = LanguageSettings.shared
+    @StateObject private var themeSettings = ThemeSettings.shared
 
     var body: some Scene {
         WindowGroup {
@@ -19,12 +20,14 @@ struct listaApp: App {
         }
         .environmentObject(navigationCoordinator)
         .environmentObject(languageSettings)
+        .environmentObject(themeSettings)
     }
 }
 
 struct RootView: View {
     @EnvironmentObject var navigationCoordinator: NavigationCoordinator
     @EnvironmentObject var languageSettings: LanguageSettings
+    @EnvironmentObject var themeSettings: ThemeSettings
 
     var body: some View {
         NavigationStack(path: $navigationCoordinator.path) {
@@ -35,6 +38,7 @@ struct RootView: View {
         }
         .environmentObject(navigationCoordinator)
         .environment(\.locale, languageSettings.currentLanguage.locale)
+        .preferredColorScheme(themeSettings.currentTheme.colorScheme)
     }
 
     @ViewBuilder
