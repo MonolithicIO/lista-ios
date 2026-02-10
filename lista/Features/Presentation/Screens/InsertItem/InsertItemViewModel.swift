@@ -36,6 +36,7 @@ final class InsertItemViewModel: ObservableObject {
     @Published var isEditing: Bool = false
     @Published var event: Events? = nil
     @Published var galleryPickerSelection: PhotosPickerItem?
+    @Published var isAddMoreEnabled: Bool = false
 
     // MARK: - Private State
     private var originalItem: ListaItemUiModel?
@@ -87,8 +88,12 @@ final class InsertItemViewModel: ObservableObject {
                         image: self.selectedImage
                     )
                 )
-                event = .onSuccess
-
+                
+                if isAddMoreEnabled {
+                    clearState()
+                } else {
+                    event = .onSuccess
+                }
             } catch {
                 print("Failed to create item \(error)")
             }
@@ -146,6 +151,16 @@ final class InsertItemViewModel: ObservableObject {
         }
 
         return filledInput.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+    
+    private func clearState() {
+        self.title = ""
+        self.description = ""
+        self.url = ""
+        self.isCompleted = false
+        self.selectedImage = nil
+        self.event = nil
+        self.galleryPickerSelection = nil
     }
 
 }

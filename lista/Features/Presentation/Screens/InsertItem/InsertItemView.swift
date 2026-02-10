@@ -55,7 +55,8 @@ struct InsertItemView: View {
             itemTitle: self.$viewModel.title,
             itemDescription: self.$viewModel.description,
             itemUrl: self.$viewModel.url,
-            selectedImage: self.$viewModel.selectedImage
+            selectedImage: self.$viewModel.selectedImage,
+            isAddMoreEnabled: self.$viewModel.isAddMoreEnabled
         )
         .task {
             viewModel.initialize(itemId: itemId)
@@ -123,6 +124,7 @@ struct InsertItemContentView: View {
     @Binding var itemDescription: String
     @Binding var itemUrl: String
     @Binding var selectedImage: UIImage?
+    @Binding var isAddMoreEnabled: Bool
     
     var isButtonEnabled: Bool {
         return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -131,23 +133,22 @@ struct InsertItemContentView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                // Title
                 sectionHeader(title: String(localized: "section.title"), isOptional: false)
                 titleCard
 
-                // Description
                 sectionHeader(title: String(localized: "section.description"), isOptional: true)
                 descriptionCard
 
-                // URL
                 sectionHeader(title: String(localized: "section.link"), isOptional: true)
                 urlCard
 
-                // Image
                 sectionHeader(title: String(localized: "section.image"), isOptional: true)
                 imageCard
-
-                // Save CTA Button
+                
+                if !isEditing {
+                    addMoreSwitch
+                }
+            
                 saveCTAButton
             }
             .padding(.horizontal, 16)
@@ -252,6 +253,13 @@ struct InsertItemContentView: View {
         )
         .disabled(!isButtonEnabled)
     }
+    
+    private var addMoreSwitch: some View {
+        Toggle(isOn: $isAddMoreEnabled) {
+            Text(String(localized: "toggle.create_more"))
+                .foregroundStyle(AppColors.accentForeground)
+        }
+    }
 
     // MARK: - Helpers
 
@@ -287,6 +295,7 @@ extension InsertItemContentView {
         itemTitle: .constant("Item title"),
         itemDescription: .constant("Description"),
         itemUrl: .constant("google.com"),
-        selectedImage: .constant(nil)
+        selectedImage: .constant(nil),
+        isAddMoreEnabled: .constant(false)
     )
 }
