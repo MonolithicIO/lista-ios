@@ -123,6 +123,10 @@ struct InsertItemContentView: View {
     @Binding var itemDescription: String
     @Binding var itemUrl: String
     @Binding var selectedImage: UIImage?
+    
+    var isButtonEnabled: Bool {
+        return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     var body: some View {
         ScrollView {
@@ -244,10 +248,9 @@ struct InsertItemContentView: View {
         .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(AppColors.accent)
+                .fill(isButtonEnabled ? AppColors.green : AppColors.accent)
         )
-        .disabled(itemTitle.isEmpty)
-        .opacity(itemTitle.isEmpty ? 0.6 : 1.0)
+        .disabled(!isButtonEnabled)
     }
 
     // MARK: - Helpers
