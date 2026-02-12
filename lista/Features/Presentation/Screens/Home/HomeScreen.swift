@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeScreen: View {
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject private var viewModel: HomeViewModel
-    @State private var presentation: HomeScreenView.Presentation? = nil
+    @State private var showAddListModal: Bool = false
 
     init(
         viewModel: HomeViewModel = InstanceKeeper.shared
@@ -24,11 +24,10 @@ struct HomeScreen: View {
             items: viewModel.items,
             searchText: $viewModel.searchQuery,
             selectedFilter: $viewModel.filter,
-            presentation: $presentation,
             onAction: { action in
                 switch action {
                 case .onAddTap:
-                    presentation = .addList
+                    showAddListModal = true
                 case .onItemTap(let item):
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
@@ -37,7 +36,7 @@ struct HomeScreen: View {
                     coordinator.push(.settings)
                 case .onAddItem(let title):
                     viewModel.addList(title: title)
-                    presentation = nil
+                    showAddListModal = false
                 case .onRemoveItem(let item):
                     viewModel.removeList(list: item)
                 }
@@ -47,6 +46,17 @@ struct HomeScreen: View {
         }
         .onChange(of: viewModel.filter) { _, _ in
             viewModel.onAppear()
+        }
+        .sheet(
+            isPresented: $showAddListModal
+        ) {
+            NavigationStack {
+                AddListView(
+                    onSubmit: { title in
+                        viewModel.addList(title: title)
+                    }
+                )
+            }
         }
     }
 }
@@ -69,7 +79,6 @@ private struct HomeScreenView: View {
     let items: [ListaUiModel]
     @Binding var searchText: String
     @Binding var selectedFilter: HomeFilter
-    @Binding var presentation: Presentation?
     let onAction: (Actions) -> Void
 
     var body: some View {
@@ -158,27 +167,6 @@ private struct HomeScreenView: View {
                 .accessibilityLabel(String(localized: "accessibility.new_list"))
             }
         }
-        .sheet(
-            isPresented: Binding(
-                get: {
-                    presentation == .addList
-                },
-                set: { isPresented in
-                    if !isPresented {
-                        presentation = nil
-                    }
-                }
-            )
-        ) {
-            NavigationStack {
-                AddListView(
-                    onSubmit: {
-                        title in
-                        onAction(.onAddItem(title))
-                    }
-                )
-            }
-        }
     }
 }
 
@@ -210,7 +198,6 @@ private struct HomeScreenView: View {
             ],
             searchText: .constant(""),
             selectedFilter: .constant(.active),
-            presentation: .constant(nil),
             onAction: { _ in }
         )
     }
