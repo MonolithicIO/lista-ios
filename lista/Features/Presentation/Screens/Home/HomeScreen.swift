@@ -22,26 +22,51 @@ struct HomeScreen: View {
     var body: some View {
         HomeScreenView(
             items: viewModel.items,
-            searchText: $viewModel.searchQuery,
             selectedFilter: $viewModel.filter,
             onAction: { action in
                 switch action {
-                case .onAddTap:
-                    showAddListModal = true
                 case .onItemTap(let item):
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
                     )
-                case .onSettingsTap:
-                    coordinator.push(.settings)
-                case .onAddItem(let title):
-                    viewModel.addList(title: title)
-                    showAddListModal = false
+                    
                 case .onRemoveItem(let item):
                     viewModel.removeList(list: item)
+                    
+                case .onAddTap:
+                    showAddListModal = true
                 }
             }
-        ).task {
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 16)
+        .background(AppColors.background.ignoresSafeArea())
+        .navigationTitle(String(localized: "navigation.lists"))
+        .searchable(
+            text: $viewModel.searchQuery,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: String(localized: "placeholder.search_lists")
+        )
+        .toolbar {
+
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    coordinator.push(.settings)
+                }) {
+                    Image(systemName: "gearshape")
+                }
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    showAddListModal = true
+                }) {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel(String(localized: "accessibility.new_list"))
+            }
+        }
+        .task {
             viewModel.onAppear()
         }
         .onChange(of: viewModel.filter) { _, _ in
@@ -54,6 +79,7 @@ struct HomeScreen: View {
                 AddListView(
                     onSubmit: { title in
                         viewModel.addList(title: title)
+                        showAddListModal = false
                     }
                 )
             }
@@ -63,21 +89,14 @@ struct HomeScreen: View {
 
 extension HomeScreenView {
     enum Actions {
-        case onSettingsTap
-        case onAddTap
-        case onAddItem(String)
         case onItemTap(ListaUiModel)
         case onRemoveItem(ListaUiModel)
-    }
-
-    enum Presentation {
-        case addList
+        case onAddTap
     }
 }
 
 private struct HomeScreenView: View {
     let items: [ListaUiModel]
-    @Binding var searchText: String
     @Binding var selectedFilter: HomeFilter
     let onAction: (Actions) -> Void
 
@@ -139,34 +158,6 @@ private struct HomeScreenView: View {
                 .scrollContentBackground(.hidden)
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 16)
-        .background(AppColors.background.ignoresSafeArea())
-        .navigationTitle(String(localized: "navigation.lists"))
-        .searchable(
-            text: $searchText,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(localized: "placeholder.search_lists")
-        )
-        .toolbar {
-
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    onAction(.onSettingsTap)
-                }) {
-                    Image(systemName: "gearshape")
-                }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    onAction(.onAddTap)
-                }) {
-                    Image(systemName: "plus")
-                }
-                .accessibilityLabel(String(localized: "accessibility.new_list"))
-            }
-        }
     }
 }
 
@@ -196,7 +187,6 @@ private struct HomeScreenView: View {
                     status: .active
                 ),
             ],
-            searchText: .constant(""),
             selectedFilter: .constant(.active),
             onAction: { _ in }
         )
