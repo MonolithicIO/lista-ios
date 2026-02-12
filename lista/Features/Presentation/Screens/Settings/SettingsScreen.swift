@@ -142,7 +142,6 @@ struct ThemeCard: View {
                     )
             )
         }
-        .buttonStyle(.plain)
     }
     
     private var iconColor: Color {

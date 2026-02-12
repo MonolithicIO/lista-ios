@@ -102,18 +102,17 @@ final class ListDataSource: ListDataSourceProtocol {
             ]
 
             let entities = try context.fetch(request)
-
-            return entities.compactMap { entity in
+            
+            return try entities.compactMap { entity in
                 guard let id = entity.id,
                     let title = entity.title
                 else {
                     return nil
                 }
 
-                // Get item counts from children relationship
-                let tasksSet = entity.children as? Set<ListaItemEntity> ?? []
-                let itemCount = tasksSet.count
-                let completedCount = tasksSet.filter { $0.isCompleted }.count
+                // Use efficient count queries instead of loading full relationship
+                let itemCount = try context.count(for: self.createItemCountRequest(listId: id))
+                let completedCount = try context.count(for: self.createCompletedItemCountRequest(listId: id))
 
                 return Lista(
                     id: id,
@@ -268,6 +267,26 @@ final class ListDataSource: ListDataSourceProtocol {
 
             try context.save()
         }
+    }
+
+    // MARK: - Helper Methods
+
+    private func createItemCountRequest(listId: UUID) -> NSFetchRequest<ListaItemEntity> {
+        let request: NSFetchRequest<ListaItemEntity> = ListaItemEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "lista.id == %@",
+            listId as CVarArg
+        )
+        return request
+    }
+
+    private func createCompletedItemCountRequest(listId: UUID) -> NSFetchRequest<ListaItemEntity> {
+        let request: NSFetchRequest<ListaItemEntity> = ListaItemEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "lista.id == %@ AND isCompleted == YES",
+            listId as CVarArg
+        )
+        return request
     }
 
 }

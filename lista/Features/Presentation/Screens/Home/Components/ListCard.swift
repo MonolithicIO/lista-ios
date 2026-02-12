@@ -11,18 +11,18 @@ import SwiftUI
 struct ListaCardView: View {
     let item: ListaUiModel
 
-    var iconColor: Color {
-        switch item.status {
-        case .active:
-            return AppColors.blue
-        case .completed:
-            return AppColors.green
-        case .archived:
-            return AppColors.orange
-        }
-    }
-
     var body: some View {
+        // Pre-computed values to avoid redundant calculations
+        let isCompleted = item.completedCount == item.itemCount && item.itemCount > 0
+        let completionColor: Color = isCompleted ? AppColors.green : AppColors.mutedForeground
+        let iconColor: Color = {
+            switch item.status {
+            case .active: return AppColors.blue
+            case .completed: return AppColors.green
+            case .archived: return AppColors.orange
+            }
+        }()
+        
         HStack(spacing: 12) {
             Image(systemName: "list.bullet")
                 .font(.title3)
@@ -49,9 +49,7 @@ struct ListaCardView: View {
                         .font(.caption)
                         .foregroundStyle(completionColor)
 
-                    if item.completedCount == item.itemCount
-                        && item.itemCount > 0
-                    {
+                    if isCompleted {
                         Image(systemName: "checkmark.circle.fill")
                             .font(.caption)
                             .foregroundStyle(AppColors.green)
@@ -77,13 +75,6 @@ struct ListaCardView: View {
                     y: 4
                 )
         )
-    }
-
-    private var completionColor: Color {
-        if item.completedCount == item.itemCount && item.itemCount > 0 {
-            return AppColors.green
-        }
-        return AppColors.mutedForeground
     }
 }
 

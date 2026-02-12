@@ -54,7 +54,6 @@ struct RadioButton: View {
                 value: isChecked
             )
         }
-        .buttonStyle(.plain)
         .disabled(!isEnabled)
         .accessibilityElement()
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ListaUiModel: Identifiable {
+struct ListaUiModel: Identifiable, Equatable, Hashable {
     let id: String
     let title: String
     let itemCount: Int
@@ -15,7 +15,7 @@ struct ListaUiModel: Identifiable {
     let status: ListaUiModelStatus
 }
 
-enum ListaUiModelStatus {
+enum ListaUiModelStatus: Equatable, Hashable {
     case active
     case archived
     case completed

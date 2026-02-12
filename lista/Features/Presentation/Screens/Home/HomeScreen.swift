@@ -10,7 +10,7 @@ import SwiftUI
 struct HomeScreen: View {
     @EnvironmentObject private var coordinator: NavigationCoordinator
     @StateObject private var viewModel: HomeViewModel
-    @State private var presentation: HomeScreenView.Presentation? = nil
+    @State private var showAddListModal: Bool = false
 
     init(
         viewModel: HomeViewModel = InstanceKeeper.shared
@@ -22,57 +22,82 @@ struct HomeScreen: View {
     var body: some View {
         HomeScreenView(
             items: viewModel.items,
-            searchText: $viewModel.searchQuery,
             selectedFilter: $viewModel.filter,
-            presentation: $presentation,
             onAction: { action in
                 switch action {
-                case .onAddTap:
-                    presentation = .addList
                 case .onItemTap(let item):
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
                     )
-                case .onSettingsTap:
-                    coordinator.push(.settings)
-                case .onAddItem(let title):
-                    viewModel.addList(title: title)
-                    presentation = nil
+                    
                 case .onRemoveItem(let item):
                     viewModel.removeList(list: item)
+                    
+                case .onAddTap:
+                    showAddListModal = true
                 }
             }
-        ).task {
-            viewModel.onAppear()
+        )
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, 16)
+        .background(AppColors.background.ignoresSafeArea())
+        .navigationTitle(String(localized: "navigation.lists"))
+        .searchable(
+            text: $viewModel.searchQuery,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: String(localized: "placeholder.search_lists")
+        )
+        .toolbar {
+
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: {
+                    coordinator.push(.settings)
+                }) {
+                    Image(systemName: "gearshape")
+                }
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: {
+                    showAddListModal = true
+                }) {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel(String(localized: "accessibility.new_list"))
+            }
+        }
+        .task {
+            viewModel.loadLists()
         }
         .onChange(of: viewModel.filter) { _, _ in
-            viewModel.onAppear()
+            viewModel.loadLists()
         }
-        .onChange(of: viewModel.searchQuery) { _, _ in
-            viewModel.onChangeSearchQuery()
+        .sheet(
+            isPresented: $showAddListModal
+        ) {
+            NavigationStack {
+                AddListView(
+                    onSubmit: { title in
+                        viewModel.addList(title: title)
+                        showAddListModal = false
+                    }
+                )
+            }
         }
     }
 }
 
 extension HomeScreenView {
     enum Actions {
-        case onSettingsTap
-        case onAddTap
-        case onAddItem(String)
         case onItemTap(ListaUiModel)
         case onRemoveItem(ListaUiModel)
-    }
-
-    enum Presentation {
-        case addList
+        case onAddTap
     }
 }
 
 private struct HomeScreenView: View {
     let items: [ListaUiModel]
-    @Binding var searchText: String
     @Binding var selectedFilter: HomeFilter
-    @Binding var presentation: Presentation?
     let onAction: (Actions) -> Void
 
     var body: some View {
@@ -112,7 +137,6 @@ private struct HomeScreenView: View {
                     } label: {
                         ListaCardView(item: item)
                     }
-                    .buttonStyle(.plain)
                     .listRowSeparator(.hidden)
                     .listRowInsets(
                         .init(top: 8, leading: 0, bottom: 8, trailing: 0)
@@ -132,55 +156,6 @@ private struct HomeScreenView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden)
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.horizontal, 16)
-        .background(AppColors.background.ignoresSafeArea())
-        .navigationTitle(String(localized: "navigation.lists"))
-        .searchable(
-            text: $searchText,
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(localized: "placeholder.search_lists")
-        )
-        .toolbar {
-
-            ToolbarItem(placement: .topBarLeading) {
-                Button(action: {
-                    onAction(.onSettingsTap)
-                }) {
-                    Image(systemName: "gearshape")
-                }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button(action: {
-                    onAction(.onAddTap)
-                }) {
-                    Image(systemName: "plus")
-                }
-                .accessibilityLabel(String(localized: "accessibility.new_list"))
-            }
-        }
-        .sheet(
-            isPresented: Binding(
-                get: {
-                    presentation == .addList
-                },
-                set: { isPresented in
-                    if !isPresented {
-                        presentation = nil
-                    }
-                }
-            )
-        ) {
-            NavigationStack {
-                AddListView(
-                    onSubmit: {
-                        title in
-                        onAction(.onAddItem(title))
-                    }
-                )
             }
         }
     }
@@ -212,9 +187,7 @@ private struct HomeScreenView: View {
                     status: .active
                 ),
             ],
-            searchText: .constant(""),
             selectedFilter: .constant(.active),
-            presentation: .constant(nil),
             onAction: { _ in }
         )
     }

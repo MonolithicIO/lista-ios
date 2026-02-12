@@ -42,7 +42,6 @@ struct InsertItemView: View {
 
     var body: some View {
         InsertItemContentView(
-            navTitle: screenTitle,
             isEditing: self.viewModel.isEditing,
             onAction: { action in
                 switch action {
@@ -58,6 +57,9 @@ struct InsertItemView: View {
             selectedImage: self.$viewModel.selectedImage,
             isAddMoreEnabled: self.$viewModel.isAddMoreEnabled
         )
+        .scrollDismissesKeyboard(.interactively)
+        .background(AppColors.background)
+        .navigationTitle(screenTitle)
         .task {
             viewModel.initialize(itemId: itemId)
         }
@@ -115,7 +117,6 @@ extension InsertItemView {
 }
 
 struct InsertItemContentView: View {
-    let navTitle: String
     let isEditing: Bool
     let onAction: (Action) -> Void
 
@@ -125,38 +126,48 @@ struct InsertItemContentView: View {
     @Binding var itemUrl: String
     @Binding var selectedImage: UIImage?
     @Binding var isAddMoreEnabled: Bool
-    
+
     var isButtonEnabled: Bool {
-        return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines)
+            .isEmpty
     }
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
-                sectionHeader(title: String(localized: "section.title"), isOptional: false)
+                sectionHeader(
+                    title: String(localized: "section.title"),
+                    isOptional: false
+                )
                 titleCard
 
-                sectionHeader(title: String(localized: "section.description"), isOptional: true)
+                sectionHeader(
+                    title: String(localized: "section.description"),
+                    isOptional: true
+                )
                 descriptionCard
 
-                sectionHeader(title: String(localized: "section.link"), isOptional: true)
+                sectionHeader(
+                    title: String(localized: "section.link"),
+                    isOptional: true
+                )
                 urlCard
 
-                sectionHeader(title: String(localized: "section.image"), isOptional: true)
+                sectionHeader(
+                    title: String(localized: "section.image"),
+                    isOptional: true
+                )
                 imageCard
-                
+
                 if !isEditing {
                     addMoreSwitch
                 }
-            
+
                 saveCTAButton
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 16)
         }
-        .scrollDismissesKeyboard(.interactively)
-        .background(AppColors.background)
-        .navigationTitle(navTitle)
     }
 
     // MARK: - Card Views
@@ -240,20 +251,23 @@ struct InsertItemContentView: View {
         Button {
             onAction(.onSubmit)
         } label: {
-            Text(isEditing ? String(localized: "button.save_changes") : String(localized: "button.create_item"))
-                .font(.headline.weight(.semibold))
-                .foregroundStyle(AppColors.accentForeground)
-                .frame(maxWidth: .infinity)
-                .frame(height: 50)
+            Text(
+                isEditing
+                    ? String(localized: "button.save_changes")
+                    : String(localized: "button.create_item")
+            )
+            .font(.headline.weight(.semibold))
+            .foregroundStyle(AppColors.accentForeground)
+            .frame(maxWidth: .infinity)
+            .frame(height: 50)
         }
-        .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(isButtonEnabled ? AppColors.green : AppColors.accent)
         )
         .disabled(!isButtonEnabled)
     }
-    
+
     private var addMoreSwitch: some View {
         Toggle(isOn: $isAddMoreEnabled) {
             Text(String(localized: "toggle.create_more"))
@@ -288,7 +302,6 @@ extension InsertItemContentView {
 
 #Preview("New Item") {
     InsertItemContentView(
-        navTitle: "Create Item",
         isEditing: false,
         onAction: { _ in },
         presentedImagePicker: .constant(nil),

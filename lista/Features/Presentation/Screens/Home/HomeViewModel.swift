@@ -8,13 +8,13 @@
 import Combine
 import Foundation
 
-
-
 @MainActor
 class HomeViewModel: ObservableObject {
     private let fetchListsService: FetchListsServiceProtocol
     private let createListService: CreateListServiceProtocol
     private let removeListService: RemoveListServiceProtocol
+    private var searchTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     init(
         fetchListsService: FetchListsServiceProtocol,
@@ -28,9 +28,14 @@ class HomeViewModel: ObservableObject {
 
     @Published private(set) var items: [ListaUiModel] = []
     @Published var filter: HomeFilter = .active
-    @Published var searchQuery: String = ""
+    
+    @Published var searchQuery: String = "" {
+        didSet {
+            self.loadLists()
+        }
+    }
 
-    func onAppear() {
+    func loadLists() {
         Task {
             await fetchLists()
         }
@@ -70,13 +75,8 @@ class HomeViewModel: ObservableObject {
         }
     }
 
-    func onChangeSearchQuery() {
-        Task {
-            await fetchLists()
-        }
-    }
-
     private func fetchLists() async {
+        print("Fetching lists")
         do {
             items = try await fetchListsService.fetch(
                 filter: FetchListFilter(

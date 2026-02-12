@@ -17,8 +17,7 @@ struct ItemDetailsView: View {
     let onUpdate: () -> Void
     let onToggle: () -> Void
     let enableEdit: Bool
-
-    @State private var showSafari: Bool = false
+    let onTapUrl: (String) -> Void
 
     var body: some View {
         NavigationStack {
@@ -75,13 +74,10 @@ struct ItemDetailsView: View {
                     }) {
                         Image(systemName: "pencil")
                     }
-                    .accessibilityLabel(String(localized: "accessibility.edit_item"))
+                    .accessibilityLabel(
+                        String(localized: "accessibility.edit_item")
+                    )
                     .disabled(!enableEdit)
-                }
-            }
-            .sheet(isPresented: $showSafari) {
-                if let itemUrl = item.url, let url = URL(string: itemUrl) {
-                    SafariView(url: url)
                 }
             }
         }
@@ -137,12 +133,8 @@ struct ItemDetailsView: View {
 
     private func urlCard(url: String) -> some View {
         Button {
-            if !url.isEmpty,
-                let validUrl = URL(string: url),
-                UIApplication.shared.canOpenURL(validUrl)
-            {
-                showSafari = true
-            }
+            onTapUrl(url)
+
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "link.circle.fill")
@@ -171,7 +163,6 @@ struct ItemDetailsView: View {
             .padding(.vertical, 16)
             .padding(.horizontal, 16)
         }
-        .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(AppColors.accent)
@@ -211,8 +202,12 @@ struct ItemDetailsView: View {
                         ? "arrow.uturn.backward" : "checkmark"
                 )
                 .font(.headline.weight(.semibold))
-                Text(item.isCompleted ? String(localized: "toggle.mark_active") : String(localized: "toggle.mark_complete"))
-                    .font(.headline.weight(.semibold))
+                Text(
+                    item.isCompleted
+                        ? String(localized: "toggle.mark_active")
+                        : String(localized: "toggle.mark_complete")
+                )
+                .font(.headline.weight(.semibold))
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
@@ -229,7 +224,10 @@ struct ItemDetailsView: View {
 
     private func lastUpdatedText(date: Date) -> some View {
         Text(
-            String(format: String(localized: "details.updated_on"), date.formatted(date: .abbreviated, time: .shortened))
+            String(
+                format: String(localized: "details.updated_on"),
+                date.formatted(date: .abbreviated, time: .shortened)
+            )
         )
         .font(.caption)
         .foregroundStyle(AppColors.mutedForeground)
@@ -261,7 +259,8 @@ struct ItemDetailsView: View {
         ),
         onUpdate: {},
         onToggle: {},
-        enableEdit: true
+        enableEdit: true,
+        onTapUrl: { _ in }
     )
 }
 
@@ -280,6 +279,7 @@ struct ItemDetailsView: View {
         ),
         onUpdate: {},
         onToggle: {},
-        enableEdit: true
+        enableEdit: true,
+        onTapUrl: { _ in }
     )
 }
