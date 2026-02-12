@@ -77,7 +77,6 @@ struct AddListView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
         }
-        .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(isAddButtonEnabled ? AppColors.green : AppColors.accent)

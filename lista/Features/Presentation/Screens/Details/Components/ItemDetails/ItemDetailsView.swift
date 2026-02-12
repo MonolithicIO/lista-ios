@@ -171,7 +171,6 @@ struct ItemDetailsView: View {
             .padding(.vertical, 16)
             .padding(.horizontal, 16)
         }
-        .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(AppColors.accent)

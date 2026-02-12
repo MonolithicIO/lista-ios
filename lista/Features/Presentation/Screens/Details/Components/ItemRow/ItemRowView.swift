@@ -53,7 +53,6 @@ struct ListaItemRowView: View {
                     )
             )
         }
-        .buttonStyle(.plain)
         .contentShape(Rectangle())
     }
 
