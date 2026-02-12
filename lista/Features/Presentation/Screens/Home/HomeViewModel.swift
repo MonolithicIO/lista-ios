@@ -8,13 +8,13 @@
 import Combine
 import Foundation
 
-
-
 @MainActor
 class HomeViewModel: ObservableObject {
     private let fetchListsService: FetchListsServiceProtocol
     private let createListService: CreateListServiceProtocol
     private let removeListService: RemoveListServiceProtocol
+    private var searchTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
 
     init(
         fetchListsService: FetchListsServiceProtocol,
@@ -24,6 +24,9 @@ class HomeViewModel: ObservableObject {
         self.fetchListsService = fetchListsService
         self.createListService = createListService
         self.removeListService = removeListService
+        
+        // Setup debounced search
+        setupSearchDebouncing()
     }
 
     @Published private(set) var items: [ListaUiModel] = []
@@ -71,9 +74,19 @@ class HomeViewModel: ObservableObject {
     }
 
     func onChangeSearchQuery() {
-        Task {
-            await fetchLists()
-        }
+        // Debounced search is handled by Combine publisher
+    }
+
+    private func setupSearchDebouncing() {
+        $searchQuery
+            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
+            .removeDuplicates()
+            .sink { [weak self] _ in
+                Task {
+                    await self?.fetchLists()
+                }
+            }
+            .store(in: &cancellables)
     }
 
     private func fetchLists() async {

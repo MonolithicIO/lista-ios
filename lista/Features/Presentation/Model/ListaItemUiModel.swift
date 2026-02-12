@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-struct ListaItemUiModel: Identifiable {
+struct ListaItemUiModel: Identifiable, Equatable, Hashable {
     let listId: String
     let id: String
     let title: String

@@ -48,9 +48,6 @@ struct HomeScreen: View {
         .onChange(of: viewModel.filter) { _, _ in
             viewModel.onAppear()
         }
-        .onChange(of: viewModel.searchQuery) { _, _ in
-            viewModel.onChangeSearchQuery()
-        }
     }
 }
 

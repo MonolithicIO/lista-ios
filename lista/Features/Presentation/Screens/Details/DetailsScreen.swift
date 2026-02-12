@@ -127,16 +127,10 @@ private struct DetailsScreenView: View {
                 )
                 .padding()
             } else {
+                let actionOpacity = listEditEnabled ? 1.0 : 0.3
+                
                 List {
                     ForEach(items) { item in
-                        var actionOpacity: Double {
-                            if listEditEnabled {
-                                return 1.0
-                            } else {
-                                return 0.3
-                            }
-                        }
-
                         ListaItemRowView(
                             item: item,
                             onToggle: { item in
@@ -163,12 +157,8 @@ private struct DetailsScreenView: View {
                             }
                             .tint(
                                 item.isCompleted
-                                    ? AppColors.orange.opacity(
-                                        actionOpacity
-                                    )
-                                    : AppColors.green.opacity(
-                                        actionOpacity
-                                    )
+                                    ? AppColors.orange.opacity(actionOpacity)
+                                    : AppColors.green.opacity(actionOpacity)
                             )
                             .disabled(!listEditEnabled)
                         }

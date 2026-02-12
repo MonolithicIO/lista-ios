@@ -10,6 +10,7 @@ import Foundation
 import PhotosUI
 import SwiftUI
 
+@MainActor
 final class InsertItemViewModel: ObservableObject {
     // MARK: - Dependency properties
     private let createItemService: CreateListItemServiceProtocol
@@ -129,13 +130,22 @@ final class InsertItemViewModel: ObservableObject {
             do {
                 let item = try await getItemService.get(id: itemId)
 
-                title = item.title
-                description = item.description ?? ""
-                url = item.url ?? ""
-                isCompleted = item.isCompleted
-                originalItem = item.toUiModel()
+                await MainActor.run {
+                    title = item.title
+                    description = item.description ?? ""
+                    url = item.url ?? ""
+                    isCompleted = item.isCompleted
+                    originalItem = item.toUiModel()
+                }
+                
+                // Load image asynchronously on background thread
                 if let imagePath = item.imageUrl {
-                    selectedImage = UIImage(contentsOfFile: imagePath)
+                    let image = await Task.detached {
+                        UIImage(contentsOfFile: imagePath)
+                    }.value
+                    await MainActor.run {
+                        selectedImage = image
+                    }
                 }
             } catch {
                 print("Failed to fetch item details \(error)")

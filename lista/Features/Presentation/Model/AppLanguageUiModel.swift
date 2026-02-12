@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AppLanguageUiModel: Identifiable {
+struct AppLanguageUiModel: Identifiable, Equatable, Hashable {
     let displayName: String
     let id: AppLanguage
 }

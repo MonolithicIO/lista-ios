@@ -80,10 +80,9 @@ struct AddListView: View {
         .buttonStyle(.plain)
         .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(AppColors.accent)
+                .fill(isAddButtonEnabled ? AppColors.green : AppColors.accent)
         )
         .disabled(!isAddButtonEnabled)
-        .opacity(isAddButtonEnabled ? 1.0 : 0.6)
     }
 
     // MARK: - Helpers
