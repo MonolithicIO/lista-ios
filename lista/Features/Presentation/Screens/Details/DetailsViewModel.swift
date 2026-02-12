@@ -26,6 +26,10 @@ class DetailsViewModel: ObservableObject {
     @Published private(set) var isCompleted: Bool = false
     @Published private(set) var updatedAt: Date? = nil
     @Published private(set) var events: Events? = nil
+    var canEdit: Bool {
+        return !isArchived && !isCompleted
+
+    }
     private var listId: String!
 
     init(
