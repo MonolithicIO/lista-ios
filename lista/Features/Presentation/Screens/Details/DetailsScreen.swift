@@ -31,7 +31,8 @@ struct DetailsScreen: View {
 
     var body: some View {
         DetailsContentView(
-            updatedAt: viewModel.updatedAt, isArchived: viewModel.isArchived,
+            updatedAt: viewModel.updatedAt,
+            isArchived: viewModel.isArchived,
             isCompleted: viewModel.isCompleted,
             isEditEnabled: viewModel.canEdit,
             items: viewModel.items,
@@ -43,7 +44,7 @@ struct DetailsScreen: View {
                     )
                 case .onToggleItemState(let changedItem):
                     viewModel.onToogleItemState(item: changedItem)
-                
+
                 case .onUpdateItem(let item):
                     coordinator.push(
                         .insertItem(listId: self.listaId, itemId: item.id)
@@ -161,13 +162,25 @@ struct DetailsScreen: View {
                     item: itemDetails,
                     onUpdate: {
                         detailsToPresent = nil
-                        coordinator.push(.insertItem(listId: self.listaId, itemId: itemDetails.id))
+                        coordinator.push(
+                            .insertItem(
+                                listId: self.listaId,
+                                itemId: itemDetails.id
+                            )
+                        )
                     },
                     onToggle: {
                         viewModel.onToogleItemState(item: itemDetails)
                         detailsToPresent = nil
                     },
-                    enableEdit: viewModel.canEdit
+                    enableEdit: viewModel.canEdit,
+                    onTapUrl: { url in
+                        guard let browserUrl = URL(string: url) else { return }
+                        if UIApplication.shared.canOpenURL(browserUrl) {
+                            UIApplication.shared.open(browserUrl)
+                            return
+                        }
+                    }
                 )
             }
         }
