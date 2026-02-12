@@ -67,10 +67,10 @@ struct HomeScreen: View {
             }
         }
         .task {
-            viewModel.onAppear()
+            viewModel.loadLists()
         }
         .onChange(of: viewModel.filter) { _, _ in
-            viewModel.onAppear()
+            viewModel.loadLists()
         }
         .sheet(
             isPresented: $showAddListModal

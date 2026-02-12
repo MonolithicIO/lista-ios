@@ -24,16 +24,18 @@ class HomeViewModel: ObservableObject {
         self.fetchListsService = fetchListsService
         self.createListService = createListService
         self.removeListService = removeListService
-        
-        // Setup debounced search
-        setupSearchDebouncing()
     }
 
     @Published private(set) var items: [ListaUiModel] = []
     @Published var filter: HomeFilter = .active
-    @Published var searchQuery: String = ""
+    
+    @Published var searchQuery: String = "" {
+        didSet {
+            self.loadLists()
+        }
+    }
 
-    func onAppear() {
+    func loadLists() {
         Task {
             await fetchLists()
         }
@@ -73,23 +75,8 @@ class HomeViewModel: ObservableObject {
         }
     }
 
-    func onChangeSearchQuery() {
-        // Debounced search is handled by Combine publisher
-    }
-
-    private func setupSearchDebouncing() {
-        $searchQuery
-            .debounce(for: .milliseconds(300), scheduler: DispatchQueue.main)
-            .removeDuplicates()
-            .sink { [weak self] _ in
-                Task {
-                    await self?.fetchLists()
-                }
-            }
-            .store(in: &cancellables)
-    }
-
     private func fetchLists() async {
+        print("Fetching lists")
         do {
             items = try await fetchListsService.fetch(
                 filter: FetchListFilter(
