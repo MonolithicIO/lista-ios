@@ -36,7 +36,6 @@ struct RootView: View {
                     destinationView(for: route)
                 }
         }
-        .environmentObject(navigationCoordinator)
         .environment(
             \.locale,
             .init(
