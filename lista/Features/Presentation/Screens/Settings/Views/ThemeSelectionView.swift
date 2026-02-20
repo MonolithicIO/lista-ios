@@ -51,7 +51,7 @@ struct ThemeCard: View {
                     .foregroundStyle(iconColor)
                     .frame(width: 32, height: 32)
 
-                Text(theme.displayNameKey)
+                Text(LocalizedStringKey(theme.displayNameKey))
                     .font(.body)
                     .foregroundStyle(AppColors.cardForeground)
 

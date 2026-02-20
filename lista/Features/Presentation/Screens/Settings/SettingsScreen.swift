@@ -58,7 +58,7 @@ struct SettingsContentView: View {
                     HStack {
                         Text(LocalizedStringKey("settings.theme.title"))
                         Spacer()
-                        Text(selectedTheme.displayNameKey)
+                        Text(LocalizedStringKey(selectedTheme.displayNameKey))
                             .foregroundStyle(AppColors.mutedForeground)
                     }
                 }

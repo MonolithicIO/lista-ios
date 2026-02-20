@@ -175,21 +175,24 @@ struct InsertItemContentView: View {
     // MARK: - Card Views
 
     private var titleCard: some View {
-        TextField(String(localized: "placeholder.item_title"), text: $itemTitle)
-            .font(.body)
-            .foregroundStyle(AppColors.cardForeground)
-            .padding(.vertical, 16)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(AppColors.card)
-                    .shadow(
-                        color: Color.black.opacity(0.08),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-            )
+        TextField(
+            LocalizedStringKey("placeholder.item_title"),
+            text: $itemTitle
+        )
+        .font(.body)
+        .foregroundStyle(AppColors.cardForeground)
+        .padding(.vertical, 16)
+        .padding(.horizontal, 16)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(AppColors.card)
+                .shadow(
+                    color: Color.black.opacity(0.08),
+                    radius: 8,
+                    x: 0,
+                    y: 4
+                )
+        )
     }
 
     private var descriptionCard: some View {
@@ -214,7 +217,7 @@ struct InsertItemContentView: View {
 
     private var urlCard: some View {
         VStack(alignment: .leading, spacing: 6) {
-            TextField(String(localized: "placeholder.url"), text: $itemUrl)
+            TextField(LocalizedStringKey("placeholder.url"), text: $itemUrl)
                 .autocorrectionDisabled()
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
@@ -246,7 +249,7 @@ struct InsertItemContentView: View {
                 )
 
             if isUrlInvalid {
-                Text(String(localized: "error.invalid_url"))
+                Text(LocalizedStringKey("error.invalid_url"))
                     .font(.caption)
                     .foregroundStyle(AppColors.destructive)
                     .padding(.horizontal, 4)
@@ -279,8 +282,8 @@ struct InsertItemContentView: View {
         } label: {
             Text(
                 isEditing
-                    ? String(localized: "button.save_changes")
-                    : String(localized: "button.create_item")
+                    ? LocalizedStringKey("button.save_changes")
+                    : LocalizedStringKey("button.create_item")
             )
             .font(.headline.weight(.semibold))
             .foregroundStyle(AppColors.accentForeground)
@@ -296,7 +299,7 @@ struct InsertItemContentView: View {
 
     private var addMoreSwitch: some View {
         Toggle(isOn: $isAddMoreEnabled) {
-            Text(String(localized: "toggle.create_more"))
+            Text(LocalizedStringKey("toggle.create_more"))
                 .foregroundStyle(AppColors.accentForeground)
         }
     }
@@ -311,7 +314,7 @@ struct InsertItemContentView: View {
 
             if isOptional {
                 Spacer()
-                Text(String(localized: "field.optional"))
+                Text(LocalizedStringKey("field.optional"))
                     .font(.caption)
                     .foregroundStyle(AppColors.accentForeground)
             }

@@ -75,7 +75,7 @@ struct ItemDetailsView: View {
                         Image(systemName: "pencil")
                     }
                     .accessibilityLabel(
-                        String(localized: "accessibility.edit_item")
+                        LocalizedStringKey("accessibility.edit_item")
                     )
                     .disabled(!enableEdit)
                 }
@@ -142,7 +142,7 @@ struct ItemDetailsView: View {
                     .foregroundStyle(AppColors.accentForeground)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(LocalizedStringKey( "button.open_link"))
+                    Text(LocalizedStringKey("button.open_link"))
                         .font(.headline.weight(.medium))
                         .foregroundStyle(AppColors.accentForeground)
 
@@ -204,8 +204,8 @@ struct ItemDetailsView: View {
                 .font(.headline.weight(.semibold))
                 Text(
                     item.isCompleted
-                        ? LocalizedStringKey( "toggle.mark_active")
-                        : LocalizedStringKey( "toggle.mark_complete")
+                        ? LocalizedStringKey("toggle.mark_active")
+                        : LocalizedStringKey("toggle.mark_complete")
                 )
                 .font(.headline.weight(.semibold))
             }
