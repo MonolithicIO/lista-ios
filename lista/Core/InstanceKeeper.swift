@@ -36,6 +36,10 @@ class InstanceKeeper {
         return DiskManager()
     }
 
+    func provideAudioManager() -> AudioManagerProtocol {
+        return AudioManager.shared
+    }
+
     // MARK: - Data Providers
     func provideContext() -> NSManagedObjectContext {
         return PersistenceController.shared.container.viewContext
