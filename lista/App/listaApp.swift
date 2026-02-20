@@ -37,7 +37,12 @@ struct RootView: View {
                 }
         }
         .environmentObject(navigationCoordinator)
-        .environment(\.locale, languageSettings.currentLanguage.locale)
+        .environment(
+            \.locale,
+            .init(
+                identifier: languageSettings.currentLanguage.locale.identifier
+            )
+        )
         .preferredColorScheme(themeSettings.currentTheme.colorScheme)
     }
 

@@ -33,6 +33,8 @@ class LanguageSettings: ObservableObject {
             )
         }
     }
+    
+    @Published var availableLanguages: [AppLanguage] = AppLanguage.allCases
 
     private init() {
         // Check if user has manually selected a language

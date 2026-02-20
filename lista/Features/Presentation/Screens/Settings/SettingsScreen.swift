@@ -8,34 +8,26 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-    @StateObject private var viewModel: SettingsViewModel
-
-    init(
-        viewModel: SettingsViewModel = InstanceKeeper.shared
-            .provideSettingsViewModel()
-    ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
-    }
+    @EnvironmentObject var languageSettings: LanguageSettings
+    @EnvironmentObject var themeSettings: ThemeSettings
 
     var body: some View {
         SettingsContentView(
-            selectedLanguage: $viewModel.selectedLanguage,
-            availableLanguages: viewModel.appLanguages,
-            languageDisplayName: viewModel.languageDisplayName,
-            selectedTheme: $viewModel.selectedTheme,
-            availableThemes: viewModel.availableThemes,
-            onThemeSelected: viewModel.updateTheme
+            selectedLanguage: $languageSettings.currentLanguage,
+            availableLanguages: languageSettings.availableLanguages,
+            selectedTheme: $themeSettings.currentTheme,
+            availableThemes: themeSettings.availableThemes,
+    
         )
     }
 }
 
 struct SettingsContentView: View {
     @Binding var selectedLanguage: AppLanguage
-    let availableLanguages: [AppLanguageUiModel]
-    let languageDisplayName: String
+    let availableLanguages: [AppLanguage]
     @Binding var selectedTheme: AppTheme
     let availableThemes: [AppTheme]
-    let onThemeSelected: (AppTheme) -> Void
+    @Environment(\.locale) var locale
 
     var body: some View {
         List {
@@ -47,8 +39,8 @@ struct SettingsContentView: View {
                     selection: $selectedLanguage
                 ) {
                     ForEach(availableLanguages) { language in
-                        Text(language.displayName)
-                            .tag(language.id)
+                        Text(locale.localizedString(forLanguageCode: language.id)!.capitalized)
+                            .tag(language)
                     }
                 }
                 .pickerStyle(.navigationLink)
@@ -57,7 +49,6 @@ struct SettingsContentView: View {
                     ThemeSelectionView(
                         selectedTheme: $selectedTheme,
                         availableThemes: availableThemes,
-                        onThemeSelected: onThemeSelected
                     )
                 } label: {
                     HStack {
@@ -78,7 +69,6 @@ struct SettingsContentView: View {
 struct ThemeSelectionView: View {
     @Binding var selectedTheme: AppTheme
     let availableThemes: [AppTheme]
-    let onThemeSelected: (AppTheme) -> Void
     
     var body: some View {
         List {
@@ -88,7 +78,7 @@ struct ThemeSelectionView: View {
                         theme: theme,
                         isSelected: selectedTheme == theme,
                         onTap: {
-                            onThemeSelected(theme)
+                            selectedTheme = theme
                         }
                     )
                     .listRowInsets(EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16))
@@ -160,14 +150,9 @@ struct ThemeCard: View {
     NavigationStack {
         SettingsContentView(
             selectedLanguage: .constant(.english),
-            availableLanguages: [
-                AppLanguageUiModel(displayName: "English", id: .english),
-                AppLanguageUiModel(displayName: "Portuguese", id: .portuguese),
-            ],
-            languageDisplayName: "English",
+            availableLanguages: AppLanguage.allCases,
             selectedTheme: .constant(.system),
             availableThemes: AppTheme.allCases,
-            onThemeSelected: { _ in }
         )
     }
 }

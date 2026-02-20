@@ -63,6 +63,8 @@ class ThemeSettings: ObservableObject {
         }
     }
     
+    @Published var availableThemes = AppTheme.allCases
+    
     private init() {
         // Load saved theme preference
         if let savedTheme = UserDefaults.standard.string(forKey: userDefaultsKey),
