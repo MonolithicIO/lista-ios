@@ -29,10 +29,10 @@ struct HomeScreen: View {
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
                     )
-                    
+
                 case .onRemoveItem(let item):
                     viewModel.removeList(list: item)
-                    
+
                 case .onAddTap:
                     showAddListModal = true
                 }
@@ -41,11 +41,11 @@ struct HomeScreen: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
         .background(AppColors.background.ignoresSafeArea())
-        .navigationTitle(String(localized: "navigation.lists"))
+        .navigationTitle("navigation.lists")
         .searchable(
             text: $viewModel.searchQuery,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(localized: "placeholder.search_lists")
+            prompt: "placeholder.search_lists"
         )
         .toolbar {
 
@@ -63,7 +63,9 @@ struct HomeScreen: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel(String(localized: "accessibility.new_list"))
+                .accessibilityLabel(
+                    "accessibility.new_list"
+                )
             }
         }
         .task {
@@ -104,11 +106,11 @@ private struct HomeScreenView: View {
         VStack(spacing: 0) {
             // Segmented Filter Control - Always visible
             Picker(
-                String(localized: "accessibility.filter"),
+                "accessibility.filter",
                 selection: $selectedFilter
             ) {
                 ForEach(HomeFilter.allCases) { filter in
-                    Text(filter.displayName).tag(filter)
+                    Text(LocalizedStringKey(filter.displayName)).tag(filter)
                 }
             }
             .pickerStyle(.segmented)
@@ -147,7 +149,7 @@ private struct HomeScreenView: View {
                             onAction(.onRemoveItem(item))
                         } label: {
                             Label(
-                                String(localized: "swipe_action.delete"),
+                                "swipe_action.delete",
                                 systemImage: "trash"
                             )
                             .tint(AppColors.destructive)

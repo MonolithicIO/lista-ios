@@ -12,9 +12,9 @@ enum AppTheme: String, CaseIterable, Identifiable {
     case system = "system"
     case light = "light"
     case dark = "dark"
-    
+
     var id: String { rawValue }
-    
+
     var colorScheme: ColorScheme? {
         switch self {
         case .light:
@@ -25,18 +25,18 @@ enum AppTheme: String, CaseIterable, Identifiable {
             return nil
         }
     }
-    
-    var displayName: String {
+
+    var displayNameKey: LocalizedStringResource {
         switch self {
         case .light:
-            return String(localized: "theme.light")
+            return .themeLight
         case .dark:
-            return String(localized: "theme.dark")
+            return .themeDark
         case .system:
-            return String(localized: "theme.system")
+            return .themeSystem
         }
     }
-    
+
     var icon: String {
         switch self {
         case .light:
@@ -51,9 +51,9 @@ enum AppTheme: String, CaseIterable, Identifiable {
 
 class ThemeSettings: ObservableObject {
     static let shared = ThemeSettings()
-    
+
     private let userDefaultsKey = "app.selectedTheme"
-    
+
     @Published var currentTheme: AppTheme {
         didSet {
             UserDefaults.standard.set(
@@ -62,11 +62,16 @@ class ThemeSettings: ObservableObject {
             )
         }
     }
-    
+
+    @Published var availableThemes = AppTheme.allCases
+
     private init() {
         // Load saved theme preference
-        if let savedTheme = UserDefaults.standard.string(forKey: userDefaultsKey),
-           let theme = AppTheme(rawValue: savedTheme) {
+        if let savedTheme = UserDefaults.standard.string(
+            forKey: userDefaultsKey
+        ),
+            let theme = AppTheme(rawValue: savedTheme)
+        {
             self.currentTheme = theme
         } else {
             self.currentTheme = .system

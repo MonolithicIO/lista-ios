@@ -9,13 +9,20 @@ import Foundation
 import SwiftUI
 
 struct LastUpdatedView: View {
+    @Environment(\.locale) var locale
     let date: Date
 
     var body: some View {
         HStack(spacing: 6) {
             Image(systemName: "clock")
                 .font(.caption)
-            Text("\(String(localized: "details.last_updated")) \(date.formatted(.relative(presentation: .named)))")
+            Text(
+                .detailsLastUpdated(
+                    date.formatted(
+                        .relative(presentation: .named).locale(locale)
+                    )
+                )
+            )
         }
         .font(.footnote)
         .foregroundStyle(.secondary)

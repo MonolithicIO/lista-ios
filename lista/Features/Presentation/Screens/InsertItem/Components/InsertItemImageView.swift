@@ -77,15 +77,17 @@ private struct WriteModeView: View {
                             .foregroundStyle(AppColors.blue)
 
                         VStack(alignment: .leading, spacing: 2) {
-                            Text(String(localized: "button.attach_image"))
+                            Text("button.attach_image")
                                 .font(.headline)
                                 .foregroundStyle(AppColors.blue)
 
-                            Text(String(localized: "subtitle.gallery_or_camera"))
-                                .font(.caption)
-                                .foregroundStyle(
-                                    AppColors.mutedForeground
-                                )
+                            Text(
+                                "subtitle.gallery_or_camera"
+                            )
+                            .font(.caption)
+                            .foregroundStyle(
+                                AppColors.mutedForeground
+                            )
                         }
 
                         Spacer()
@@ -107,14 +109,14 @@ private struct WriteModeView: View {
                     "",
                     isPresented: $isConfirmationDialogPresented
                 ) {
-                    Button(String(localized: "button.select_gallery")) {
+                    Button("button.select_gallery") {
                         formImageSource = .gallery
                     }
 
                     if UIImagePickerController.isSourceTypeAvailable(
                         .camera
                     ) {
-                        Button(String(localized: "button.take_photo")) {
+                        Button("button.take_photo") {
                             formImageSource = .camera
                         }
                     }

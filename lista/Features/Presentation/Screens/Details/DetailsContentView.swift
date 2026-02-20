@@ -75,10 +75,8 @@ struct DetailsContentView: View {
                             } label: {
                                 Label(
                                     item.isCompleted
-                                        ? String(localized: "swipe_action.undo")
-                                        : String(
-                                            localized: "swipe_action.complete"
-                                        ),
+                                        ? "swipe_action.undo"
+                                        : "swipe_action.complete",
                                     systemImage: item.isCompleted
                                         ? "arrow.uturn.backward" : "checkmark"
                                 )
@@ -95,7 +93,7 @@ struct DetailsContentView: View {
                                 onAction(.onDeleteItem(item))
                             } label: {
                                 Label(
-                                    String(localized: "swipe_action.delete"),
+                                    "swipe_action.delete",
                                     systemImage: "trash"
                                 )
                             }

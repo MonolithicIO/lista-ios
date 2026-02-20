@@ -13,8 +13,10 @@ struct ListaCardView: View {
 
     var body: some View {
         // Pre-computed values to avoid redundant calculations
-        let isCompleted = item.completedCount == item.itemCount && item.itemCount > 0
-        let completionColor: Color = isCompleted ? AppColors.green : AppColors.mutedForeground
+        let isCompleted =
+            item.completedCount == item.itemCount && item.itemCount > 0
+        let completionColor: Color =
+            isCompleted ? AppColors.green : AppColors.mutedForeground
         let iconColor: Color = {
             switch item.status {
             case .active: return AppColors.blue
@@ -22,7 +24,7 @@ struct ListaCardView: View {
             case .archived: return AppColors.orange
             }
         }()
-        
+
         HStack(spacing: 12) {
             Image(systemName: "list.bullet")
                 .font(.title3)
@@ -37,7 +39,7 @@ struct ListaCardView: View {
 
                 // Stats row
                 HStack(spacing: 4) {
-                    Text(String(format: String(localized: "details.item_count"), item.itemCount))
+                    Text(.detailsItemCount(itemCounte: item.itemCount))
                         .font(.caption)
                         .foregroundStyle(AppColors.mutedForeground)
 
@@ -45,9 +47,13 @@ struct ListaCardView: View {
                         .font(.caption)
                         .foregroundStyle(AppColors.mutedForeground)
 
-                    Text(String(format: String(localized: "details.completed_count"), item.completedCount))
-                        .font(.caption)
-                        .foregroundStyle(completionColor)
+                    Text(
+                        .detailsCompletedCount(
+                            completedCount: item.completedCount
+                        )
+                    )
+                    .font(.caption)
+                    .foregroundStyle(completionColor)
 
                     if isCompleted {
                         Image(systemName: "checkmark.circle.fill")

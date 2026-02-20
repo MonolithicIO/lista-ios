@@ -33,6 +33,8 @@ class LanguageSettings: ObservableObject {
             )
         }
     }
+    
+    @Published var availableLanguages: [AppLanguage] = AppLanguage.allCases
 
     private init() {
         // Check if user has manually selected a language
@@ -70,12 +72,5 @@ class LanguageSettings: ObservableObject {
 
         // Default to English if no supported language found
         return .english
-    }
-
-    func displayName(for language: AppLanguage) -> String {
-        // Return language name localized in the current app language
-        let currentLocale = currentLanguage.locale
-        return currentLocale.localizedString(forLanguageCode: language.rawValue)
-            ?? language.rawValue
     }
 }
