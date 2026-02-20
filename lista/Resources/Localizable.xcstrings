@@ -296,6 +296,52 @@
         }
       }
     },
+    "alert.microphone_access_needed.message" : {
+      "comment" : "Message shown when microphone permission is denied while creating an item",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable microphone permission to record an audio note."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Activa el permiso del micrófono para grabar una nota de audio."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ative a permissão do microfone para gravar uma nota de áudio."
+          }
+        }
+      }
+    },
+    "alert.microphone_access_needed.title" : {
+      "comment" : "Title shown when microphone permission is denied while creating an item",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Microphone Access Needed"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se necesita acceso al micrófono"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acesso ao microfone necessário"
+          }
+        }
+      }
+    },
     "alert.delete_list.message" : {
       "comment" : "Message for delete list confirmation alert",
       "localizations" : {
@@ -434,6 +480,52 @@
         }
       }
     },
+    "button.discard" : {
+      "comment" : "Discard button label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Descartar"
+          }
+        }
+      }
+    },
+    "button.ok" : {
+      "comment" : "Generic confirmation button label",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "button.open_link" : {
       "comment" : "Open link button label",
       "localizations" : {
@@ -476,6 +568,75 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Salvar Alterações"
+          }
+        }
+      }
+    },
+    "button.record_audio_note" : {
+      "comment" : "Button label to start recording an audio note",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record audio note"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabar nota de audio"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravar nota de áudio"
+          }
+        }
+      }
+    },
+    "button.re_record" : {
+      "comment" : "Button label to re-record an audio note",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Re-record"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Volver a grabar"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Regravar"
+          }
+        }
+      }
+    },
+    "button.stop_recording" : {
+      "comment" : "Button label to stop audio recording",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop recording"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Detener grabación"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parar gravação"
           }
         }
       }
@@ -1170,6 +1331,29 @@
         }
       }
     },
+    "section.audio" : {
+      "comment" : "Audio section header",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio note"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota de audio"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota de áudio"
+          }
+        }
+      }
+    },
     "section.description" : {
       "comment" : "Description section header",
       "localizations" : {
@@ -1423,6 +1607,29 @@
         }
       }
     },
+    "status.audio_note_ready" : {
+      "comment" : "Status label shown when an audio draft is ready",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Audio note ready"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota de audio lista"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nota de áudio pronta"
+          }
+        }
+      }
+    },
     "status.completed" : {
       "comment" : "Completed status label",
       "localizations" : {
@@ -1446,6 +1653,29 @@
         }
       }
     },
+    "status.recording_in_progress" : {
+      "comment" : "Status label shown while audio is being recorded",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recording in progress"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grabación en progreso"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gravação em andamento"
+          }
+        }
+      }
+    },
     "subtitle.gallery_or_camera" : {
       "comment" : "Subtitle for image picker",
       "localizations" : {
@@ -1465,6 +1695,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Galeria ou câmera"
+          }
+        }
+      }
+    },
+    "subtitle.tap_to_start_recording" : {
+      "comment" : "Subtitle for starting audio recording",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to start recording"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toca para comenzar a grabar"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toque para iniciar a gravação"
           }
         }
       }

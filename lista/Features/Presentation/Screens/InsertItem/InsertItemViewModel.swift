@@ -16,16 +16,19 @@ final class InsertItemViewModel: ObservableObject {
     private let createItemService: CreateListItemServiceProtocol
     private let getItemService: GetListItemServiceProtocol
     private let updateListItemService: UpdateListItemServiceProtocol
+    private let audioManager: AudioManagerProtocol
 
     // MARK: - Initializer
     init(
         createItemService: CreateListItemServiceProtocol,
         getItemService: GetListItemServiceProtocol,
-        updateListItemService: UpdateListItemServiceProtocol
+        updateListItemService: UpdateListItemServiceProtocol,
+        audioManager: AudioManagerProtocol
     ) {
         self.createItemService = createItemService
         self.getItemService = getItemService
         self.updateListItemService = updateListItemService
+        self.audioManager = audioManager
     }
 
     // MARK: - Public State
@@ -38,6 +41,13 @@ final class InsertItemViewModel: ObservableObject {
     @Published var event: Events? = nil
     @Published var galleryPickerSelection: PhotosPickerItem?
     @Published var isAddMoreEnabled: Bool = false
+    @Published var isAudioRecording: Bool = false
+    @Published var hasAudioDraft: Bool = false
+    @Published var audioPermissionDenied: Bool = false
+
+    var shouldShowAudioSection: Bool {
+        true
+    }
 
     // MARK: - Private State
     private var originalItem: ListaItemUiModel?
@@ -77,6 +87,56 @@ final class InsertItemViewModel: ObservableObject {
         }
     }
 
+    func startAudioRecording() {
+        Task {
+            let isGranted = await audioManager.requestRecordPermission()
+
+            await MainActor.run {
+                self.audioPermissionDenied = !isGranted
+            }
+
+            guard isGranted else { return }
+
+            do {
+                try audioManager.startRecording()
+                await MainActor.run {
+                    self.isAudioRecording = true
+                    self.hasAudioDraft = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.isAudioRecording = false
+                }
+            }
+        }
+    }
+
+    func stopAudioRecording() {
+        do {
+            _ = try audioManager.stopRecording()
+            isAudioRecording = false
+            hasAudioDraft = true
+        } catch {
+            isAudioRecording = false
+            hasAudioDraft = audioManager.hasDraft
+        }
+    }
+
+    func discardAudioDraftIfNeeded() {
+        do {
+            try audioManager.discardDraft()
+        } catch {
+            // no-op
+        }
+
+        isAudioRecording = false
+        hasAudioDraft = false
+    }
+
+    func dismissAudioPermissionAlert() {
+        audioPermissionDenied = false
+    }
+
     private func createNewItem(listId: UUID) {
         Task {
             do {
@@ -91,8 +151,10 @@ final class InsertItemViewModel: ObservableObject {
                 )
                 
                 if isAddMoreEnabled {
+                    discardAudioDraftIfNeeded()
                     clearState()
                 } else {
+                    discardAudioDraftIfNeeded()
                     event = .onSuccess
                 }
             } catch {
@@ -117,6 +179,7 @@ final class InsertItemViewModel: ObservableObject {
                         shouldRemoveImage: false
                     )
                 )
+                discardAudioDraftIfNeeded()
                 event = .onSuccess
 
             } catch {
@@ -171,6 +234,9 @@ final class InsertItemViewModel: ObservableObject {
         self.selectedImage = nil
         self.event = nil
         self.galleryPickerSelection = nil
+        self.isAudioRecording = false
+        self.hasAudioDraft = false
+        self.audioPermissionDenied = false
     }
 
 }

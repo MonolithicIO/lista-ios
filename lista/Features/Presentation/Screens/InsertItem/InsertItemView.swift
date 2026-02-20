@@ -48,6 +48,12 @@ struct InsertItemView: View {
 
                 case .onSubmit:
                     self.viewModel.insertItem(listId: self.listId)
+                case .onStartAudioRecording:
+                    self.viewModel.startAudioRecording()
+                case .onStopAudioRecording:
+                    self.viewModel.stopAudioRecording()
+                case .onDiscardAudioDraft:
+                    self.viewModel.discardAudioDraftIfNeeded()
                 }
             },
             presentedImagePicker: self.$presentedImagePicker,
@@ -55,7 +61,9 @@ struct InsertItemView: View {
             itemDescription: self.$viewModel.description,
             itemUrl: self.$viewModel.url,
             selectedImage: self.$viewModel.selectedImage,
-            isAddMoreEnabled: self.$viewModel.isAddMoreEnabled
+            isAddMoreEnabled: self.$viewModel.isAddMoreEnabled,
+            isAudioRecording: self.$viewModel.isAudioRecording,
+            hasAudioDraft: self.$viewModel.hasAudioDraft
         )
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
@@ -70,6 +78,16 @@ struct InsertItemView: View {
             case .onSuccess:
                 dismiss()
             }
+        }
+        .onDisappear {
+            viewModel.discardAudioDraftIfNeeded()
+        }
+        .alert(String(localized: "alert.microphone_access_needed.title"), isPresented: $viewModel.audioPermissionDenied) {
+            Button(String(localized: "button.ok")) {
+                viewModel.dismissAudioPermissionAlert()
+            }
+        } message: {
+            Text(String(localized: "alert.microphone_access_needed.message"))
         }
         // MARK: - Gallery Picker
         .photosPicker(
@@ -126,6 +144,8 @@ struct InsertItemContentView: View {
     @Binding var itemUrl: String
     @Binding var selectedImage: UIImage?
     @Binding var isAddMoreEnabled: Bool
+    @Binding var isAudioRecording: Bool
+    @Binding var hasAudioDraft: Bool
 
     var isButtonEnabled: Bool {
         return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -158,6 +178,12 @@ struct InsertItemContentView: View {
                     isOptional: true
                 )
                 imageCard
+
+                sectionHeader(
+                    title: String(localized: "section.audio"),
+                    isOptional: true
+                )
+                audioCard
 
                 if !isEditing {
                     addMoreSwitch
@@ -247,6 +273,27 @@ struct InsertItemContentView: View {
         )
     }
 
+    private var audioCard: some View {
+        InsertItemAudioView(
+            isRecording: $isAudioRecording,
+            hasDraft: $hasAudioDraft,
+            onStartRecording: { onAction(.onStartAudioRecording) },
+            onStopRecording: { onAction(.onStopAudioRecording) },
+            onDiscardDraft: { onAction(.onDiscardAudioDraft) }
+        )
+        .padding(12)
+        .background(
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(AppColors.card)
+                .shadow(
+                    color: Color.black.opacity(0.08),
+                    radius: 8,
+                    x: 0,
+                    y: 4
+                )
+        )
+    }
+
     private var saveCTAButton: some View {
         Button {
             onAction(.onSubmit)
@@ -297,6 +344,9 @@ struct InsertItemContentView: View {
 extension InsertItemContentView {
     enum Action {
         case onSubmit
+        case onStartAudioRecording
+        case onStopAudioRecording
+        case onDiscardAudioDraft
     }
 }
 
@@ -309,6 +359,8 @@ extension InsertItemContentView {
         itemDescription: .constant("Description"),
         itemUrl: .constant("google.com"),
         selectedImage: .constant(nil),
-        isAddMoreEnabled: .constant(false)
+        isAddMoreEnabled: .constant(false),
+        isAudioRecording: .constant(false),
+        hasAudioDraft: .constant(false)
     )
 }

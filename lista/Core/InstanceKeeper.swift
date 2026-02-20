@@ -179,7 +179,8 @@ class InstanceKeeper {
         return InsertItemViewModel(
             createItemService: provideCreateListItemService(),
             getItemService: provideGetItemService(),
-            updateListItemService: provideUpdateListItemService()
+            updateListItemService: provideUpdateListItemService(),
+            audioManager: provideAudioManager()
         )
     }
     
