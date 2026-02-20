@@ -43,6 +43,7 @@ struct InsertItemView: View {
     var body: some View {
         InsertItemContentView(
             isEditing: self.viewModel.isEditing,
+            isUrlInvalid: self.viewModel.isUrlInvalid,
             onAction: { action in
                 switch action {
 
@@ -118,6 +119,7 @@ extension InsertItemView {
 
 struct InsertItemContentView: View {
     let isEditing: Bool
+    let isUrlInvalid: Bool
     let onAction: (Action) -> Void
 
     @Binding var presentedImagePicker: InsertItemView.PresentedImagePicker?
@@ -129,7 +131,7 @@ struct InsertItemContentView: View {
 
     var isButtonEnabled: Bool {
         return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-            .isEmpty
+            .isEmpty && !isUrlInvalid
     }
 
     var body: some View {
@@ -211,21 +213,42 @@ struct InsertItemContentView: View {
     }
 
     private var urlCard: some View {
-        TextField(String(localized: "placeholder.url"), text: $itemUrl)
-            .font(.body)
-            .foregroundStyle(AppColors.cardForeground)
-            .padding(.vertical, 16)
-            .padding(.horizontal, 16)
-            .background(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(AppColors.card)
-                    .shadow(
-                        color: Color.black.opacity(0.08),
-                        radius: 8,
-                        x: 0,
-                        y: 4
-                    )
-            )
+        VStack(alignment: .leading, spacing: 6) {
+            TextField(String(localized: "placeholder.url"), text: $itemUrl)
+                .autocorrectionDisabled()
+                .keyboardType(.URL)
+                .textInputAutocapitalization(.never)
+                .font(.body)
+                .foregroundStyle(AppColors.cardForeground)
+                .padding(.vertical, 16)
+                .padding(.horizontal, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .fill(AppColors.card)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .stroke(
+                                    isUrlInvalid
+                                        ? AppColors.destructive
+                                        : Color.clear,
+                                    lineWidth: 1.5
+                                )
+                        )
+                        .shadow(
+                            color: Color.black.opacity(0.08),
+                            radius: 8,
+                            x: 0,
+                            y: 4
+                        )
+                )
+
+            if isUrlInvalid {
+                Text(String(localized: "error.invalid_url"))
+                    .font(.caption)
+                    .foregroundStyle(AppColors.destructive)
+                    .padding(.horizontal, 4)
+            }
+        }
     }
 
     private var imageCard: some View {
@@ -303,6 +326,7 @@ extension InsertItemContentView {
 #Preview("New Item") {
     InsertItemContentView(
         isEditing: false,
+        isUrlInvalid: false,
         onAction: { _ in },
         presentedImagePicker: .constant(nil),
         itemTitle: .constant("Item title"),

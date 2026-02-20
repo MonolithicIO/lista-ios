@@ -756,6 +756,29 @@
         }
       }
     },
+    "error.invalid_url" : {
+      "comment" : "Validation message shown when URL is invalid",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a valid URL"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ingresa una URL valida"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Digite uma URL valida"
+          }
+        }
+      }
+    },
     "field.optional" : {
       "comment" : "Optional field indicator",
       "localizations" : {

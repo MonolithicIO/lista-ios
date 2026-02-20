@@ -39,6 +39,10 @@ final class InsertItemViewModel: ObservableObject {
     @Published var galleryPickerSelection: PhotosPickerItem?
     @Published var isAddMoreEnabled: Bool = false
 
+    var isUrlInvalid: Bool {
+        !isValidUrlInput(url)
+    }
+
     // MARK: - Private State
     private var originalItem: ListaItemUiModel?
 
@@ -50,6 +54,7 @@ final class InsertItemViewModel: ObservableObject {
     }
 
     func insertItem(listId: String) {
+        guard !isUrlInvalid else { return }
         guard let uuid = UUID(uuidString: listId) else { return }
 
         if isEditing {
@@ -85,7 +90,7 @@ final class InsertItemViewModel: ObservableObject {
                         listId: listId,
                         title: self.title,
                         description: sanitizeString(input: self.description),
-                        url: sanitizeString(input: self.url),
+                        url: sanitizeUrl(input: self.url),
                         image: self.selectedImage
                     )
                 )
@@ -111,7 +116,7 @@ final class InsertItemViewModel: ObservableObject {
                         itemId: itemId,
                         title: self.title,
                         description: sanitizeString(input: self.description),
-                        url: sanitizeString(input: self.url),
+                        url: sanitizeUrl(input: self.url),
                         isCompleted: self.isCompleted,
                         image: self.selectedImage,
                         shouldRemoveImage: false
@@ -161,6 +166,40 @@ final class InsertItemViewModel: ObservableObject {
         }
 
         return filledInput.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private func sanitizeUrl(input: String?) -> String? {
+        guard let input else { return nil }
+
+        let trimmedInput = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmedInput.isEmpty {
+            return nil
+        }
+
+        return normalizedUrlString(trimmedInput)
+    }
+
+    private func isValidUrlInput(_ input: String) -> Bool {
+        guard let normalizedUrl = sanitizeUrl(input: input) else { return true }
+
+        guard let urlComponents = URLComponents(string: normalizedUrl),
+            let scheme = urlComponents.scheme?.lowercased(),
+            ["http", "https"].contains(scheme),
+            let host = urlComponents.host,
+            !host.isEmpty
+        else {
+            return false
+        }
+
+        return true
+    }
+
+    private func normalizedUrlString(_ input: String) -> String {
+        if input.contains("://") {
+            return input
+        }
+
+        return "http://\(input)"
     }
     
     private func clearState() {
