@@ -29,10 +29,10 @@ struct HomeScreen: View {
                     coordinator.push(
                         .details(listaId: item.id, listaTitle: item.title)
                     )
-                    
+
                 case .onRemoveItem(let item):
                     viewModel.removeList(list: item)
-                    
+
                 case .onAddTap:
                     showAddListModal = true
                 }
@@ -45,7 +45,7 @@ struct HomeScreen: View {
         .searchable(
             text: $viewModel.searchQuery,
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: String(localized: "placeholder.search_lists")
+            prompt: LocalizedStringKey("placeholder.search_lists")
         )
         .toolbar {
 
