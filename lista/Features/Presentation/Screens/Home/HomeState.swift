@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum HomeFilter: String, CaseIterable, Identifiable {
     case active = "active"
@@ -14,14 +15,14 @@ enum HomeFilter: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var displayName: String {
+    var displayName: LocalizedStringKey {
         switch self {
         case .active:
-            return String(localized: "filter.active")
+            return LocalizedStringKey("filter.active")
         case .completed:
-            return String(localized: "filter.completed")
+            return LocalizedStringKey("filter.completed")
         case .archived:
-            return String(localized: "filter.archived")
+            return LocalizedStringKey("filter.archived")
         }
     }
 

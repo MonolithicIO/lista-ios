@@ -11,13 +11,13 @@ import SwiftUI
 struct AddListView: View {
     // MARK: - Env properties
     @Environment(\.dismiss) private var dismiss
-    
+
     // MARK: - State properties
     @State private var listTitle: String = ""
     var isAddButtonEnabled: Bool {
         !listTitle.isEmpty
     }
-    
+
     // MARK: - Input properties
     let onSubmit: (String) -> Void
 
@@ -25,7 +25,10 @@ struct AddListView: View {
         ScrollView {
             VStack(spacing: 16) {
                 // List Name Section
-                sectionHeader(title: String(localized: "section.list_name"), isOptional: false)
+                sectionHeader(
+                    title: String(localized: "section.list_name"),
+                    isOptional: false
+                )
                 titleCard
 
                 // Create List CTA Button
@@ -36,11 +39,11 @@ struct AddListView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
-        .navigationTitle(String(localized: "navigation.new_list"))
+        .navigationTitle(LocalizedStringKey("navigation.new_list"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(String(localized: "button.cancel")) {
+                Button(LocalizedStringKey("button.cancel")) {
                     dismiss()
                 }
             }
@@ -50,7 +53,7 @@ struct AddListView: View {
     // MARK: - Card Views
 
     private var titleCard: some View {
-        TextField(String(localized: "placeholder.list_name"), text: $listTitle)
+        TextField(LocalizedStringKey("placeholder.list_name"), text: $listTitle)
             .font(.body)
             .foregroundStyle(AppColors.cardForeground)
             .padding(.vertical, 16)
@@ -71,7 +74,7 @@ struct AddListView: View {
         Button {
             onSubmit(listTitle)
         } label: {
-            Text(String(localized: "button.create_list"))
+            Text(LocalizedStringKey("button.create_list"))
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(AppColors.accentForeground)
                 .frame(maxWidth: .infinity)
@@ -94,7 +97,7 @@ struct AddListView: View {
 
             if isOptional {
                 Spacer()
-                Text(String(localized: "field.optional"))
+                Text(LocalizedStringKey("field.optional"))
                     .font(.caption)
                     .foregroundStyle(AppColors.accent)
             }

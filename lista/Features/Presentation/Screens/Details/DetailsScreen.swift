@@ -126,11 +126,11 @@ struct DetailsScreen: View {
             }
         )
         .alert(
-            String(localized: "alert.complete_list.title"),
+            LocalizedStringKey("alert.complete_list.title"),
             isPresented: .constant(isConfirmCompletePresented),
             actions: {
                 Button(
-                    String(localized: "alert.button.complete"),
+                    LocalizedStringKey("alert.button.complete"),
                     role: .destructive
                 ) {
                     viewModel.setCompletedState(state: true)
@@ -142,7 +142,7 @@ struct DetailsScreen: View {
                 }
             },
             message: {
-                Text(String(localized: "alert.complete_list.message"))
+                Text(LocalizedStringKey( "alert.complete_list.message"))
             }
         )
         .sheet(

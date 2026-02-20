@@ -34,14 +34,14 @@ struct ListStatusBadge: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
-    private var title: String {
+    private var title: LocalizedStringKey {
         switch status {
         case .active:
-            return String(localized: "status.active")
+            return LocalizedStringKey("status.active")
         case .completed:
-            return String(localized: "status.completed")
+            return LocalizedStringKey("status.completed")
         case .archived:
-            return String(localized: "status.archived")
+            return LocalizedStringKey("status.archived")
         }
     }
 

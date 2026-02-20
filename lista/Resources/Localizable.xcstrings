@@ -1563,6 +1563,7 @@
     },
     "theme.dark" : {
       "comment" : "Dark theme option",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1586,6 +1587,7 @@
     },
     "theme.light" : {
       "comment" : "Light theme option",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1609,6 +1611,7 @@
     },
     "theme.system" : {
       "comment" : "System theme option",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

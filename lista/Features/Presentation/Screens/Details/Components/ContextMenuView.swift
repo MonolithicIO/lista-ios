@@ -17,7 +17,7 @@ enum DetailsMenuAction {
 }
 
 struct DetailsContextMenuView: View {
-    
+
     let isCompleted: Bool
     let isArquived: Bool
     let onAction: (DetailsMenuAction) -> Void
@@ -26,7 +26,7 @@ struct DetailsContextMenuView: View {
         Menu {
             if isCompleted {
                 Button(
-                    String(localized: "menu.undo_completion"),
+                    LocalizedStringKey("menu.undo_completion"),
                     systemImage: "arrow.uturn.backward.circle"
                 ) {
                     onAction(.undoComplete)
@@ -34,7 +34,7 @@ struct DetailsContextMenuView: View {
                 .disabled(isArquived)
             } else {
                 Button(
-                    String(localized: "menu.mark_completed"),
+                    LocalizedStringKey("menu.mark_completed"),
                     systemImage: "checkmark.circle"
                 ) {
                     onAction(.complete)
@@ -44,7 +44,7 @@ struct DetailsContextMenuView: View {
 
             if isArquived {
                 Button(
-                    String(localized: "menu.undo_archive"),
+                    LocalizedStringKey("menu.undo_archive"),
                     systemImage: "arrow.uturn.backward.circle"
                 ) {
                     onAction(.undoArchive)
@@ -53,7 +53,7 @@ struct DetailsContextMenuView: View {
 
             } else {
                 Button(
-                    String(localized: "menu.archive"),
+                    LocalizedStringKey("menu.archive"),
                     systemImage: "archivebox"
                 ) {
                     onAction(.archive)
@@ -64,7 +64,7 @@ struct DetailsContextMenuView: View {
             Divider()
 
             Button(
-                String(localized: "menu.delete"),
+                LocalizedStringKey("menu.delete"),
                 systemImage: "trash",
                 role: .destructive
             ) {

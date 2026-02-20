@@ -28,7 +28,7 @@ struct ItemDetailsView: View {
                         .padding(.top, 8)
 
                     // Title Card
-                    sectionTitle(String(localized: "section.title"))
+                    sectionTitle(String("section.title"))
                     titleCard
 
                     // Description Card (if exists)
@@ -142,7 +142,7 @@ struct ItemDetailsView: View {
                     .foregroundStyle(AppColors.accentForeground)
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(String(localized: "button.open_link"))
+                    Text(LocalizedStringKey( "button.open_link"))
                         .font(.headline.weight(.medium))
                         .foregroundStyle(AppColors.accentForeground)
 
@@ -204,8 +204,8 @@ struct ItemDetailsView: View {
                 .font(.headline.weight(.semibold))
                 Text(
                     item.isCompleted
-                        ? String(localized: "toggle.mark_active")
-                        : String(localized: "toggle.mark_complete")
+                        ? LocalizedStringKey( "toggle.mark_active")
+                        : LocalizedStringKey( "toggle.mark_complete")
                 )
                 .font(.headline.weight(.semibold))
             }

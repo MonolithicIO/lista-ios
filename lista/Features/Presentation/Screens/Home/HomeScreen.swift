@@ -41,7 +41,7 @@ struct HomeScreen: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, 16)
         .background(AppColors.background.ignoresSafeArea())
-        .navigationTitle(String(localized: "navigation.lists"))
+        .navigationTitle(LocalizedStringKey("navigation.lists"))
         .searchable(
             text: $viewModel.searchQuery,
             placement: .navigationBarDrawer(displayMode: .always),
@@ -63,7 +63,9 @@ struct HomeScreen: View {
                 }) {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel(String(localized: "accessibility.new_list"))
+                .accessibilityLabel(
+                    LocalizedStringKey("accessibility.new_list")
+                )
             }
         }
         .task {
@@ -104,7 +106,7 @@ private struct HomeScreenView: View {
         VStack(spacing: 0) {
             // Segmented Filter Control - Always visible
             Picker(
-                String(localized: "accessibility.filter"),
+                LocalizedStringKey("accessibility.filter"),
                 selection: $selectedFilter
             ) {
                 ForEach(HomeFilter.allCases) { filter in
@@ -147,7 +149,7 @@ private struct HomeScreenView: View {
                             onAction(.onRemoveItem(item))
                         } label: {
                             Label(
-                                String(localized: "swipe_action.delete"),
+                                LocalizedStringKey("swipe_action.delete"),
                                 systemImage: "trash"
                             )
                             .tint(AppColors.destructive)

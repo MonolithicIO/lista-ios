@@ -32,11 +32,11 @@ struct InsertItemView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
-    var screenTitle: String {
+    var screenTitleKey: LocalizedStringKey {
         if itemId != nil {
-            String(localized: "navigation.edit_item")
+            LocalizedStringKey("navigation.edit_item")
         } else {
-            String(localized: "navigation.create_item")
+            LocalizedStringKey("navigation.create_item")
         }
     }
 
@@ -60,7 +60,7 @@ struct InsertItemView: View {
         )
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
-        .navigationTitle(screenTitle)
+        .navigationTitle(screenTitleKey)
         .task {
             viewModel.initialize(itemId: itemId)
         }
@@ -226,13 +226,16 @@ struct InsertItemContentView: View {
                     RoundedRectangle(cornerRadius: 16, style: .continuous)
                         .fill(AppColors.card)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                .stroke(
-                                    isUrlInvalid
-                                        ? AppColors.destructive
-                                        : Color.clear,
-                                    lineWidth: 1.5
-                                )
+                            RoundedRectangle(
+                                cornerRadius: 16,
+                                style: .continuous
+                            )
+                            .stroke(
+                                isUrlInvalid
+                                    ? AppColors.destructive
+                                    : Color.clear,
+                                lineWidth: 1.5
+                            )
                         )
                         .shadow(
                             color: Color.black.opacity(0.08),
