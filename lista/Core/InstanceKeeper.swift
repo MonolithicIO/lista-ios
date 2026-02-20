@@ -36,8 +36,12 @@ class InstanceKeeper {
         return DiskManager()
     }
 
-    func provideAudioManager() -> AudioManagerProtocol {
-        return AudioManager.shared
+    func provideAudioRecorder() -> AudioRecorderProtocol {
+        return AudioRecorder.shared
+    }
+
+    func provideAudioPlayer() -> AudioPlayerProtocol {
+        return AudioPlayer.shared
     }
 
     // MARK: - Data Providers
@@ -180,7 +184,8 @@ class InstanceKeeper {
             createItemService: provideCreateListItemService(),
             getItemService: provideGetItemService(),
             updateListItemService: provideUpdateListItemService(),
-            audioManager: provideAudioManager()
+            audioRecorder: provideAudioRecorder(),
+            audioPlayer: provideAudioPlayer()
         )
     }
     

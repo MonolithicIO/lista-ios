@@ -16,19 +16,22 @@ final class InsertItemViewModel: ObservableObject {
     private let createItemService: CreateListItemServiceProtocol
     private let getItemService: GetListItemServiceProtocol
     private let updateListItemService: UpdateListItemServiceProtocol
-    private let audioManager: AudioManagerProtocol
+    private let audioRecorder: AudioRecorderProtocol
+    private let audioPlayer: AudioPlayerProtocol
 
     // MARK: - Initializer
     init(
         createItemService: CreateListItemServiceProtocol,
         getItemService: GetListItemServiceProtocol,
         updateListItemService: UpdateListItemServiceProtocol,
-        audioManager: AudioManagerProtocol
+        audioRecorder: AudioRecorderProtocol,
+        audioPlayer: AudioPlayerProtocol
     ) {
         self.createItemService = createItemService
         self.getItemService = getItemService
         self.updateListItemService = updateListItemService
-        self.audioManager = audioManager
+        self.audioRecorder = audioRecorder
+        self.audioPlayer = audioPlayer
     }
 
     // MARK: - Public State
@@ -43,6 +46,8 @@ final class InsertItemViewModel: ObservableObject {
     @Published var isAddMoreEnabled: Bool = false
     @Published var isAudioRecording: Bool = false
     @Published var hasAudioDraft: Bool = false
+    @Published var isAudioPlaying: Bool = false
+    @Published var audioPlaybackProgress: Double = 0
     @Published var audioPermissionDenied: Bool = false
 
     var shouldShowAudioSection: Bool {
@@ -51,6 +56,8 @@ final class InsertItemViewModel: ObservableObject {
 
     // MARK: - Private State
     private var originalItem: ListaItemUiModel?
+    private var audioDraftURL: URL?
+    private var playbackObserver: AnyCancellable?
 
     func initialize(itemId: String?) {
         if let itemId {
@@ -88,8 +95,12 @@ final class InsertItemViewModel: ObservableObject {
     }
 
     func startAudioRecording() {
+        audioPlayer.stop()
+        stopPlaybackObserver(resetProgress: true)
+        isAudioPlaying = false
+
         Task {
-            let isGranted = await audioManager.requestRecordPermission()
+            let isGranted = await audioRecorder.requestRecordPermission()
 
             await MainActor.run {
                 self.audioPermissionDenied = !isGranted
@@ -98,12 +109,17 @@ final class InsertItemViewModel: ObservableObject {
             guard isGranted else { return }
 
             do {
-                try audioManager.startRecording()
+                try audioRecorder.startRecording()
                 await MainActor.run {
                     self.isAudioRecording = true
                     self.hasAudioDraft = false
+                    self.isAudioPlaying = false
+                    self.audioPlaybackProgress = 0
+                    self.audioDraftURL = nil
                 }
             } catch {
+                let error = error
+                print(error)
                 await MainActor.run {
                     self.isAudioRecording = false
                 }
@@ -113,24 +129,66 @@ final class InsertItemViewModel: ObservableObject {
 
     func stopAudioRecording() {
         do {
-            _ = try audioManager.stopRecording()
+            let draftURL = try audioRecorder.stopRecording()
             isAudioRecording = false
             hasAudioDraft = true
+            isAudioPlaying = false
+            audioPlaybackProgress = 0
+            audioDraftURL = draftURL
         } catch {
             isAudioRecording = false
-            hasAudioDraft = audioManager.hasDraft
+            hasAudioDraft = audioRecorder.hasDraft
+
+            if !hasAudioDraft {
+                isAudioPlaying = false
+                audioPlaybackProgress = 0
+                audioDraftURL = nil
+            }
+        }
+    }
+
+    func toggleAudioPlayback() {
+        syncPlaybackState()
+
+        if isAudioPlaying != audioPlayer.isPlaying {
+            isAudioPlaying = audioPlayer.isPlaying
+        }
+
+        if isAudioPlaying {
+            audioPlayer.pause()
+            isAudioPlaying = false
+            stopPlaybackObserver(resetProgress: false)
+            syncPlaybackState()
+            return
+        }
+
+        guard let audioDraftURL else { return }
+
+        do {
+            try audioPlayer.play(url: audioDraftURL)
+            isAudioPlaying = true
+            startPlaybackObserver()
+            syncPlaybackState()
+        } catch {
+            isAudioPlaying = false
         }
     }
 
     func discardAudioDraftIfNeeded() {
+        audioPlayer.stop()
+        stopPlaybackObserver(resetProgress: true)
+
         do {
-            try audioManager.discardDraft()
+            try audioRecorder.discardDraft()
         } catch {
             // no-op
         }
 
         isAudioRecording = false
         hasAudioDraft = false
+        isAudioPlaying = false
+        audioPlaybackProgress = 0
+        audioDraftURL = nil
     }
 
     func dismissAudioPermissionAlert() {
@@ -225,6 +283,42 @@ final class InsertItemViewModel: ObservableObject {
 
         return filledInput.trimmingCharacters(in: .whitespacesAndNewlines)
     }
+
+    private func startPlaybackObserver() {
+        stopPlaybackObserver(resetProgress: false)
+
+        playbackObserver = Timer.publish(every: 0.1, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                self?.syncPlaybackState()
+            }
+    }
+
+    private func stopPlaybackObserver(resetProgress: Bool) {
+        playbackObserver?.cancel()
+        playbackObserver = nil
+
+        if resetProgress {
+            audioPlaybackProgress = 0
+        }
+    }
+
+    private func syncPlaybackState() {
+        let duration = audioPlayer.duration
+        let currentTime = audioPlayer.currentTime
+
+        if duration > 0 {
+            let progress = currentTime / duration
+            audioPlaybackProgress = min(max(progress, 0), 1)
+        } else {
+            audioPlaybackProgress = 0
+        }
+
+        if isAudioPlaying && !audioPlayer.isPlaying {
+            isAudioPlaying = false
+            stopPlaybackObserver(resetProgress: false)
+        }
+    }
     
     private func clearState() {
         self.title = ""
@@ -236,7 +330,11 @@ final class InsertItemViewModel: ObservableObject {
         self.galleryPickerSelection = nil
         self.isAudioRecording = false
         self.hasAudioDraft = false
+        self.isAudioPlaying = false
+        self.audioPlaybackProgress = 0
         self.audioPermissionDenied = false
+        self.audioDraftURL = nil
+        self.stopPlaybackObserver(resetProgress: true)
     }
 
 }

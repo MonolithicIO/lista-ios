@@ -618,6 +618,52 @@
         }
       }
     },
+    "button.pause_audio" : {
+      "comment" : "Button label to pause audio playback",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause audio"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausar audio"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pausar áudio"
+          }
+        }
+      }
+    },
+    "button.play_audio" : {
+      "comment" : "Button label to play audio playback",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play audio"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproducir audio"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reproduzir áudio"
+          }
+        }
+      }
+    },
     "button.stop_recording" : {
       "comment" : "Button label to stop audio recording",
       "localizations" : {

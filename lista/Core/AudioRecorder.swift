@@ -1,5 +1,5 @@
 //
-//  AudioManager.swift
+//  AudioRecorder.swift
 //  lista
 //
 //  Created by Lucca Beurmann on 20/02/26.
@@ -17,7 +17,7 @@ enum AudioRecordingError: Error {
     case draftPersistenceFailed
 }
 
-protocol AudioManagerProtocol {
+protocol AudioRecorderProtocol {
     var isRecording: Bool { get }
     var hasDraft: Bool { get }
 
@@ -28,9 +28,9 @@ protocol AudioManagerProtocol {
     func saveDraft(fileName: String) throws -> String
 }
 
-final class AudioManager {
+final class AudioRecorder {
 
-    static let shared = AudioManager()
+    static let shared = AudioRecorder()
 
     private var audioRecorder: AVAudioRecorder?
     private var draftRecordingURL: URL?
@@ -54,7 +54,7 @@ final class AudioManager {
     }
 }
 
-extension AudioManager: AudioManagerProtocol {
+extension AudioRecorder: AudioRecorderProtocol {
 
     var isRecording: Bool {
         audioRecorder?.isRecording == true

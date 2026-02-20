@@ -8,10 +8,13 @@ import SwiftUI
 struct InsertItemAudioView: View {
     @Binding var isRecording: Bool
     @Binding var hasDraft: Bool
+    @Binding var isPlaying: Bool
+    @Binding var playbackProgress: Double
 
     let onStartRecording: () -> Void
     let onStopRecording: () -> Void
     let onDiscardDraft: () -> Void
+    let onTogglePlayback: () -> Void
 
     var body: some View {
         VStack(spacing: 12) {
@@ -103,6 +106,31 @@ struct InsertItemAudioView: View {
 
                 Spacer()
             }
+
+            Button {
+                onTogglePlayback()
+            } label: {
+                HStack(spacing: 8) {
+                    Image(systemName: isPlaying ? "pause.fill" : "play.fill")
+                    Text(
+                        isPlaying
+                            ? String(localized: "button.pause_audio")
+                            : String(localized: "button.play_audio")
+                    )
+                    .font(.subheadline.weight(.semibold))
+                }
+                .foregroundStyle(AppColors.accentForeground)
+                .frame(maxWidth: .infinity)
+                .frame(height: 42)
+            }
+            .background(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(AppColors.blue)
+            )
+
+            ProgressView(value: playbackProgress, total: 1)
+                .tint(AppColors.blue)
+                .frame(maxWidth: .infinity)
 
             HStack(spacing: 10) {
                 Button {

@@ -54,6 +54,8 @@ struct InsertItemView: View {
                     self.viewModel.stopAudioRecording()
                 case .onDiscardAudioDraft:
                     self.viewModel.discardAudioDraftIfNeeded()
+                case .onToggleAudioPlayback:
+                    self.viewModel.toggleAudioPlayback()
                 }
             },
             presentedImagePicker: self.$presentedImagePicker,
@@ -63,7 +65,9 @@ struct InsertItemView: View {
             selectedImage: self.$viewModel.selectedImage,
             isAddMoreEnabled: self.$viewModel.isAddMoreEnabled,
             isAudioRecording: self.$viewModel.isAudioRecording,
-            hasAudioDraft: self.$viewModel.hasAudioDraft
+            hasAudioDraft: self.$viewModel.hasAudioDraft,
+            isAudioPlaying: self.$viewModel.isAudioPlaying,
+            audioPlaybackProgress: self.$viewModel.audioPlaybackProgress
         )
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
@@ -146,6 +150,8 @@ struct InsertItemContentView: View {
     @Binding var isAddMoreEnabled: Bool
     @Binding var isAudioRecording: Bool
     @Binding var hasAudioDraft: Bool
+    @Binding var isAudioPlaying: Bool
+    @Binding var audioPlaybackProgress: Double
 
     var isButtonEnabled: Bool {
         return !itemTitle.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -277,9 +283,12 @@ struct InsertItemContentView: View {
         InsertItemAudioView(
             isRecording: $isAudioRecording,
             hasDraft: $hasAudioDraft,
+            isPlaying: $isAudioPlaying,
+            playbackProgress: $audioPlaybackProgress,
             onStartRecording: { onAction(.onStartAudioRecording) },
             onStopRecording: { onAction(.onStopAudioRecording) },
-            onDiscardDraft: { onAction(.onDiscardAudioDraft) }
+            onDiscardDraft: { onAction(.onDiscardAudioDraft) },
+            onTogglePlayback: { onAction(.onToggleAudioPlayback) }
         )
         .padding(12)
         .background(
@@ -347,6 +356,7 @@ extension InsertItemContentView {
         case onStartAudioRecording
         case onStopAudioRecording
         case onDiscardAudioDraft
+        case onToggleAudioPlayback
     }
 }
 
@@ -361,6 +371,8 @@ extension InsertItemContentView {
         selectedImage: .constant(nil),
         isAddMoreEnabled: .constant(false),
         isAudioRecording: .constant(false),
-        hasAudioDraft: .constant(false)
+        hasAudioDraft: .constant(false),
+        isAudioPlaying: .constant(false),
+        audioPlaybackProgress: .constant(0)
     )
 }
