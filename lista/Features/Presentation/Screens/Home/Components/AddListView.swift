@@ -23,10 +23,10 @@ struct AddListView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 16) {
+            VStack(alignment: .leading, spacing: 16) {
                 // List Name Section
                 sectionHeader(
-                    title: String(localized: "section.list_name"),
+                    title: LocalizedStringKey("section.list_name"),
                     isOptional: false
                 )
                 titleCard
@@ -39,11 +39,11 @@ struct AddListView: View {
         }
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
-        .navigationTitle(LocalizedStringKey("navigation.new_list"))
+        .navigationTitle("navigation.new_list")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button(LocalizedStringKey("button.cancel")) {
+                Button("button.cancel") {
                     dismiss()
                 }
             }
@@ -53,7 +53,7 @@ struct AddListView: View {
     // MARK: - Card Views
 
     private var titleCard: some View {
-        TextField(LocalizedStringKey("placeholder.list_name"), text: $listTitle)
+        TextField("placeholder.list_name", text: $listTitle)
             .font(.body)
             .foregroundStyle(AppColors.cardForeground)
             .padding(.vertical, 16)
@@ -74,7 +74,7 @@ struct AddListView: View {
         Button {
             onSubmit(listTitle)
         } label: {
-            Text(LocalizedStringKey("button.create_list"))
+            Text("button.create_list")
                 .font(.headline.weight(.semibold))
                 .foregroundStyle(AppColors.accentForeground)
                 .frame(maxWidth: .infinity)
@@ -89,7 +89,9 @@ struct AddListView: View {
 
     // MARK: - Helpers
 
-    private func sectionHeader(title: String, isOptional: Bool) -> some View {
+    private func sectionHeader(title: LocalizedStringKey, isOptional: Bool)
+        -> some View
+    {
         HStack {
             Text(title)
                 .font(.subheadline.weight(.medium))
@@ -97,7 +99,7 @@ struct AddListView: View {
 
             if isOptional {
                 Spacer()
-                Text(LocalizedStringKey("field.optional"))
+                Text("field.optional")
                     .font(.caption)
                     .foregroundStyle(AppColors.accent)
             }

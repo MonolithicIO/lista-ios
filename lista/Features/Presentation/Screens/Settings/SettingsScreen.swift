@@ -32,10 +32,10 @@ struct SettingsContentView: View {
     var body: some View {
         List {
             Section(
-                header: Text(LocalizedStringKey("settings.section.preferences"))
+                header: Text("settings.section.preferences")
             ) {
                 Picker(
-                    LocalizedStringKey("settings.language.title"),
+                    "settings.language.title",
                     selection: $selectedLanguage
                 ) {
                     ForEach(availableLanguages) { language in
@@ -56,15 +56,15 @@ struct SettingsContentView: View {
                     )
                 } label: {
                     HStack {
-                        Text(LocalizedStringKey("settings.theme.title"))
+                        Text("settings.theme.title")
                         Spacer()
-                        Text(LocalizedStringKey(selectedTheme.displayNameKey))
+                        Text(selectedTheme.displayNameKey)
                             .foregroundStyle(AppColors.mutedForeground)
                     }
                 }
             }
         }
-        .navigationTitle(LocalizedStringKey("settings.title"))
+        .navigationTitle("settings.title")
         .scrollContentBackground(.hidden)
         .background(AppColors.background.ignoresSafeArea())
     }

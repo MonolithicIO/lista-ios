@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 struct LastUpdatedView: View {
+    @Environment(\.locale) var locale
     let date: Date
 
     var body: some View {
@@ -16,7 +17,11 @@ struct LastUpdatedView: View {
             Image(systemName: "clock")
                 .font(.caption)
             Text(
-                "\(LocalizedStringKey("details.last_updated")) \(date.formatted(.relative(presentation: .named)))"
+                .detailsLastUpdated(
+                    date.formatted(
+                        .relative(presentation: .named).locale(locale)
+                    )
+                )
             )
         }
         .font(.footnote)

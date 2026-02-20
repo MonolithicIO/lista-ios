@@ -11,7 +11,7 @@ struct ItemStatusBadge: View {
 
     var body: some View {
         Label {
-            Text(title)
+            Text(LocalizedStringKey(title))
         } icon: {
             Image(systemName: systemImage)
         }

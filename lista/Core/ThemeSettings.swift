@@ -26,14 +26,14 @@ enum AppTheme: String, CaseIterable, Identifiable {
         }
     }
 
-    var displayNameKey: String {
+    var displayNameKey: LocalizedStringResource {
         switch self {
         case .light:
-            return "theme.light"
+            return .themeLight
         case .dark:
-            return "theme.dark"
+            return .themeDark
         case .system:
-            return "theme.system"
+            return .themeSystem
         }
     }
 

@@ -32,11 +32,11 @@ struct InsertItemView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
-    var screenTitleKey: LocalizedStringKey {
+    var screenTitleKey: String {
         if itemId != nil {
-            LocalizedStringKey("navigation.edit_item")
+            "navigation.edit_item"
         } else {
-            LocalizedStringKey("navigation.create_item")
+            "navigation.create_item"
         }
     }
 
@@ -60,7 +60,7 @@ struct InsertItemView: View {
         )
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
-        .navigationTitle(screenTitleKey)
+        .navigationTitle(LocalizedStringKey(screenTitleKey))
         .task {
             viewModel.initialize(itemId: itemId)
         }
@@ -138,25 +138,25 @@ struct InsertItemContentView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 sectionHeader(
-                    title: String(localized: "section.title"),
+                    title: LocalizedStringKey("section.title"),
                     isOptional: false
                 )
                 titleCard
 
                 sectionHeader(
-                    title: String(localized: "section.description"),
+                    title: LocalizedStringKey("section.description"),
                     isOptional: true
                 )
                 descriptionCard
 
                 sectionHeader(
-                    title: String(localized: "section.link"),
+                    title: LocalizedStringKey("section.link"),
                     isOptional: true
                 )
                 urlCard
 
                 sectionHeader(
-                    title: String(localized: "section.image"),
+                    title: LocalizedStringKey("section.image"),
                     isOptional: true
                 )
                 imageCard
@@ -176,7 +176,7 @@ struct InsertItemContentView: View {
 
     private var titleCard: some View {
         TextField(
-            LocalizedStringKey("placeholder.item_title"),
+            "placeholder.item_title",
             text: $itemTitle
         )
         .font(.body)
@@ -217,7 +217,7 @@ struct InsertItemContentView: View {
 
     private var urlCard: some View {
         VStack(alignment: .leading, spacing: 6) {
-            TextField(LocalizedStringKey("placeholder.url"), text: $itemUrl)
+            TextField("placeholder.url", text: $itemUrl)
                 .autocorrectionDisabled()
                 .keyboardType(.URL)
                 .textInputAutocapitalization(.never)
@@ -249,7 +249,7 @@ struct InsertItemContentView: View {
                 )
 
             if isUrlInvalid {
-                Text(LocalizedStringKey("error.invalid_url"))
+                Text("error.invalid_url")
                     .font(.caption)
                     .foregroundStyle(AppColors.destructive)
                     .padding(.horizontal, 4)
@@ -282,8 +282,8 @@ struct InsertItemContentView: View {
         } label: {
             Text(
                 isEditing
-                    ? LocalizedStringKey("button.save_changes")
-                    : LocalizedStringKey("button.create_item")
+                    ? "button.save_changes"
+                    : "button.create_item"
             )
             .font(.headline.weight(.semibold))
             .foregroundStyle(AppColors.accentForeground)
@@ -299,14 +299,16 @@ struct InsertItemContentView: View {
 
     private var addMoreSwitch: some View {
         Toggle(isOn: $isAddMoreEnabled) {
-            Text(LocalizedStringKey("toggle.create_more"))
+            Text("toggle.create_more")
                 .foregroundStyle(AppColors.accentForeground)
         }
     }
 
     // MARK: - Helpers
 
-    private func sectionHeader(title: String, isOptional: Bool) -> some View {
+    private func sectionHeader(title: LocalizedStringKey, isOptional: Bool)
+        -> some View
+    {
         HStack {
             Text(title)
                 .font(.subheadline.weight(.bold))
@@ -314,7 +316,7 @@ struct InsertItemContentView: View {
 
             if isOptional {
                 Spacer()
-                Text(LocalizedStringKey("field.optional"))
+                Text("field.optional")
                     .font(.caption)
                     .foregroundStyle(AppColors.accentForeground)
             }

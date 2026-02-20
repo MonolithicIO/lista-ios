@@ -516,76 +516,75 @@
     },
     "details.completed_count" : {
       "comment" : "Number of completed items",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d completed"
+            "value" : "%1$(completedCount)lld Completed"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d completados"
+            "value" : "%1$(completedCount)lld  Completados"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d concluídos"
+            "value" : "%1$(completedCount)lld Concluídos"
           }
         }
       }
     },
     "details.item_count" : {
       "comment" : "Number of items in list",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d items"
+            "value" : "%(itemCounte)lld items"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d elementos"
+            "value" : "%(itemCounte)lld elementos"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%d itens"
+            "value" : "%(itemCounte)lld itens"
           }
         }
       }
     },
     "details.last_updated" : {
       "comment" : "Last updated timestamp prefix",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Last updated"
+            "value" : "Last updated %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última actualización"
+            "value" : "Última actualización %@"
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última atualização"
+            "value" : "Última atualização %@"
           }
         }
       }
-    },
-    "details.last_updated %@" : {
-
     },
     "details.updated_on" : {
       "comment" : "Item last updated timestamp",
@@ -796,6 +795,7 @@
     },
     "filter.active" : {
       "comment" : "Active filter option",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -819,6 +819,7 @@
     },
     "filter.archived" : {
       "comment" : "Archived filter option",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -842,6 +843,7 @@
     },
     "filter.completed" : {
       "comment" : "Completed filter option",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -980,6 +982,7 @@
     },
     "navigation.create_item" : {
       "comment" : "Navigation title for creating item",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1003,6 +1006,7 @@
     },
     "navigation.edit_item" : {
       "comment" : "Navigation title for editing item",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1417,6 +1421,7 @@
     },
     "status.archived" : {
       "comment" : "Archived status label",
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1555,7 +1560,7 @@
     },
     "theme.dark" : {
       "comment" : "Dark theme option",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1579,7 +1584,7 @@
     },
     "theme.light" : {
       "comment" : "Light theme option",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1603,7 +1608,7 @@
     },
     "theme.system" : {
       "comment" : "System theme option",
-      "extractionState" : "stale",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {

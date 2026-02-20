@@ -34,7 +34,7 @@ struct ThemeSelectionView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(AppColors.background.ignoresSafeArea())
-        .navigationTitle(LocalizedStringKey("settings.theme.title"))
+        .navigationTitle("settings.theme.title")
     }
 }
 
@@ -51,7 +51,7 @@ struct ThemeCard: View {
                     .foregroundStyle(iconColor)
                     .frame(width: 32, height: 32)
 
-                Text(LocalizedStringKey(theme.displayNameKey))
+                Text(theme.displayNameKey)
                     .font(.body)
                     .foregroundStyle(AppColors.cardForeground)
 

@@ -87,66 +87,66 @@ struct DetailsScreen: View {
                     Image(systemName: "plus")
                 }
                 .accessibilityLabel(
-                    LocalizedStringKey("accessibility.add_item")
+                    "accessibility.add_item"
                 )
                 .disabled(!viewModel.canEdit)
             }
         }
         .alert(
-            LocalizedStringKey("alert.delete_list.title"),
+            "alert.delete_list.title",
             isPresented: .constant(isConfirmDeletePresented),
         ) {
             Button(
-                LocalizedStringKey("alert.button.delete"),
+                "alert.button.delete",
                 role: .destructive
             ) {
                 viewModel.onDeleteList()
                 presentation = nil
             }
-            Button(LocalizedStringKey("alert.button.cancel"), role: .cancel) {
+            Button("alert.button.cancel", role: .cancel) {
                 presentation = nil
             }
         } message: {
-            Text(LocalizedStringKey("alert.delete_list.message"))
+            Text("alert.delete_list.message")
         }
         .alert(
-            LocalizedStringKey("alert.archive_list.title"),
+            "alert.archive_list.title",
             isPresented: .constant(isConfirmArchivePresented),
             actions: {
                 Button(
-                    LocalizedStringKey("alert.button.archive"),
+                    "alert.button.archive",
                     role: .destructive
                 ) {
                     viewModel.setArchiveState(state: true)
                     presentation = nil
                 }
-                Button(LocalizedStringKey("alert.button.cancel"), role: .cancel)
+                Button("alert.button.cancel", role: .cancel)
                 {
                     presentation = nil
                 }
             },
             message: {
-                Text(LocalizedStringKey("alert.archive_list.message"))
+                Text("alert.archive_list.message")
             }
         )
         .alert(
-            LocalizedStringKey("alert.complete_list.title"),
+            "alert.complete_list.title",
             isPresented: .constant(isConfirmCompletePresented),
             actions: {
                 Button(
-                    LocalizedStringKey("alert.button.complete"),
+                    "alert.button.complete",
                     role: .destructive
                 ) {
                     viewModel.setCompletedState(state: true)
                     presentation = nil
                 }
-                Button(LocalizedStringKey("alert.button.cancel"), role: .cancel)
+                Button("alert.button.cancel", role: .cancel)
                 {
                     presentation = nil
                 }
             },
             message: {
-                Text(LocalizedStringKey("alert.complete_list.message"))
+                Text("alert.complete_list.message")
             }
         )
         .sheet(

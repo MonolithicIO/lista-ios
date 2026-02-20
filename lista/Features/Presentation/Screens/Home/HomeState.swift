@@ -15,14 +15,14 @@ enum HomeFilter: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var displayName: LocalizedStringKey {
+    var displayName: String {
         switch self {
         case .active:
-            return LocalizedStringKey("filter.active")
+            return "filter.active"
         case .completed:
-            return LocalizedStringKey("filter.completed")
+            return "filter.completed"
         case .archived:
-            return LocalizedStringKey("filter.archived")
+            return "filter.archived"
         }
     }
 
