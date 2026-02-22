@@ -19,7 +19,7 @@ struct ListStatusBadge: View {
 
     var body: some View {
         Label {
-            Text(LocalizedStringKey(title))
+            Text(title)
         } icon: {
             Image(systemName: systemImage)
         }
@@ -34,7 +34,7 @@ struct ListStatusBadge: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
-    private var title: String {
+    private var title: LocalizedStringResource {
         switch status {
         case .active:
             return "status.active"

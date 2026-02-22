@@ -795,7 +795,6 @@
     },
     "filter.active" : {
       "comment" : "Active filter option",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -819,7 +818,6 @@
     },
     "filter.archived" : {
       "comment" : "Archived filter option",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -843,7 +841,6 @@
     },
     "filter.completed" : {
       "comment" : "Completed filter option",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -982,7 +979,6 @@
     },
     "navigation.create_item" : {
       "comment" : "Navigation title for creating item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1006,7 +1002,6 @@
     },
     "navigation.edit_item" : {
       "comment" : "Navigation title for editing item",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1421,7 +1416,6 @@
     },
     "status.archived" : {
       "comment" : "Archived status label",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
