@@ -15,7 +15,7 @@ enum HomeFilter: String, CaseIterable, Identifiable {
 
     var id: String { rawValue }
 
-    var displayName: String {
+    var displayName: LocalizedStringResource {
         switch self {
         case .active:
             return "filter.active"

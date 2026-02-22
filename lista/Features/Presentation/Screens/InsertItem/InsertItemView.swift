@@ -32,7 +32,7 @@ struct InsertItemView: View {
         self._viewModel = StateObject(wrappedValue: viewModel)
     }
 
-    var screenTitleKey: String {
+    var screenTitleKey: LocalizedStringResource {
         if itemId != nil {
             "navigation.edit_item"
         } else {
@@ -60,7 +60,7 @@ struct InsertItemView: View {
         )
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
-        .navigationTitle(LocalizedStringKey(screenTitleKey))
+        .navigationTitle(screenTitleKey)
         .task {
             viewModel.initialize(itemId: itemId)
         }

@@ -110,7 +110,7 @@ private struct HomeScreenView: View {
                 selection: $selectedFilter
             ) {
                 ForEach(HomeFilter.allCases) { filter in
-                    Text(LocalizedStringKey(filter.displayName)).tag(filter)
+                    Text(filter.displayName).tag(filter)
                 }
             }
             .pickerStyle(.segmented)
