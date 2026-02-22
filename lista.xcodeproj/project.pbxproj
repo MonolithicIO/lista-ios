@@ -403,6 +403,7 @@
 				DEVELOPMENT_TEAM = 7H62BDWNNL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Lista;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to attach images to list items";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to attach audio notes to list items";
@@ -439,6 +440,7 @@
 				DEVELOPMENT_TEAM = 7H62BDWNNL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = Lista;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = "We use the camera to attach images to list items";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "We use the microphone to attach audio notes to list items";
