@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct HomeScreen: View {
-    @EnvironmentObject private var coordinator: NavigationCoordinator
+    @Environment(NavigationCoordinator.self) private var coordinator
     @StateObject private var viewModel: HomeViewModel
     @State private var showAddListModal: Bool = false
 

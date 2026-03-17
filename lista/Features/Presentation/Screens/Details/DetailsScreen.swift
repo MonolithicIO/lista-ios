@@ -12,9 +12,9 @@ struct DetailsScreen: View {
     let listaTitle: String
 
     @Environment(\.dismiss) private var dismiss
-    @EnvironmentObject private var coordinator: NavigationCoordinator
+    @Environment(NavigationCoordinator.self) private var coordinator
 
-    @StateObject private var viewModel: DetailsViewModel
+    @State private var viewModel: DetailsViewModel
     @State private var presentation: DetailsScreenPresentation? = nil
     @State private var detailsToPresent: ListaItemUiModel? = nil
 
@@ -24,7 +24,7 @@ struct DetailsScreen: View {
         listaId: String,
         listaTitle: String
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         self.listaId = listaId
         self.listaTitle = listaTitle
     }
@@ -120,8 +120,7 @@ struct DetailsScreen: View {
                     viewModel.setArchiveState(state: true)
                     presentation = nil
                 }
-                Button("alert.button.cancel", role: .cancel)
-                {
+                Button("alert.button.cancel", role: .cancel) {
                     presentation = nil
                 }
             },
@@ -140,8 +139,7 @@ struct DetailsScreen: View {
                     viewModel.setCompletedState(state: true)
                     presentation = nil
                 }
-                Button("alert.button.cancel", role: .cancel)
-                {
+                Button("alert.button.cancel", role: .cancel) {
                     presentation = nil
                 }
             },

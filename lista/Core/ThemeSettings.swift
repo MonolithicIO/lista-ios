@@ -49,12 +49,13 @@ enum AppTheme: String, CaseIterable, Identifiable {
     }
 }
 
-class ThemeSettings: ObservableObject {
+@Observable
+class ThemeSettings {
     static let shared = ThemeSettings()
 
     private let userDefaultsKey = "app.selectedTheme"
 
-    @Published var currentTheme: AppTheme {
+    var currentTheme: AppTheme {
         didSet {
             UserDefaults.standard.set(
                 currentTheme.rawValue,
@@ -63,7 +64,7 @@ class ThemeSettings: ObservableObject {
         }
     }
 
-    @Published var availableThemes = AppTheme.allCases
+    var availableThemes = AppTheme.allCases
 
     private init() {
         // Load saved theme preference

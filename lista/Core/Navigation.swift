@@ -17,8 +17,9 @@ enum Routes: Hashable {
 }
 
 // MARK: - Navigation Coordinator
-class NavigationCoordinator: ObservableObject {
-    @Published var path = NavigationPath()
+@Observable
+class NavigationCoordinator {
+    var path = NavigationPath()
 
     func push(_ route: Routes) {
         path.append(route)

@@ -20,12 +20,13 @@ enum AppLanguage: String, CaseIterable, Identifiable {
     }
 }
 
-class LanguageSettings: ObservableObject {
+@Observable
+class LanguageSettings {
     static let shared = LanguageSettings()
 
     private let userDefaultsKey = "app.selectedLanguage"
 
-    @Published var currentLanguage: AppLanguage {
+    var currentLanguage: AppLanguage {
         didSet {
             UserDefaults.standard.set(
                 currentLanguage.rawValue,
@@ -34,7 +35,7 @@ class LanguageSettings: ObservableObject {
         }
     }
     
-    @Published var availableLanguages: [AppLanguage] = AppLanguage.allCases
+    var availableLanguages: [AppLanguage] = AppLanguage.allCases
 
     private init() {
         // Check if user has manually selected a language

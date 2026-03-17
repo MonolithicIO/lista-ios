@@ -9,7 +9,8 @@ import Combine
 import Foundation
 
 @MainActor
-class DetailsViewModel: ObservableObject {
+@Observable
+class DetailsViewModel {
     private let fetchDetailsService: FetchListaDetailsServiceProtocol
     private let deleteListService: RemoveListServiceProtocol
     private let archiveListService: ArchiveListServiceProtocol
@@ -21,11 +22,11 @@ class DetailsViewModel: ObservableObject {
     private let dateProvider: DateProviderProtocol
     private let deleteItemService: DeleteListItemServiceProtocol
 
-    @Published private(set) var items: [ListaItemUiModel] = []
-    @Published private(set) var isArchived: Bool = false
-    @Published private(set) var isCompleted: Bool = false
-    @Published private(set) var updatedAt: Date? = nil
-    @Published private(set) var events: Events? = nil
+    private(set) var items: [ListaItemUiModel] = []
+    private(set) var isArchived: Bool = false
+    private(set) var isCompleted: Bool = false
+    private(set) var updatedAt: Date? = nil
+    private(set) var events: Events? = nil
     var canEdit: Bool {
         return !isArchived && !isCompleted
 
@@ -102,10 +103,11 @@ class DetailsViewModel: ObservableObject {
             do {
                 let newState = !item.isCompleted
 
-                let updatedItem = try await updateItemStatusService.updateItemStatus(
-                    itemId: item.id,
-                    isCompleted: newState
-                )
+                let updatedItem =
+                    try await updateItemStatusService.updateItemStatus(
+                        itemId: item.id,
+                        isCompleted: newState
+                    )
 
                 items[itemIndex] = updatedItem.toUiModel()
                 updatedAt = updatedItem.updatedAt
@@ -173,7 +175,9 @@ class DetailsViewModel: ObservableObject {
                 let updatedItem = try await updateItemService.update(item: dto)
 
                 // Find and update the item in the local array
-                if let index = items.firstIndex(where: { $0.id == updatedItem.id.uuidString }) {
+                if let index = items.firstIndex(where: {
+                    $0.id == updatedItem.id.uuidString
+                }) {
                     items[index] = updatedItem.toUiModel()
                     updatedAt = updatedItem.updatedAt
                 }

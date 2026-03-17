@@ -8,15 +8,18 @@
 import SwiftUI
 
 struct SettingsScreen: View {
-    @EnvironmentObject var languageSettings: LanguageSettings
-    @EnvironmentObject var themeSettings: ThemeSettings
+    @Environment(LanguageSettings.self) var languageSettings
+    @Environment(ThemeSettings.self) var themeSettings
 
     var body: some View {
+        @Bindable var language = languageSettings
+        @Bindable var theme = themeSettings
+
         SettingsContentView(
-            selectedLanguage: $languageSettings.currentLanguage,
-            availableLanguages: languageSettings.availableLanguages,
-            selectedTheme: $themeSettings.currentTheme,
-            availableThemes: themeSettings.availableThemes,
+            selectedLanguage: $language.currentLanguage,
+            availableLanguages: language.availableLanguages,
+            selectedTheme: $theme.currentTheme,
+            availableThemes: theme.availableThemes,
 
         )
     }

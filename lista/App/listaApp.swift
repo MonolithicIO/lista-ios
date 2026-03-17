@@ -10,27 +10,35 @@ import SwiftUI
 
 @main
 struct listaApp: App {
-    @StateObject private var navigationCoordinator = NavigationCoordinator()
-    @StateObject private var languageSettings = LanguageSettings.shared
-    @StateObject private var themeSettings = ThemeSettings.shared
+    @State private var navigationCoordinator = NavigationCoordinator()
+    @State private var languageSettings = LanguageSettings.shared
+    @State private var themeSettings = ThemeSettings.shared
 
     var body: some Scene {
         WindowGroup {
             RootView()
         }
-        .environmentObject(navigationCoordinator)
-        .environmentObject(languageSettings)
-        .environmentObject(themeSettings)
+        .environment(navigationCoordinator)
+        .environment(languageSettings)
+        .environment(themeSettings)
     }
 }
 
 struct RootView: View {
-    @EnvironmentObject var navigationCoordinator: NavigationCoordinator
-    @EnvironmentObject var languageSettings: LanguageSettings
-    @EnvironmentObject var themeSettings: ThemeSettings
+
+    @Environment(NavigationCoordinator.self)
+    var navigationCoordinator: NavigationCoordinator
+    
+    @Environment(LanguageSettings.self)
+    var languageSettings
+    
+    @Environment(ThemeSettings.self)
+    var themeSettings
 
     var body: some View {
-        NavigationStack(path: $navigationCoordinator.path) {
+        @Bindable var navigator = navigationCoordinator
+        
+        NavigationStack(path: $navigator.path) {
             HomeScreen()
                 .navigationDestination(for: Routes.self) { route in
                     destinationView(for: route)
