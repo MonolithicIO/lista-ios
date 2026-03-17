@@ -11,7 +11,8 @@ import PhotosUI
 import SwiftUI
 
 @MainActor
-final class InsertItemViewModel: ObservableObject {
+@Observable
+final class InsertItemViewModel {
     // MARK: - Dependency properties
     private let createItemService: CreateListItemServiceProtocol
     private let getItemService: GetListItemServiceProtocol
@@ -29,15 +30,15 @@ final class InsertItemViewModel: ObservableObject {
     }
 
     // MARK: - Public State
-    @Published var title: String = ""
-    @Published var description: String = ""
-    @Published var url: String = ""
-    @Published var isCompleted: Bool = false
-    @Published var selectedImage: UIImage?
-    @Published var isEditing: Bool = false
-    @Published var event: Events? = nil
-    @Published var galleryPickerSelection: PhotosPickerItem?
-    @Published var isAddMoreEnabled: Bool = false
+    var title: String = ""
+    var description: String = ""
+    var url: String = ""
+    var isCompleted: Bool = false
+    var selectedImage: UIImage?
+    var isEditing: Bool = false
+    var event: Events? = nil
+    var galleryPickerSelection: PhotosPickerItem?
+    var isAddMoreEnabled: Bool = false
 
     var isUrlInvalid: Bool {
         !isValidUrlInput(url)
@@ -59,8 +60,10 @@ final class InsertItemViewModel: ObservableObject {
 
         if isEditing {
             guard let originalItemId = originalItem?.id else { return }
-            guard let originalItemUuid = UUID(uuidString: originalItemId) else { return }
-            
+            guard let originalItemUuid = UUID(uuidString: originalItemId) else {
+                return
+            }
+
             updateItem(itemId: originalItemUuid)
         } else {
             createNewItem(listId: uuid)
@@ -94,7 +97,7 @@ final class InsertItemViewModel: ObservableObject {
                         image: self.selectedImage
                     )
                 )
-                
+
                 if isAddMoreEnabled {
                     clearState()
                 } else {
@@ -142,7 +145,7 @@ final class InsertItemViewModel: ObservableObject {
                     isCompleted = item.isCompleted
                     originalItem = item.toUiModel()
                 }
-                
+
                 // Load image asynchronously on background thread
                 if let imagePath = item.imageUrl {
                     let image = await Task.detached {
@@ -201,7 +204,7 @@ final class InsertItemViewModel: ObservableObject {
 
         return "http://\(input)"
     }
-    
+
     private func clearState() {
         self.title = ""
         self.description = ""

@@ -14,7 +14,7 @@ struct InsertItemView: View {
     @Environment(\.dismiss) private var dismiss
 
     // MARK: - State
-    @StateObject var viewModel: InsertItemViewModel
+    @State var viewModel: InsertItemViewModel
     @State var presentedImagePicker: PresentedImagePicker? = nil
 
     // MARK: - Input properties
@@ -29,7 +29,7 @@ struct InsertItemView: View {
     ) {
         self.listId = listId
         self.itemId = itemId
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
     }
 
     var screenTitleKey: LocalizedStringResource {

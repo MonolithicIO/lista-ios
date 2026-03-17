@@ -9,7 +9,8 @@ import Combine
 import Foundation
 
 @MainActor
-class HomeViewModel: ObservableObject {
+@Observable
+class HomeViewModel {
     private let fetchListsService: FetchListsServiceProtocol
     private let createListService: CreateListServiceProtocol
     private let removeListService: RemoveListServiceProtocol
@@ -26,10 +27,10 @@ class HomeViewModel: ObservableObject {
         self.removeListService = removeListService
     }
 
-    @Published private(set) var items: [ListaUiModel] = []
-    @Published var filter: HomeFilter = .active
-    
-    @Published var searchQuery: String = "" {
+    private(set) var items: [ListaUiModel] = []
+    var filter: HomeFilter = .active
+
+    var searchQuery: String = "" {
         didSet {
             self.loadLists()
         }

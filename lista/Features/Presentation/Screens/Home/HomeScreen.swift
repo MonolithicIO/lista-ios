@@ -9,14 +9,14 @@ import SwiftUI
 
 struct HomeScreen: View {
     @Environment(NavigationCoordinator.self) private var coordinator
-    @StateObject private var viewModel: HomeViewModel
+    @State private var viewModel: HomeViewModel
     @State private var showAddListModal: Bool = false
 
     init(
         viewModel: HomeViewModel = InstanceKeeper.shared
             .provideHomeViewModel()
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
     }
 
     var body: some View {
