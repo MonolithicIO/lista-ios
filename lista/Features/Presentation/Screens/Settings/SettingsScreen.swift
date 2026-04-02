@@ -20,8 +20,10 @@ struct SettingsScreen: View {
             availableLanguages: language.availableLanguages,
             selectedTheme: $theme.currentTheme,
             availableThemes: theme.availableThemes,
-
         )
+        .navigationTitle("settings.title")
+        .scrollContentBackground(.hidden)
+        .background(AppColors.background.ignoresSafeArea())
     }
 }
 
@@ -67,9 +69,6 @@ struct SettingsContentView: View {
                 }
             }
         }
-        .navigationTitle(LocalizedStringKey("settings.title"))
-        .scrollContentBackground(.hidden)
-        .background(AppColors.background.ignoresSafeArea())
     }
 }
 

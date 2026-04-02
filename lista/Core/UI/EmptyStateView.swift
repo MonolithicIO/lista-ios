@@ -10,10 +10,10 @@ import SwiftUI
 
 struct EmptyStateView: View {
 
-    let title: String
-    let description: String
+    let title: LocalizedStringKey
+    let description: LocalizedStringKey
     let iconName: String
-    let actionTitle: String?
+    let actionTitle: LocalizedStringKey?
     let onAction: (() -> Void)?
 
     var body: some View {

@@ -34,12 +34,12 @@ struct DetailsContentView: View {
 
             if items.isEmpty {
                 EmptyStateView(
-                    title: String(localized: "empty.no_items.title"),
-                    description: String(
-                        localized: "empty.no_items.description"
+                    title: LocalizedStringKey("empty.no_items.title"),
+                    description: LocalizedStringKey(
+                        "empty.no_items.description"
                     ),
                     iconName: "list.bullet",
-                    actionTitle: String(localized: "empty.no_items.button"),
+                    actionTitle: LocalizedStringKey("empty.no_items.button"),
                     onAction: {
                         onAction(.onAddItem)
                     }

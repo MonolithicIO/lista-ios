@@ -121,12 +121,12 @@ private struct HomeScreenView: View {
             // Content area - fills remaining space
             if items.isEmpty {
                 EmptyStateView(
-                    title: String(localized: "empty.no_results.title"),
-                    description: String(
-                        localized: "empty.no_results.description"
+                    title: LocalizedStringKey("empty.no_results.title"),
+                    description: LocalizedStringKey(
+                        "empty.no_results.description"
                     ),
                     iconName: "list.bullet",
-                    actionTitle: String(localized: "empty.no_results.button"),
+                    actionTitle: LocalizedStringKey("empty.no_results.button"),
                     onAction: {
                         onAction(.onAddTap)
                     }
