@@ -138,13 +138,11 @@ final class InsertItemViewModel {
             do {
                 let item = try await getItemService.get(id: itemId)
 
-                await MainActor.run {
-                    title = item.title
-                    description = item.description ?? ""
-                    url = item.url ?? ""
-                    isCompleted = item.isCompleted
-                    originalItem = item.toUiModel()
-                }
+                title = item.title
+                description = item.description ?? ""
+                url = item.url ?? ""
+                isCompleted = item.isCompleted
+                originalItem = item.toUiModel()
 
                 // Load image asynchronously on background thread
                 if let imagePath = item.imageUrl {

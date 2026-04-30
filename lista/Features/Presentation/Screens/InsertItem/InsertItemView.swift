@@ -61,7 +61,7 @@ struct InsertItemView: View {
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
         .navigationTitle(screenTitleKey)
-        .task {
+        .onAppear {
             viewModel.initialize(itemId: itemId)
         }
         .onChange(of: viewModel.event) { _, newValue in
