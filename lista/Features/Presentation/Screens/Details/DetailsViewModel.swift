@@ -81,7 +81,7 @@ class DetailsViewModel {
                     )
                 )
                 items.append(newItem.toUiModel())
-                updatedAt = try dateProvider.currentDate()
+                updatedAt = dateProvider.currentDate()
             } catch {
                 print("Error saving new item \(error)")
             }
@@ -140,7 +140,7 @@ class DetailsViewModel {
                     isArchived: state
                 )
                 self.isArchived = state
-                self.updatedAt = try dateProvider.currentDate()
+                self.updatedAt = dateProvider.currentDate()
             } catch {
                 print(
                     "Error updating archived list state: \(listId ?? ""). Error: \(error)"
@@ -191,10 +191,8 @@ class DetailsViewModel {
         Task {
             do {
                 try await deleteItemService.deleteItem(itemId: itemId)
-
-                // Remove item from local array
                 items.removeAll { $0.id == itemId }
-                updatedAt = try dateProvider.currentDate()
+                updatedAt = dateProvider.currentDate()
             } catch {
                 print("Error deleting item: \(itemId). Error: \(error)")
             }

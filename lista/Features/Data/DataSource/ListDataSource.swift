@@ -54,7 +54,7 @@ final class ListDataSource: ListDataSourceProtocol {
             }
 
             listaObject.isArchived = state
-            listaObject.updatedAt = try self.dateProvider.currentDate()
+            listaObject.updatedAt = self.dateProvider.currentDate()
         }
     }
 
@@ -102,7 +102,7 @@ final class ListDataSource: ListDataSourceProtocol {
             ]
 
             let entities = try context.fetch(request)
-            
+
             return try entities.compactMap { entity in
                 guard let id = entity.id,
                     let title = entity.title
@@ -111,8 +111,12 @@ final class ListDataSource: ListDataSourceProtocol {
                 }
 
                 // Use efficient count queries instead of loading full relationship
-                let itemCount = try context.count(for: self.createItemCountRequest(listId: id))
-                let completedCount = try context.count(for: self.createCompletedItemCountRequest(listId: id))
+                let itemCount = try context.count(
+                    for: self.createItemCountRequest(listId: id)
+                )
+                let completedCount = try context.count(
+                    for: self.createCompletedItemCountRequest(listId: id)
+                )
 
                 return Lista(
                     id: id,
@@ -131,8 +135,8 @@ final class ListDataSource: ListDataSourceProtocol {
             let entity = ListaEntity(context: context)
             entity.id = UUID()
             entity.title = title
-            entity.createdAt = try self.dateProvider.currentDate()
-            entity.updatedAt = try self.dateProvider.currentDate()
+            entity.createdAt = self.dateProvider.currentDate()
+            entity.updatedAt = self.dateProvider.currentDate()
             entity.isArchived = false
             entity.isCompleted = false
 
@@ -234,7 +238,7 @@ final class ListDataSource: ListDataSourceProtocol {
     }
 
     func setCompletedState(id: UUID, state: Bool) async throws {
-        let now = try dateProvider.currentDate()
+        let now = dateProvider.currentDate()
 
         try await context.perform { [context] in
 
@@ -271,8 +275,11 @@ final class ListDataSource: ListDataSourceProtocol {
 
     // MARK: - Helper Methods
 
-    private func createItemCountRequest(listId: UUID) -> NSFetchRequest<ListaItemEntity> {
-        let request: NSFetchRequest<ListaItemEntity> = ListaItemEntity.fetchRequest()
+    private func createItemCountRequest(listId: UUID) -> NSFetchRequest<
+        ListaItemEntity
+    > {
+        let request: NSFetchRequest<ListaItemEntity> =
+            ListaItemEntity.fetchRequest()
         request.predicate = NSPredicate(
             format: "lista.id == %@",
             listId as CVarArg
@@ -280,8 +287,11 @@ final class ListDataSource: ListDataSourceProtocol {
         return request
     }
 
-    private func createCompletedItemCountRequest(listId: UUID) -> NSFetchRequest<ListaItemEntity> {
-        let request: NSFetchRequest<ListaItemEntity> = ListaItemEntity.fetchRequest()
+    private func createCompletedItemCountRequest(listId: UUID)
+        -> NSFetchRequest<ListaItemEntity>
+    {
+        let request: NSFetchRequest<ListaItemEntity> =
+            ListaItemEntity.fetchRequest()
         request.predicate = NSPredicate(
             format: "lista.id == %@ AND isCompleted == YES",
             listId as CVarArg
