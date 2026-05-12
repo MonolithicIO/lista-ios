@@ -8,23 +8,25 @@
 import Foundation
 
 protocol ListItemRepositoryProtocol {
-    func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
+    func createItem(item _dto: CreateListItemRequest) async throws -> ListaItem
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
-    func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
+    func updateItem(item: UpdateListItemRequest) async throws -> ListaItem
     func deleteItem(itemId: UUID) async throws
     func getItem(itemId: UUID) async throws -> ListaItem
 }
 
 final class ListItemRepository: ListItemRepositoryProtocol {
-    
+
     private let datasource: ListItemDataSourceProtocol
 
     init(datasource: ListItemDataSourceProtocol) {
         self.datasource = datasource
     }
 
-    func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem {
-        return try await datasource.createItem(item: _dto)
+    func createItem(item _request: CreateListItemRequest) async throws
+        -> ListaItem
+    {
+        return try await datasource.createItem(item: _request)
     }
 
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem {
@@ -34,14 +36,14 @@ final class ListItemRepository: ListItemRepositoryProtocol {
         )
     }
 
-    func updateItem(item: UpdateListItemDTO) async throws -> ListaItem {
+    func updateItem(item: UpdateListItemRequest) async throws -> ListaItem {
         return try await datasource.updateItem(item: item)
     }
 
     func deleteItem(itemId: UUID) async throws {
         try await datasource.deleteItem(itemId: itemId)
     }
-    
+
     func getItem(itemId: UUID) async throws -> ListaItem {
         return try await datasource.getItem(itemId: itemId)
     }

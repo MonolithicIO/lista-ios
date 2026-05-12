@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol DiskManagerProtocol {
+protocol DiskManagerProtocol: Sendable {
     func saveImage(image: UIImage, fileName: String) throws -> String
     func deleteImage(fileName: String) throws
     func loadImage(fileName: String) throws -> UIImage
@@ -28,9 +28,8 @@ final class DiskManager: DiskManagerProtocol {
 
         try data.write(to: fileUrl, options: .atomic)
 
-        return finalName // ✅ só o filename
+        return finalName
     }
-
 
     func deleteImage(fileName: String) throws {
         let directory = FileManager.default.urls(
@@ -57,16 +56,23 @@ final class DiskManager: DiskManagerProtocol {
             throw NSError(
                 domain: "DiskManager",
                 code: 404,
-                userInfo: [NSLocalizedDescriptionKey: "Image file not found: \(fileName).jpg"]
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Image file not found: \(fileName).jpg"
+                ]
             )
         }
 
         guard let data = try? Data(contentsOf: fileUrl),
-              let image = UIImage(data: data) else {
+            let image = UIImage(data: data)
+        else {
             throw NSError(
                 domain: "DiskManager",
                 code: 500,
-                userInfo: [NSLocalizedDescriptionKey: "Failed to load image: \(fileName).jpg"]
+                userInfo: [
+                    NSLocalizedDescriptionKey:
+                        "Failed to load image: \(fileName).jpg"
+                ]
             )
         }
 

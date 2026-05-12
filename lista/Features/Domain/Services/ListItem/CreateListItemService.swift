@@ -14,12 +14,44 @@ protocol CreateListItemServiceProtocol {
 final class CreateListItemService: CreateListItemServiceProtocol {
 
     private let listItemRepository: ListItemRepositoryProtocol
+    private let diskManager: DiskManagerProtocol
+    private let uuidProvider: UUIDProviderProtocol
 
-    init(listItemRepository: ListItemRepositoryProtocol) {
+    init(
+        listItemRepository: ListItemRepositoryProtocol,
+        diskManager: DiskManagerProtocol,
+        uuidProvider: UUIDProviderProtocol
+    ) {
         self.listItemRepository = listItemRepository
+        self.diskManager = diskManager
+        self.uuidProvider = uuidProvider
     }
 
     func create(item _dto: CreateListItemDTO) async throws -> ListaItem {
-        return try await listItemRepository.createItem(item: _dto)
+        var savedImageUrl: String?
+
+        if let itemImage = _dto.image {
+            savedImageUrl = try diskManager.saveImage(
+                image: itemImage,
+                fileName: uuidProvider.provide().uuidString
+            )
+        }
+
+        do {
+            return try await listItemRepository.createItem(
+                item: CreateListItemRequest(
+                    listId: _dto.listId,
+                    title: _dto.title,
+                    description: _dto.description,
+                    url: _dto.url,
+                    imagePath: savedImageUrl
+                )
+            )
+        } catch {
+            if let imageToDelete = savedImageUrl {
+                try diskManager.deleteImage(fileName: imageToDelete)
+            }
+            throw error
+        }
     }
 }

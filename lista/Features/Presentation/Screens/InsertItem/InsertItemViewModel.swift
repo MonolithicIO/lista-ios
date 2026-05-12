@@ -121,8 +121,7 @@ final class InsertItemViewModel {
                         description: sanitizeString(input: self.description),
                         url: sanitizeUrl(input: self.url),
                         isCompleted: self.isCompleted,
-                        image: self.selectedImage,
-                        shouldRemoveImage: false
+                        itemImage: self.selectedImage,
                     )
                 )
                 event = .onSuccess

@@ -9,9 +9,9 @@ import CoreData
 import Foundation
 
 protocol ListItemDataSourceProtocol {
-    func createItem(item _dto: CreateListItemDTO) async throws -> ListaItem
+    func createItem(item _dto: CreateListItemRequest) async throws -> ListaItem
     func updateStatus(itemId: UUID, isActive: Bool) async throws -> ListaItem
-    func updateItem(item: UpdateListItemDTO) async throws -> ListaItem
+    func updateItem(item: UpdateListItemRequest) async throws -> ListaItem
     func deleteItem(itemId: UUID) async throws
     func getItem(itemId: UUID) async throws -> ListaItem
 }
@@ -20,7 +20,6 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
 
     private let context: NSManagedObjectContext
     private let dateProvider: DateProviderProtocol
-    private let diskManager: DiskManagerProtocol
     private let uuidProvider: UUIDProviderProtocol
 
     init(
@@ -31,28 +30,19 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
     ) {
         self.context = context
         self.dateProvider = dateProvider
-        self.diskManager = diskManager
         self.uuidProvider = uuidProvider
     }
 
-    func createItem(item dto: CreateListItemDTO) async throws -> ListaItem {
-        try await context.perform {
-
-            var imageUrl: String?
-
-            if let attachedImage = dto.image {
-                imageUrl = try self.diskManager.saveImage(
-                    image: attachedImage,
-                    fileName: self.uuidProvider.provide().uuidString
-                )
-            }
-
+    func createItem(item _request: CreateListItemRequest) async throws
+        -> ListaItem
+    {
+        return try await context.perform {
             let listRequest: NSFetchRequest<ListaEntity> =
                 ListaEntity.fetchRequest()
             listRequest.fetchLimit = 1
             listRequest.predicate = NSPredicate(
                 format: "id == %@",
-                dto.listId as CVarArg
+                _request.listId as CVarArg
             )
 
             guard let lista = try self.context.fetch(listRequest).first else {
@@ -61,22 +51,22 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                     code: 404,
                     userInfo: [
                         NSLocalizedDescriptionKey:
-                            "List with id \(dto.listId.uuidString) not found"
+                            "List with id \(_request.listId.uuidString) not found"
                     ]
                 )
             }
             let listaItem = ListaItemEntity(context: self.context)
             listaItem.id = self.uuidProvider.provide()
-            listaItem.title = dto.title
-            listaItem.note = dto.description
-            listaItem.link = dto.url
-            listaItem.updatedAt = try self.dateProvider.currentDate()
-            listaItem.createdAt = try self.dateProvider.currentDate()
-            listaItem.lista = lista
+            listaItem.title = _request.title
+            listaItem.note = _request.description
+            listaItem.link = _request.url
+            listaItem.updatedAt = self.dateProvider.currentDate()
+            listaItem.createdAt = self.dateProvider.currentDate()
+            listaItem.imageUrl = _request.imagePath
             listaItem.isCompleted = false
-            listaItem.imageUrl = imageUrl
+            listaItem.lista = lista
 
-            lista.updatedAt = try self.dateProvider.currentDate()
+            lista.updatedAt = self.dateProvider.currentDate()
 
             if self.context.hasChanges {
                 try self.context.save()
@@ -117,7 +107,7 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 )
             }
 
-            let newDate = try self.dateProvider.currentDate()
+            let newDate = self.dateProvider.currentDate()
 
             listItem.isCompleted = isActive
             listItem.updatedAt = newDate
@@ -141,8 +131,8 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
         }
     }
 
-    func updateItem(item dto: UpdateListItemDTO) async throws -> ListaItem {
-        try await context.perform {
+    func updateItem(item dto: UpdateListItemRequest) async throws -> ListaItem {
+        return try await context.perform {
             let itemRequest = ListaItemEntity.fetchRequest()
             itemRequest.fetchLimit = 1
             itemRequest.predicate = NSPredicate(
@@ -162,37 +152,13 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 )
             }
 
-            // Handle image updates
-            var newImageUrl: String? = listItem.imageUrl
-
-            if dto.shouldRemoveImage {
-                // Delete old image if exists
-                if let oldImageUrl = listItem.imageUrl {
-                    try? self.diskManager.deleteImage(fileName: oldImageUrl)
-                }
-                newImageUrl = nil
-            } else if let newImage = dto.image {
-                // Delete old image if exists
-                if let oldImageUrl = listItem.imageUrl {
-                    try? self.diskManager.deleteImage(fileName: oldImageUrl)
-                }
-                // Save new image
-                newImageUrl = try self.diskManager.saveImage(
-                    image: newImage,
-                    fileName: self.uuidProvider.provide().uuidString
-                )
-            }
-
-            // Update fields
             listItem.title = dto.title
             listItem.note = dto.description
             listItem.link = dto.url
             listItem.isCompleted = dto.isCompleted
-            listItem.imageUrl = newImageUrl
-            listItem.updatedAt = try self.dateProvider.currentDate()
-
-            // Update parent list's updatedAt
-            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
+            listItem.imageUrl = dto.itemImagePath
+            listItem.updatedAt = self.dateProvider.currentDate()
+            listItem.lista?.updatedAt = self.dateProvider.currentDate()
 
             if self.context.hasChanges {
                 try self.context.save()
@@ -233,23 +199,16 @@ final class ListItemDataSource: ListItemDataSourceProtocol {
                 )
             }
 
-            // Delete associated image if exists
-            if let imageUrl = listItem.imageUrl {
-                try? self.diskManager.deleteImage(fileName: imageUrl)
-            }
-
-            // Delete the item
             self.context.delete(listItem)
 
-            // Update parent list's updatedAt
-            listItem.lista?.updatedAt = try self.dateProvider.currentDate()
+            listItem.lista?.updatedAt = self.dateProvider.currentDate()
 
             if self.context.hasChanges {
                 try self.context.save()
             }
         }
     }
-    
+
     func getItem(itemId: UUID) async throws -> ListaItem {
         try await context.perform {
             let itemRequest = ListaItemEntity.fetchRequest()

@@ -109,7 +109,10 @@ class InstanceKeeper {
 
     func provideCreateListItemService() -> CreateListItemServiceProtocol {
         return CreateListItemService(
-            listItemRepository: provideListItemRepository()
+            listItemRepository: provideListItemRepository(),
+            diskManager: provideDiskManager(),
+            uuidProvider: provideUuidProvider(),
+
         )
     }
 
@@ -121,7 +124,9 @@ class InstanceKeeper {
 
     func provideUpdateListItemService() -> UpdateListItemServiceProtocol {
         return UpdateListItemService(
-            repository: provideListItemRepository()
+            repository: provideListItemRepository(),
+            diskManager: provideDiskManager(),
+            uuidProvider: provideUuidProvider()
         )
     }
 
