@@ -23,33 +23,29 @@ struct ItemDetailsView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    // Status badge (subtle, centered)
+
                     ItemStatusBadge(isItemCompleted: item.isCompleted)
                         .padding(.top, 8)
 
-                    // Title Card
-                    sectionTitle(String("section.title"))
+                    sectionTitle(LocalizedStringKey("section.title"))
                     titleCard
 
-                    // Description Card (if exists)
                     if let itemDescription = item.description {
-                        sectionTitle(String(localized: "section.description"))
+                        sectionTitle(LocalizedStringKey("section.description"))
                         descriptionCard(description: itemDescription)
                     }
 
-                    // URL Card (action-oriented button style)
                     if let itemUrl = item.url {
-                        sectionTitle(String(localized: "section.link"))
+                        sectionTitle(LocalizedStringKey("section.link"))
                         urlCard(url: itemUrl)
                     }
 
-                    // Image Card (if exists)
                     if let imagePath = item.image,
                         let image = UIImage(
                             contentsOfFile: imageURL(from: imagePath).path()
                         )
                     {
-                        sectionTitle(String(localized: "section.image"))
+                        sectionTitle(LocalizedStringKey("section.image"))
                         imageCard(image: image)
                     }
 
@@ -226,7 +222,10 @@ struct ItemDetailsView: View {
         Text(
             String(
                 format: String(localized: "details.updated_on"),
-                date.formatted(date: .abbreviated, time: .shortened)
+                date.formatted(
+                    date: .abbreviated,
+                    time: .shortened,
+                )
             )
         )
         .font(.caption)
@@ -235,7 +234,7 @@ struct ItemDetailsView: View {
         .padding(.top, 8)
     }
 
-    private func sectionTitle(_ title: String) -> some View {
+    private func sectionTitle(_ title: LocalizedStringKey) -> some View {
         Text(title)
             .font(.subheadline.weight(.medium))
             .foregroundStyle(AppColors.mutedForeground)

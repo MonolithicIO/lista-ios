@@ -11,7 +11,7 @@ struct ItemStatusBadge: View {
 
     var body: some View {
         Label {
-            Text(LocalizedStringKey(title))
+            Text(title)
         } icon: {
             Image(systemName: systemImage)
         }
@@ -26,11 +26,11 @@ struct ItemStatusBadge: View {
         .accessibilityLabel(accessibilityLabel)
     }
 
-    private var title: String {
+    private var title: LocalizedStringKey {
         if isItemCompleted {
-            String(localized: "status.completed")
+            LocalizedStringKey("status.completed")
         } else {
-            String(localized: "status.active")
+            LocalizedStringKey("status.active")
         }
     }
 
@@ -51,7 +51,7 @@ struct ItemStatusBadge: View {
     }
 
     private var backgroundStyle: Color {
-        if  isItemCompleted {
+        if isItemCompleted {
             return AppColors.green.opacity(0.15)
         } else {
             return AppColors.blue.opacity(0.15)
