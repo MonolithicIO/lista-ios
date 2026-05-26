@@ -30,36 +30,28 @@ class HomeViewModel {
     private(set) var items: [ListaUiModel] = []
     var filter: HomeFilter = .active
 
-    var searchQuery: String = "" {
-        didSet {
-            self.loadLists()
-        }
+    var searchQuery: String = ""
+
+    func loadLists() async {
+        await fetchLists()
     }
 
-    func loadLists() {
-        Task {
-            await fetchLists()
-        }
-    }
-
-    func addList(title: String) {
-        Task {
-            do {
-                let newList = try await createListService.create(
-                    title: title
+    func addList(title: String) async {
+        do {
+            let newList = try await createListService.create(
+                title: title
+            )
+            items.append(
+                ListaUiModel(
+                    id: newList.id.uuidString,
+                    title: newList.title,
+                    itemCount: newList.itemCount,
+                    completedCount: newList.completedCount,
+                    status: newList.toStatus()
                 )
-                items.append(
-                    ListaUiModel(
-                        id: newList.id.uuidString,
-                        title: newList.title,
-                        itemCount: newList.itemCount,
-                        completedCount: newList.completedCount,
-                        status: newList.toStatus()
-                    )
-                )
-            } catch {
+            )
+        } catch {
 
-            }
         }
     }
 

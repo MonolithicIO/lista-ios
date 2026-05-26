@@ -43,14 +43,17 @@ struct DetailsScreen: View {
                         .insertItem(listId: self.listaId, itemId: nil)
                     )
                 case .onToggleItemState(let changedItem):
-                    viewModel.onToogleItemState(item: changedItem)
-
+                    Task {
+                        await viewModel.onToogleItemState(item: changedItem)
+                    }
                 case .onUpdateItem(let item):
                     coordinator.push(
                         .insertItem(listId: self.listaId, itemId: item.id)
                     )
                 case .onDeleteItem(let item):
-                    viewModel.onDeleteItem(itemId: item.id)
+                    Task {
+                        await viewModel.onDeleteItem(itemId: item.id)
+                    }
                 case .onTapItem(let item):
                     detailsToPresent = item
                 }
@@ -70,13 +73,18 @@ struct DetailsScreen: View {
                         case .archive:
                             presentation = .confirmArchive
                         case .undoArchive:
-                            viewModel.setArchiveState(state: false)
+                            Task {
+                                await viewModel.setArchiveState(state: false)
+                            }
+
                         case .delete:
                             presentation = .confirmDelete
                         case .complete:
                             presentation = .confirmComplete
                         case .undoComplete:
-                            viewModel.setCompletedState(state: false)
+                            Task {
+                                await viewModel.setCompletedState(state: false)
+                            }
                         }
                     }
                 )
@@ -100,8 +108,10 @@ struct DetailsScreen: View {
                 "alert.button.delete",
                 role: .destructive
             ) {
-                viewModel.onDeleteList()
-                presentation = nil
+                Task {
+                    await viewModel.onDeleteList()
+                    presentation = nil
+                }
             }
             Button("alert.button.cancel", role: .cancel) {
                 presentation = nil
@@ -117,8 +127,11 @@ struct DetailsScreen: View {
                     "alert.button.archive",
                     role: .destructive
                 ) {
-                    viewModel.setArchiveState(state: true)
-                    presentation = nil
+                    Task {
+                        await viewModel.setArchiveState(state: true)
+                        presentation = nil
+                    }
+
                 }
                 Button("alert.button.cancel", role: .cancel) {
                     presentation = nil
@@ -136,8 +149,10 @@ struct DetailsScreen: View {
                     "alert.button.complete",
                     role: .destructive
                 ) {
-                    viewModel.setCompletedState(state: true)
-                    presentation = nil
+                    Task {
+                        await viewModel.setCompletedState(state: true)
+                        presentation = nil
+                    }
                 }
                 Button("alert.button.cancel", role: .cancel) {
                     presentation = nil
@@ -172,8 +187,10 @@ struct DetailsScreen: View {
                         )
                     },
                     onToggle: {
-                        viewModel.onToogleItemState(item: itemDetails)
-                        detailsToPresent = nil
+                        Task {
+                            await viewModel.onToogleItemState(item: itemDetails)
+                            detailsToPresent = nil
+                        }
                     },
                     enableEdit: viewModel.canEdit,
                     onTapUrl: { url in
@@ -187,7 +204,7 @@ struct DetailsScreen: View {
             }
         }
         .task {
-            viewModel.onAppear(listaId: listaId)
+            await viewModel.onAppear(listaId: listaId)
         }
         .onChange(of: self.viewModel.events) { _, newValue in
             if let event = newValue {

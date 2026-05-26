@@ -57,167 +57,149 @@ class DetailsViewModel {
         self.deleteItemService = deleteItemService
     }
 
-    func onAppear(listaId: String) {
+    func onAppear(listaId: String) async {
         self.listId = listaId
-        loadList()
+        await loadList()
     }
 
-    func onAddNewItem(item: AddListaItemUiModel) {
-        Task {
-            guard let listaUuid = UUID(uuidString: listId) else { return }
+    func onAddNewItem(item: AddListaItemUiModel) async {
+        guard let listaUuid = UUID(uuidString: listId) else { return }
 
-            do {
-                let newItem = try await createItemService.create(
-                    item: CreateListItemDTO(
-                        listId: listaUuid,
-                        title: item.title.trimmingCharacters(
-                            in: .whitespacesAndNewlines
-                        ),
-                        description: self.sanitizeString(
-                            input: item.description
-                        ),
-                        url: self.sanitizeString(input: item.url),
-                        image: item.attachedImage
-                    )
+        do {
+            let newItem = try await createItemService.create(
+                item: CreateListItemDTO(
+                    listId: listaUuid,
+                    title: item.title.trimmingCharacters(
+                        in: .whitespacesAndNewlines
+                    ),
+                    description: self.sanitizeString(
+                        input: item.description
+                    ),
+                    url: self.sanitizeString(input: item.url),
+                    image: item.attachedImage
                 )
-                items.append(newItem.toUiModel())
-                updatedAt = dateProvider.currentDate()
-            } catch {
-                print("Error saving new item \(error)")
-            }
+            )
+            items.append(newItem.toUiModel())
+            updatedAt = dateProvider.currentDate()
+        } catch {
+            print("Error saving new item \(error)")
         }
     }
 
-    func onToogleItemState(item: ListaItemUiModel) {
-        Task {
-            guard
-                let itemIndex = items.firstIndex(
-                    where: { stateItem in
-                        item.id == stateItem.id
-                    }
+    func onToogleItemState(item: ListaItemUiModel) async {
+        guard
+            let itemIndex = items.firstIndex(
+                where: { stateItem in
+                    item.id == stateItem.id
+                }
+            )
+        else {
+            return
+        }
+
+        do {
+            let newState = !item.isCompleted
+
+            let updatedItem =
+                try await updateItemStatusService.updateItemStatus(
+                    itemId: item.id,
+                    isCompleted: newState
                 )
-            else {
-                return
+
+            items[itemIndex] = updatedItem.toUiModel()
+            updatedAt = updatedItem.updatedAt
+        } catch {
+            print("Error updating item \(item.id). Error: \(error) ")
+        }
+    }
+
+    func onDeleteList() async {
+        do {
+            try await deleteListService.remove(listId: listId)
+            events = .deleteSuccess
+        } catch {
+            print(
+                "Error deleting list: \(listId ?? ""). Error: \(error)"
+            )
+        }
+    }
+
+    func setArchiveState(state: Bool) async {
+        do {
+            try await archiveListService.archive(
+                listaId: listId,
+                isArchived: state
+            )
+            self.isArchived = state
+            self.updatedAt = dateProvider.currentDate()
+        } catch {
+            print(
+                "Error updating archived list state: \(listId ?? ""). Error: \(error)"
+            )
+        }
+    }
+
+    func setCompletedState(state: Bool) async {
+        do {
+            if state {
+                try await completeListService.complete(listaId: listId)
+            } else {
+                try await revertCompleteListService.revert(
+                    listaId: listId
+                )
             }
 
-            do {
-                let newState = !item.isCompleted
+            await loadList()
+        } catch {
+            print(
+                "Error updating archived list state: \(listId ?? ""). Error: \(error)"
+            )
+        }
+    }
 
-                let updatedItem =
-                    try await updateItemStatusService.updateItemStatus(
-                        itemId: item.id,
-                        isCompleted: newState
-                    )
+    func onUpdateItem(dto: UpdateListItemDTO) async {
+        do {
+            let updatedItem = try await updateItemService.update(item: dto)
 
-                items[itemIndex] = updatedItem.toUiModel()
+            // Find and update the item in the local array
+            if let index = items.firstIndex(where: {
+                $0.id == updatedItem.id.uuidString
+            }) {
+                items[index] = updatedItem.toUiModel()
                 updatedAt = updatedItem.updatedAt
-            } catch {
-                print("Error updating item \(item.id). Error: \(error) ")
             }
-        }
-
-    }
-
-    func onDeleteList() {
-        Task {
-            do {
-                try await deleteListService.remove(listId: listId)
-                events = .deleteSuccess
-            } catch {
-                print(
-                    "Error deleting list: \(listId ?? ""). Error: \(error)"
-                )
-            }
-        }
-
-    }
-
-    func setArchiveState(state: Bool) {
-        Task {
-            do {
-                try await archiveListService.archive(
-                    listaId: listId,
-                    isArchived: state
-                )
-                self.isArchived = state
-                self.updatedAt = dateProvider.currentDate()
-            } catch {
-                print(
-                    "Error updating archived list state: \(listId ?? ""). Error: \(error)"
-                )
-            }
+        } catch {
+            print("Error updating item: \(dto.itemId). Error: \(error)")
         }
     }
 
-    func setCompletedState(state: Bool) {
-        Task {
-            do {
-                if state {
-                    try await completeListService.complete(listaId: listId)
-                } else {
-                    try await revertCompleteListService.revert(
-                        listaId: listId
-                    )
-                }
-
-                loadList()
-            } catch {
-                print(
-                    "Error updating archived list state: \(listId ?? ""). Error: \(error)"
-                )
-            }
+    func onDeleteItem(itemId: String) async {
+        do {
+            try await deleteItemService.deleteItem(itemId: itemId)
+            items.removeAll { $0.id == itemId }
+            updatedAt = dateProvider.currentDate()
+        } catch {
+            print("Error deleting item: \(itemId). Error: \(error)")
         }
     }
 
-    func onUpdateItem(dto: UpdateListItemDTO) {
-        Task {
-            do {
-                let updatedItem = try await updateItemService.update(item: dto)
+    private func loadList() async {
 
-                // Find and update the item in the local array
-                if let index = items.firstIndex(where: {
-                    $0.id == updatedItem.id.uuidString
-                }) {
-                    items[index] = updatedItem.toUiModel()
-                    updatedAt = updatedItem.updatedAt
-                }
-            } catch {
-                print("Error updating item: \(dto.itemId). Error: \(error)")
+        guard let uuid = UUID(uuidString: self.listId) else { return }
+        do {
+            let details = try await fetchDetailsService.fetch(
+                listaId: uuid
+            )
+            items = details.items.map { item in
+                item.toUiModel()
             }
+            isArchived = details.isArchived
+            isCompleted = details.isCompleted
+            listId = details.id.uuidString
+            updatedAt = details.updatedAt
+        } catch {
+            items = []
         }
-    }
-
-    func onDeleteItem(itemId: String) {
-        Task {
-            do {
-                try await deleteItemService.deleteItem(itemId: itemId)
-                items.removeAll { $0.id == itemId }
-                updatedAt = dateProvider.currentDate()
-            } catch {
-                print("Error deleting item: \(itemId). Error: \(error)")
-            }
-        }
-    }
-
-    private func loadList() {
-        Task {
-            guard let uuid = UUID(uuidString: self.listId) else { return }
-            do {
-                let details = try await fetchDetailsService.fetch(
-                    listaId: uuid
-                )
-                items = details.items.map { item in
-                    item.toUiModel()
-                }
-                isArchived = details.isArchived
-                isCompleted = details.isCompleted
-                listId = details.id.uuidString
-                updatedAt = details.updatedAt
-            } catch {
-                items = []
-            }
-        }
-
     }
 
     private func sanitizeString(input: String?) -> String? {

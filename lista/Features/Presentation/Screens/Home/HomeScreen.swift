@@ -69,10 +69,17 @@ struct HomeScreen: View {
             }
         }
         .task {
-            viewModel.loadLists()
+            await viewModel.loadLists()
         }
         .onChange(of: viewModel.filter) { _, _ in
-            viewModel.loadLists()
+            Task {
+                await viewModel.loadLists()
+            }
+        }
+        .onChange(of: viewModel.searchQuery) { _, _ in
+            Task {
+                await viewModel.loadLists()
+            }
         }
         .sheet(
             isPresented: $showAddListModal
@@ -80,8 +87,10 @@ struct HomeScreen: View {
             NavigationStack {
                 AddListView(
                     onSubmit: { title in
-                        viewModel.addList(title: title)
-                        showAddListModal = false
+                        Task {
+                            await viewModel.addList(title: title)
+                            showAddListModal = false
+                        }
                     }
                 )
             }
