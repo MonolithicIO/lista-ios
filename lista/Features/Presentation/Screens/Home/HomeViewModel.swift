@@ -14,8 +14,8 @@ class HomeViewModel {
     private let fetchListsService: FetchListsServiceProtocol
     private let createListService: CreateListServiceProtocol
     private let removeListService: RemoveListServiceProtocol
-    private var searchTask: Task<Void, Never>?
-    private var cancellables = Set<AnyCancellable>()
+    private let searchSubject = PassthroughSubject<String, Never>()
+    private var cancellables: [AnyCancellable]
 
     init(
         fetchListsService: FetchListsServiceProtocol,
@@ -25,12 +25,22 @@ class HomeViewModel {
         self.fetchListsService = fetchListsService
         self.createListService = createListService
         self.removeListService = removeListService
+        self.cancellables = []
     }
 
     private(set) var items: [ListaUiModel] = []
     var filter: HomeFilter = .active
 
-    var searchQuery: String = ""
+    var searchQuery: String = "" {
+        didSet {
+            searchSubject.send(searchQuery)
+        }
+    }
+
+    func firstLoad() async {
+        await self.loadLists()
+        initObserving()
+    }
 
     func loadLists() async {
         await fetchLists()
@@ -80,5 +90,17 @@ class HomeViewModel {
         } catch {
 
         }
+    }
+
+    private func initObserving() {
+        searchSubject
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .removeDuplicates()
+            .sink { [weak self] _ in
+                Task {
+                    await self?.fetchLists()
+                }
+            }
+            .store(in: &cancellables)
     }
 }

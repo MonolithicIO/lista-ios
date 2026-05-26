@@ -71,14 +71,9 @@ struct HomeScreen: View {
             }
         }
         .task {
-            await viewModel.loadLists()
+            await viewModel.firstLoad()
         }
         .onChange(of: viewModel.filter) { _, _ in
-            Task {
-                await viewModel.loadLists()
-            }
-        }
-        .onChange(of: viewModel.searchQuery) { _, _ in
             Task {
                 await viewModel.loadLists()
             }
