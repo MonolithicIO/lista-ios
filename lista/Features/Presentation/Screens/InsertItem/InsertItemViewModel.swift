@@ -47,14 +47,14 @@ final class InsertItemViewModel {
     // MARK: - Private State
     private var originalItem: ListaItemUiModel?
 
-    func initialize(itemId: String?) {
+    func initialize(itemId: String?) async {
         if let itemId {
-            loadItemData(itemId: itemId)
+            await loadItemData(itemId: itemId)
             isEditing = true
         }
     }
 
-    func insertItem(listId: String) {
+    func insertItem(listId: String) async {
         guard !isUrlInvalid else { return }
         guard let uuid = UUID(uuidString: listId) else { return }
 
@@ -64,97 +64,90 @@ final class InsertItemViewModel {
                 return
             }
 
-            updateItem(itemId: originalItemUuid)
+            await updateItem(itemId: originalItemUuid)
         } else {
-            createNewItem(listId: uuid)
+            await createNewItem(listId: uuid)
         }
     }
 
-    func handleGallerySelection(_ item: PhotosPickerItem?) {
+    func handleGallerySelection(_ item: PhotosPickerItem?) async {
         guard let item else { return }
 
-        Task {
-            if let data = try? await item.loadTransferable(type: Data.self),
-                let image = UIImage(data: data)
-            {
-                await MainActor.run {
-                    self.selectedImage = image
-                    self.galleryPickerSelection = nil
-                }
+        if let data = try? await item.loadTransferable(type: Data.self),
+            let image = UIImage(data: data)
+        {
+            await MainActor.run {
+                self.selectedImage = image
+                self.galleryPickerSelection = nil
             }
         }
     }
 
-    private func createNewItem(listId: UUID) {
-        Task {
-            do {
-                _ = try await createItemService.create(
-                    item: CreateListItemDTO(
-                        listId: listId,
-                        title: self.title,
-                        description: sanitizeString(input: self.description),
-                        url: sanitizeUrl(input: self.url),
-                        image: self.selectedImage
-                    )
+    private func createNewItem(listId: UUID) async {
+        do {
+            _ = try await createItemService.create(
+                item: CreateListItemDTO(
+                    listId: listId,
+                    title: self.title,
+                    description: sanitizeString(input: self.description),
+                    url: sanitizeUrl(input: self.url),
+                    image: self.selectedImage
                 )
+            )
 
-                if isAddMoreEnabled {
-                    clearState()
-                } else {
-                    event = .onSuccess
-                }
-            } catch {
-                print("Failed to create item \(error)")
+            if isAddMoreEnabled {
+                clearState()
+            } else {
+                event = .onSuccess
             }
+        } catch {
+            print("Failed to create item \(error)")
         }
     }
 
     private func updateItem(
         itemId: UUID,
-    ) {
-        Task {
-            do {
-                _ = try await updateListItemService.update(
-                    item: UpdateListItemDTO(
-                        itemId: itemId,
-                        title: self.title,
-                        description: sanitizeString(input: self.description),
-                        url: sanitizeUrl(input: self.url),
-                        isCompleted: self.isCompleted,
-                        itemImage: self.selectedImage,
-                    )
-                )
-                event = .onSuccess
+    ) async {
 
-            } catch {
-                print("Failed to create item \(error)")
-            }
+        do {
+            _ = try await updateListItemService.update(
+                item: UpdateListItemDTO(
+                    itemId: itemId,
+                    title: self.title,
+                    description: sanitizeString(input: self.description),
+                    url: sanitizeUrl(input: self.url),
+                    isCompleted: self.isCompleted,
+                    itemImage: self.selectedImage,
+                )
+            )
+            event = .onSuccess
+
+        } catch {
+            print("Failed to create item \(error)")
         }
     }
 
-    private func loadItemData(itemId: String) {
-        Task {
-            do {
-                let item = try await getItemService.get(id: itemId)
+    private func loadItemData(itemId: String) async {
+        do {
+            let item = try await getItemService.get(id: itemId)
 
-                title = item.title
-                description = item.description ?? ""
-                url = item.url ?? ""
-                isCompleted = item.isCompleted
-                originalItem = item.toUiModel()
+            title = item.title
+            description = item.description ?? ""
+            url = item.url ?? ""
+            isCompleted = item.isCompleted
+            originalItem = item.toUiModel()
 
-                // Load image asynchronously on background thread
-                if let imagePath = item.imageUrl {
-                    let image = await Task.detached {
-                        UIImage(contentsOfFile: imagePath)
-                    }.value
-                    await MainActor.run {
-                        selectedImage = image
-                    }
+            // Load image asynchronously on background thread
+            if let imagePath = item.imageUrl {
+                let image = await Task.detached {
+                    UIImage(contentsOfFile: imagePath)
+                }.value
+                await MainActor.run {
+                    selectedImage = image
                 }
-            } catch {
-                print("Failed to fetch item details \(error)")
             }
+        } catch {
+            print("Failed to fetch item details \(error)")
         }
     }
 

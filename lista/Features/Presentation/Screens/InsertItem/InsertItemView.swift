@@ -48,7 +48,9 @@ struct InsertItemView: View {
                 switch action {
 
                 case .onSubmit:
-                    self.viewModel.insertItem(listId: self.listId)
+                    Task {
+                        await self.viewModel.insertItem(listId: self.listId)
+                    }
                 }
             },
             presentedImagePicker: self.$presentedImagePicker,
@@ -61,8 +63,8 @@ struct InsertItemView: View {
         .scrollDismissesKeyboard(.interactively)
         .background(AppColors.background)
         .navigationTitle(screenTitleKey)
-        .onAppear {
-            viewModel.initialize(itemId: itemId)
+        .task {
+            await viewModel.initialize(itemId: itemId)
         }
         .onChange(of: viewModel.event) { _, newValue in
             guard let event = newValue else { return }
@@ -86,7 +88,9 @@ struct InsertItemView: View {
             matching: .images
         )
         .onChange(of: viewModel.galleryPickerSelection) { _, newValue in
-            self.viewModel.handleGallerySelection(newValue)
+            Task {
+                await self.viewModel.handleGallerySelection(newValue)
+            }
         }
         // MARK: - Camera Picker
         .sheet(
