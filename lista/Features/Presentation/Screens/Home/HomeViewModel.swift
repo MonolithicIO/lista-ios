@@ -55,16 +55,14 @@ class HomeViewModel {
         }
     }
 
-    func removeList(list _removedItem: ListaUiModel) {
-        Task {
-            do {
-                try await removeListService.remove(listId: _removedItem.id)
-                items = items.filter { list in
-                    list.id != _removedItem.id
-                }
-            } catch {
-
+    func removeList(list _removedItem: ListaUiModel) async {
+        do {
+            try await removeListService.remove(listId: _removedItem.id)
+            items = items.filter { list in
+                list.id != _removedItem.id
             }
+        } catch {
+
         }
     }
 

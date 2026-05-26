@@ -31,7 +31,9 @@ struct HomeScreen: View {
                     )
 
                 case .onRemoveItem(let item):
-                    viewModel.removeList(list: item)
+                    Task {
+                        await viewModel.removeList(list: item)
+                    }
 
                 case .onAddTap:
                     showAddListModal = true
