@@ -138,7 +138,8 @@ final class InsertItemViewModel {
             originalItem = item.toUiModel()
 
             if let imagePath = item.imageUrl {
-                selectedImage = await loadImage(imageUrl: imagePath)
+                let url = imageURL(from: imagePath).path()
+                selectedImage = await loadImage(imageUrl: url)
             }
 
         } catch {
