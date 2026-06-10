@@ -137,18 +137,17 @@ final class InsertItemViewModel {
             isCompleted = item.isCompleted
             originalItem = item.toUiModel()
 
-            // Load image asynchronously on background thread
             if let imagePath = item.imageUrl {
-                let image = await Task.detached {
-                    UIImage(contentsOfFile: imagePath)
-                }.value
-                await MainActor.run {
-                    selectedImage = image
-                }
+                selectedImage = await loadImage(imageUrl: imagePath)
             }
+
         } catch {
             print("Failed to fetch item details \(error)")
         }
+    }
+
+    nonisolated private func loadImage(imageUrl: String) async -> UIImage? {
+        return UIImage(contentsOfFile: imageUrl)
     }
 
     private func sanitizeString(input: String?) -> String? {
