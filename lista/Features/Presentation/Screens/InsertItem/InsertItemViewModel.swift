@@ -73,12 +73,20 @@ final class InsertItemViewModel {
     func handleGallerySelection(_ item: PhotosPickerItem?) async {
         guard let item else { return }
 
-        if let data = try? await item.loadTransferable(type: Data.self),
-            let image = UIImage(data: data)
-        {
-            self.selectedImage = image
+        let galleryImage = await loadFromGalery(item: item)
+
+        if let galleryImage {
+            self.selectedImage = galleryImage
             self.galleryPickerSelection = nil
         }
+    }
+
+    nonisolated private func loadFromGalery(item: PhotosPickerItem) async
+        -> UIImage?
+    {
+        let imageData = try? await item.loadTransferable(type: Data.self)
+        guard let galeryData = imageData else { return nil }
+        return UIImage(data: galeryData)
     }
 
     private func createNewItem(listId: UUID) async {
