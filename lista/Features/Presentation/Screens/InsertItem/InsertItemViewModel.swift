@@ -76,10 +76,8 @@ final class InsertItemViewModel {
         if let data = try? await item.loadTransferable(type: Data.self),
             let image = UIImage(data: data)
         {
-            await MainActor.run {
-                self.selectedImage = image
-                self.galleryPickerSelection = nil
-            }
+            self.selectedImage = image
+            self.galleryPickerSelection = nil
         }
     }
 
